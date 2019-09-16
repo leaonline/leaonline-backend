@@ -1,0 +1,15 @@
+{
+  "hosts": {
+    "ocpu": {
+      "url": "http://localhost:6060",
+      "username": "ocpu",
+      "password": "password"
+    },
+    "content": {
+      "url": "http://localhost:3030"
+    },
+    "otulea": {
+      "url": "http://localhost:3000"
+    }
+  }
+}

@@ -9,7 +9,13 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.3.4",
-    "meteor-node-stubs": "^0.4.1"
+    "@fortawesome/fontawesome-free": "^5.10.2",
+    "bcrypt": "^3.0.6",
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.4.1",
+    "meteor-node-stubs": "^0.4.1",
+    "popper.js": "^1.15.0",
+    "simpl-schema": "^1.5.5"
   },
   "meteor": {
     "mainModule": {
@@ -17,5 +23,9 @@
       "server": "server/main.js"
     },
     "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "snazzy": "^8.0.0",
+    "standard": "^14.3.0"
   }
 }
