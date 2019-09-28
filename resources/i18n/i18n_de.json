@@ -1,0 +1,103 @@
+{
+  "aria": {
+    "readText": "Text als Audio abspielen"
+  },
+  "competencies": {
+    "fulfilled": "Das kann ich schon",
+    "toImprove": "Das kann ich bald, wenn ich noch ein wenig übe",
+    "reading": {
+      "1": "kurze Sätze lesen und verstehen.",
+      "2": "dies das",
+      "3": "gut lesen",
+      "4": "richtig gut lesen"
+    }
+  },
+  "dimensions": {
+    "understand": {
+      "title": "Sprache",
+      "easy": "Ich erkenne, ob einfache Sätze richtig formuliert sind.",
+      "medium": "Ich erkenne, ob Sätze richtig gesprochen sind, die etwas über die Vergangenheit aussagen.",
+      "hard": "Ich kann erkennen, ob zwei Sätze inhaltlich zusammenhängen."
+    },
+    "reading": {
+      "title": "Lesen",
+      "easy": "Ich kann bereits kurze, einfache Wörter lesen.",
+      "medium": "Ich kann längere Wörter und einfache Sätze lesen und deren Sinn verstehen.",
+      "hard": "Ich kann ganze Texte lesen und einzelne Informationen heraussuchen."
+    },
+    "writing": {
+      "title": "Schreiben",
+      "easy": "Ich kann einige Buchstaben erkennen, aber mir fällt es schwer ganze Wörter zu schreiben.",
+      "medium": "Ich kann ganze Wörter schreiben, habe aber immer noch ein wenig Schwierigkeiten mit der Rechtschreibung.",
+      "hard": "Ich kann ganze Wörter richtig schreiben. Nur das Schreiben zusammenhängender Sätze fällt mir schwer."
+    },
+    "math": {
+      "title": "Rechnen",
+      "easy": "Ich kann Ziffern bis eintausend erkennen.",
+      "medium": "Ich kann Zahlen bis eintausend schriftlich zusammenzählen oder voneinander abziehen.",
+      "hard": "Ich kann Zahlen schriftliche miteinander mal nehmen oder teilen."
+    }
+  },
+  "levels": {
+    "easy": "Einfach",
+    "medium": "Mittel",
+    "hard": "Schwer"
+  },
+  "navigation": {
+    "toOverview": "Zur Übersichtsseite"
+  },
+  "common": {
+    "yes": "Ja",
+    "no": "Nein",
+    "back": "Zurück",
+    "forward": "Weiter",
+    "continue": "Fortsetzen",
+    "end": "Beenden",
+    "logout": "Abmelden",
+    "restart": "Neu starten",
+    "finish": "Weiter zur nächsten Aufgabe",
+    "toOverview": "Zur Übersicht",
+    "toWelcome": "Zur Startseite",
+    "help": "Hilfe"
+  },
+  "routes": {
+    "redirecting": "Weiterleitung",
+    "notFound": "Seite nicht gefunden",
+    "welcome": "Willkommen bei lea."
+  },
+  "pages": {
+    "task": {
+      "title": "Aufgabe bearbeiten"
+    },
+    "welcome": {
+      "title": "Willkommen bei lea.",
+      "introVideo": "Video mit Begrüßung",
+      "playIntro": "Einführungsvideo abspielen",
+      "loggedIn": "Sie sind bereits angemeldet. Sie können auf dieser Seite noch einmal die Einführung ansehen oder zur Übersicht zurückkehren.",
+      "wrongUser": "Klicken Sie hier, wenn der dargestellte Benutzer nicht von Ihnen angelegt wurde.",
+      "introduction": "Sie können hier angeben, ob Sie bereits einen Test absolviert haben. Wenn Sie bereits teilgenommen haben, klicken sie auf „Ja“. Falls Sie zum ersten Mal hier sind, klicken Sie bitte auf „Nein“.",
+      "newCode": "Hier können Sie sich anmelden. Wenn Sie zum ersten Mal hier sind, bekommen Sie auf dieser Seite Ihren persönlichen Code. Sie können sich mit diesem Code immer wieder anmelden. Um den Code nicht zu vergessen haben Sie folgende Möglichkeiten: Sie können den Code notieren, Sie können sich den Code nach der Befragung ausdrucken oder Sie können sich den Code mit dem Handy abfotografieren.",
+      "enterCode": "Bitte geben Sie hier Ihren Code ein.",
+      "loginFail": "Der Code war nicht korrekt. Bitte versuchen Sie es erneut.",
+      "login": "Anmelden",
+      "loggingIn": "Sie werden angemeldet"
+    },
+    "overview": {
+      "chooseDimension": "Bitte wählen Sie eine Kategorie aus.",
+      "chooseLevel": "Wir möchten die Aufgaben möglichst passend für Sie zusammenstellen. Bitte schätzen Sie hier Ihre Fähigkeiten ein. Wenn Sie mit dem Mauszeiger über die Schaltflächen fahren, werden Ihnen Beipsiele genannt. Bitte klicken Sie mit der linken Maustaste die Schaltfläche an, die Ihre Fähigkeit am ehesten beschreibt.",
+      "confirm": "Aufgaben starten",
+      "sessionFound": "Es läuft bereits eine Bearbeitung für diese Auswahl. Möchten Sie die Bearbeitung fortsetzen oder neu starten?"
+    },
+    "notFound": {
+      "title": "Die angefragte Seite wurde nicht gefunden. Das tut uns leid.",
+      "description": "Es wurde die angeforderte Seite nicht im System gefunden. Möchten Sie uns den Fehler mitteilen?"
+    },
+    "complete": {
+      "thankYou": "Schön, dass Sie teilgenommen haben!",
+      "printResults": "Ergebnis ausdrucken",
+      "printResultsTeacher": "Für Kursleitende ausdrucken",
+      "youCanPrint": "Sie können Ihr Ergebnis hier ausdrucken.",
+      "continueOrEnd": "Was möchten Sie als nächstes tun?"
+    }
+  }
+}
