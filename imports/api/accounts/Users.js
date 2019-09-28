@@ -23,6 +23,7 @@ Users.login = {}
 Users.login.schema = {
   username: {
     type: String,
+    max: 32,
     label: _i18nReactive('contexts.users.username'),
     autoform: {
       autocomplete: 'username'
@@ -31,6 +32,7 @@ Users.login.schema = {
   password: {
     type: String,
     label: _i18nReactive('contexts.users.password'),
+    max: 128,
     autoform: {
       type: 'password',
       autocomplete: 'current-password'
