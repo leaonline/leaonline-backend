@@ -1,3 +1,15 @@
 <template name="login">
-    login
+        <div class="row my-5">
+            <div class="col col-sm-12 col-md-6 col-lg-4 ml-auto mr-auto">
+                {{#unless currentUser}}
+                    {{> quickForm id="loginForm" schema=loginSchema type="normal"
+                        buttonClasses="btn btn-block btn-primary"
+                        buttonConten=(i18n "actions.login") }}
+                {{else}}
+                    <div class="jumbotron">
+                        <strong>{{i18n "pages.login.loggedIn"}}</strong>
+                    </div>
+                {{/unless}}
+            </div>
+        </div>
 </template>
