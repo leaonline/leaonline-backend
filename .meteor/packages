@@ -32,7 +32,6 @@ ostrio:i18n
 
 jkuester:template-states
 reactive-dict
-leaonline:utils
 
 # SCSS
 fourseven:scss

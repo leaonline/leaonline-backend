@@ -1,7 +1,7 @@
 import { Schema } from '../../../api/schema/Schema'
 import { Users } from '../../../api/accounts/Users'
-import { loggedIn } from 'meteor/leaonline:utils/both/accounts'
-import { formIsValid } from 'meteor/leaonline:utils/client/form'
+import { loggedIn } from '../../../utils/accounts'
+import { formIsValid } from '../../../utils/form'
 import dely from 'dely'
 import './login.html'
 
@@ -49,7 +49,7 @@ Template.login.events({
     if (!insertDoc) return
 
     templateInstance.state.set('loggingIn', true)
-    Meteor.loginWithPassword(insertDoc.username, insertDoc.password, by300((err, res) => {
+    Users.login.call(insertDoc.username, insertDoc.password, by300((err, res) => {
       templateInstance.state.set('loggingIn', false)
       if (err) {
         return templateInstance.state.set('loginError', err)

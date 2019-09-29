@@ -1,7 +1,7 @@
 /* global Roles */
 import { check } from 'meteor/check'
 import { Router } from './Router'
-import { loggedIn, loggedOut } from 'meteor/leaonline:utils/both/accounts'
+import { loggedIn, loggedOut } from '../../utils/accounts'
 
 export const createLoginTrigger = (redirectRoute) => {
   check(redirectRoute.path, Function)

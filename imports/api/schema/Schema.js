@@ -1,6 +1,6 @@
 import { Tracker } from 'meteor/tracker'
 import SimpleSchema from 'simpl-schema'
-import { onClient } from 'meteor/leaonline:utils/both/arch'
+import { onClient } from '../../utils/arch'
 
 export const Schema = {}
 
