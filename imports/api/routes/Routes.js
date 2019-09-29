@@ -38,7 +38,7 @@ Routes.dashboard = {
     return import('../../ui/pages/dashboard/dashboard')
   },
   target: null,
-  template: 'login',
+  template: 'dashboard',
   roles: null,
   data: null
 }
@@ -48,7 +48,7 @@ Routes.dashboard = {
  */
 
 Routes.login = {
-  path: () => `${settings.login}`,
+  path: () => `/${settings.login}`,
   label: 'pages.login.title',
   triggersEnter: () => [],
   async load () {
@@ -57,7 +57,11 @@ Routes.login = {
   target: null,
   template: 'login',
   roles: null,
-  data: null
+  data: {
+    next () {
+      return Routes.dashboard
+    }
+  }
 }
 
 /**

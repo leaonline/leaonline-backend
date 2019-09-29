@@ -1,13 +1,13 @@
 import { Schema } from '../../../api/schema/Schema'
 import { Users } from '../../../api/accounts/Users'
 import { loggedIn } from '../../../utils/accounts'
+import { Router } from '../../../api/routes/Router'
 import { formIsValid } from '../../../utils/form'
 import dely from 'dely'
 import './login.html'
 
 const by300 = dely(300)
 const loginSchema = Schema.create(Users.login.schema)
-
 
 const states = {
   login: 'login',
@@ -34,6 +34,10 @@ Template.login.helpers({
   view (name) {
     return Template.getState('view') === name
   },
+  loggedIn () {
+    const instance = Template.instance()
+    return instance.state.get('view') === states.loggedIn && !instance.state.get('loggingIn')
+  },
   loggingIn () {
     return Template.getState('loggingIn')
   },
@@ -54,7 +58,8 @@ Template.login.events({
       if (err) {
         return templateInstance.state.set('loginError', err)
       } else {
-        // TODO redirect
+        const route = templateInstance.data.next()
+        Router.go(route)
       }
     }))
   }

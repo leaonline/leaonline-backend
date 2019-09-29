@@ -24,6 +24,11 @@
     "notFound": {
       "title": "Die angefragte Seite wurde nicht gefunden. Das tut uns leid.",
       "description": "Es wurde die angeforderte Seite nicht im System gefunden. Möchten Sie uns den Fehler mitteilen?"
+    },
+    "login": {
+      "title": "Anmeldeseite",
+      "submit": "Anmelden",
+      "loggedIn": "Sie sind angemeldet"
     }
   }
 }

@@ -22,10 +22,14 @@
                 </div>
             {{/with}}
 
-            {{#if view "loggedIn"}}
+            {{#if loggedIn}}
                 <div class="alert alert-info">
                     <strong class="alert-heading">{{i18n "pages.login.loggedIn"}}</strong>
                 </div>
+
+                <a class="btn btn-primary btn-block" href="{{next}}">
+                    {{i18n "common.continue"}}
+                </a>
             {{/if}}
         </div>
     </div>
