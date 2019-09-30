@@ -1,45 +1,45 @@
 {
-  "contexts": {
-    "users": {
-      "title": "Benutzeraccounts",
-      "username": "Benutzername",
-      "password": "Passwort"
-    }
-  },
   "common": {
-    "url": "Url",
-    "yes": "Ja",
-    "no": "Nein",
     "back": "Zurück",
-    "forward": "Weiter",
     "continue": "Fortsetzen",
     "end": "Beenden",
-    "logout": "Abmelden",
-    "restart": "Neu starten",
     "finish": "Weiter zur nächsten Aufgabe",
+    "forward": "Weiter",
+    "help": "Hilfe",
+    "logout": "Abmelden",
+    "no": "Nein",
+    "restart": "Neu starten",
     "toOverview": "Zur Übersicht",
     "toWelcome": "Zur Startseite",
-    "help": "Hilfe"
+    "url": "Url",
+    "yes": "Ja"
+  },
+  "contexts": {
+    "users": {
+      "password": "Passwort",
+      "title": "Benutzeraccounts",
+      "username": "Benutzername"
+    }
   },
   "pages": {
-    "notFound": {
-      "title": "Die angefragte Seite wurde nicht gefunden. Das tut uns leid.",
-      "description": "Es wurde die angeforderte Seite nicht im System gefunden. Möchten Sie uns den Fehler mitteilen?"
-    },
-    "login": {
-      "title": "Anmeldeseite",
-      "submit": "Anmelden",
-      "loggedIn": "Sie sind angemeldet"
-    },
     "dashboard": {
       "title": "Dashboard"
     },
-    "status": {
-      "overview": "Status (alle Anwendungen)",
-      "connection": "Verbindung"
+    "login": {
+      "loggedIn": "Sie sind angemeldet",
+      "submit": "Anmelden",
+      "title": "Anmeldeseite"
+    },
+    "notFound": {
+      "description": "Es wurde die angeforderte Seite nicht im System gefunden. Möchten Sie uns den Fehler mitteilen?",
+      "title": "Die angefragte Seite wurde nicht gefunden. Das tut uns leid."
     },
     "sessions": {
       "title": "Benutzer Sessions"
+    },
+    "status": {
+      "connection": "Verbindung",
+      "overview": "Status (alle Anwendungen)"
     }
   }
 }
