@@ -3,7 +3,14 @@
 		<h1>{{app.name}}</h1>
 
 		{{#let connection=app.connection}}
-			Connected: {{connection.status.status}}
+			<div class="card-body">
+				{{i18n "pages.status.connection"}}: {{connection.status.status}}
+			</div>
+
+		<div class="card-body">
+			{{i18n "pages.status.loggedIn"}}:
+			{{#if connection._userId}}{{i18n "common.yes"}}{{else}}{{i18n "common.no"}}{{/if}}
+		</div>
 		{{/let}}
 	{{/let}}
 </template>

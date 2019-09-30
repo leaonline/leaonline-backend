@@ -14,8 +14,7 @@ Template.statusApp.onCreated(function () {
     if (!appId) {
       throw new Error(`Expected appId, got ${appId}`)
     }
-
-    Apps.connect(appId)
+    console.log(Apps.connect(appId))
     instance.state.set('appId', appId)
   })
 })
