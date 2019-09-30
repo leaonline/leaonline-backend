@@ -29,6 +29,9 @@
       "title": "Anmeldeseite",
       "submit": "Anmelden",
       "loggedIn": "Sie sind angemeldet"
+    },
+    "dashboard": {
+      "title": "Dashboard"
     }
   }
 }

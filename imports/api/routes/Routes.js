@@ -40,7 +40,8 @@ Routes.dashboard = {
   target: null,
   template: 'dashboard',
   roles: null,
-  data: null
+  data: null,
+  icon: 'home'
 }
 
 /**
@@ -54,7 +55,7 @@ Routes.login = {
   async load () {
     return import('../../ui/pages/login/login')
   },
-  target: null,
+  target: 'login-render-target',
   template: 'login',
   roles: null,
   data: {
