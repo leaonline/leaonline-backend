@@ -17,13 +17,13 @@
         "name": "lea.content",
         "short": "content",
         "url": "http://localhost:3030",
-        "icon": "file-o"
+        "icon": "file"
       },
       "otulea": {
         "name": "otu.lea",
         "short": "otulea",
         "url": "http://localhost:3000",
-        "icon": "pencil"
+        "icon": "edit"
       }
     }
   }
