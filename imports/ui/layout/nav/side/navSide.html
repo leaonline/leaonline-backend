@@ -4,11 +4,22 @@
 			<ul class="nav flex-column">
 				{{#each route in topLevelRoutes}}
 					<li class="nav-item">
-						<a class="nav-link active" href="{{route.path}}">
+						<a class="nav-link" href="{{route.path}}">
 							<i class="fa fas fa-fw fa-{{route.icon}}"></i>
 							{{i18n route.label}}
 						</a>
 					</li>
+					{{#with route.children}}
+						<ul class="nav flex-column">
+							{{#each childRoute in this}}
+								<li class="nav-item">
+									<a class="nav-link" href="{{childRoute.href}}">
+										{{childRoute.label}}
+									</a>
+								</li>
+							{{/each}}
+						</ul>
+					{{/with}}
 				{{/each}}
 			</ul>
 			{{!--

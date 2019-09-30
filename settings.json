@@ -1,15 +1,27 @@
 {
   "hosts": {
     "ocpu": {
-      "url": "http://localhost:6060",
       "username": "ocpu",
       "password": "password"
-    },
-    "content": {
-      "url": "http://localhost:3030"
-    },
-    "otulea": {
-      "url": "http://localhost:3000"
+    }
+  },
+  "public": {
+    "hosts": {
+      "ocpu": {
+        "name": "lea.statistics",
+        "short": "stat",
+        "url": "http://localhost:6060"
+      },
+      "content": {
+        "name": "lea.content",
+        "short": "content",
+        "url": "http://localhost:3030"
+      },
+      "otulea": {
+        "name": "otu.lea",
+        "short": "otulea",
+        "url": "http://localhost:3000"
+      }
     }
   }
 }
