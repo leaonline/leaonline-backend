@@ -86,6 +86,10 @@ Routes.root = {
   data: null
 }
 
+/**
+ * Displays status overview for all apps.
+ */
+
 Routes.statusOverview = {
   path: () => `/${settings.status}`,
   label: 'pages.status.overview',
@@ -105,6 +109,10 @@ Routes.statusOverview = {
   },
   icon: 'heartbeat'
 }
+
+/**
+ * Displays extended status for a single app.
+ */
 
 Routes.statusApp = {
   path: (appId = ':appId') => `/${settings.status}/${appId}`,
