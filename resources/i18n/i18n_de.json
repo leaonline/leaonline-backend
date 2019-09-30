@@ -34,7 +34,8 @@
       "title": "Dashboard"
     },
     "status": {
-      "overview": "Status (alle Anwendungen)"
+      "overview": "Status (alle Anwendungen)",
+      "connection": "Verbindung"
     }
   }
 }
