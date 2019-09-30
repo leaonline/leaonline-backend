@@ -32,6 +32,9 @@
     },
     "dashboard": {
       "title": "Dashboard"
+    },
+    "status": {
+      "overview": "Status (alle Anwendungen)"
     }
   }
 }

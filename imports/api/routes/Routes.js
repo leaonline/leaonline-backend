@@ -102,7 +102,8 @@ Routes.statusOverview = {
     next (appId) {
 
     }
-  }
+  },
+  icon: 'heartbeat'
 }
 
 Routes.statusApp = {
