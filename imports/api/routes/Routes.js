@@ -129,6 +129,26 @@ Routes.statusApp = {
   data: null
 }
 
+/**
+ * Display an overview of recent sessions.
+ */
+
+Routes.sessions = {
+  path: () => `/${settings.sessions}`,
+  label: 'pages.sessions.title',
+  triggersEnter: () => [
+    createLoginTrigger(Routes.login),
+  ],
+  async load () {
+    return import('../../ui/pages/sessions/sessions')
+  },
+  target: null,
+  template: 'sessions',
+  roles: null,
+  data: null,
+  icon: 'user'
+}
+
 Routes.fallback = {
   path: () => '*',
   label: 'pages.redirecting.title',

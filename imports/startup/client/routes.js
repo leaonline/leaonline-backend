@@ -27,6 +27,7 @@ Object
  */
 ;[
   Routes.dashboard,
+  Routes.sessions,
   Routes.statusOverview
 ].forEach(route => RoutesTree.topLevel(route.path(), route))
 

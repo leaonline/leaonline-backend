@@ -2,5 +2,6 @@
   "notFound": "seite-nicht-gefunden",
   "dashboard": "dashboard",
   "login": "anmelden",
-  "status": "status"
+  "status": "status",
+  "sessions": "benutzer-sessions"
 }

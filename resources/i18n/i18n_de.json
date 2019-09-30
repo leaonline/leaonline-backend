@@ -7,6 +7,7 @@
     }
   },
   "common": {
+    "url": "Url",
     "yes": "Ja",
     "no": "Nein",
     "back": "Zurück",
@@ -36,6 +37,9 @@
     "status": {
       "overview": "Status (alle Anwendungen)",
       "connection": "Verbindung"
+    },
+    "sessions": {
+      "title": "Benutzer Sessions"
     }
   }
 }
