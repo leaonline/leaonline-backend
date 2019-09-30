@@ -6,6 +6,7 @@ import '../imports/startup/client/fontawesome'
 import '../imports/startup/client/bootstrap'
 import '../imports/startup/client/schema'
 import '../imports/startup/client/autoform'
+import '../imports/startup/client/templateHelpers'
 
 // contexts
 import '../imports/startup/client/contexts/users'

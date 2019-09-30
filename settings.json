@@ -25,6 +25,11 @@
         "url": "http://localhost:3000",
         "icon": "edit"
       }
+    },
+    "pages": {
+      "sessions": {
+        "use": "otulea"
+      }
     }
   }
 }

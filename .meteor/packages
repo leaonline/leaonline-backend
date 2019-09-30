@@ -25,6 +25,7 @@ dburles:mongo-collection-instances
 alanning:roles
 accounts-base
 accounts-password
+ongoworks:ddp-login
 
 ostrio:flow-router-extra
 ostrio:files

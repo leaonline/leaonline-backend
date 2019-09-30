@@ -19,3 +19,9 @@ i18n.set = function (lang, options) {
 i18n.getLocale = function () {
   return _translator.currentLocale.get()
 }
+
+i18n.localeDateOptions = function () {
+  const localeKey = i18n.getLocale()
+  const config = _translator.langugeSet()
+  return config.all.find(enty => enty.code === localeKey).isoCode
+}

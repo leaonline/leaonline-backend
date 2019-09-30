@@ -1,3 +1,38 @@
 <template name="sessions">
-	sessions
+	{{#unless loggedIn}}
+		<div class="alert alert-warning">
+			{{i18n "pages.session.notLoggedIn"}}
+		</div>
+	{{/unless}}
+	{{#if notConnected}}
+		<div class="alert alert-danger">
+			{{i18n "pages.session.notConnected"}}
+		</div>
+	{{/if}}
+
+	{{#with sessions}}
+		<ul class="list-group">
+			<li class="list-group-item d-flex justify-content-between font-weight-bold">
+				<span>{{i18n "common.username"}}</span>
+				<span>{{i18n "common.updatedAt"}}</span>
+			</li>
+
+			{{#each user in this}}
+				<li class="list-group-item d-flex justify-content-between">
+					<span>{{user.username}}</span>
+					<span>{{toDate user.updatedAt}}</span>
+				</li>
+			{{/each}}
+		</ul>
+		{{else}}
+		<div class="alert alert-info">
+			{{i18n "page.session.noUsers"}}
+		</div>
+	{{/with}}
+
+	{{#unless sessionsLoaded}}
+		<div class="card-body">
+			{{> loading title=(i18n "pages.session.title")}}
+		</div>
+	{{/unless}}
 </template>
