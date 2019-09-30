@@ -7,7 +7,7 @@ const { hosts } = Meteor.settings.public
 const allHosts = Object.values(hosts)
 
 allHosts.forEach(host => {
-  Apps.register({ id: host.short, name: host.name, url: host.url})
+  Apps.register({ id: host.short, name: host.name, url: host.url, icon: host.icon })
 })
 
 const mappedHosts = allHosts.map(host => {
