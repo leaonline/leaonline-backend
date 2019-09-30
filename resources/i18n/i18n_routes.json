@@ -1,5 +1,6 @@
 {
   "notFound": "seite-nicht-gefunden",
   "dashboard": "dashboard",
-  "login": "anmelden"
+  "login": "anmelden",
+  "status": "status"
 }

@@ -86,6 +86,39 @@ Routes.root = {
   data: null
 }
 
+Routes.statusOverview = {
+  path: () => `/${settings.status}`,
+  label: 'pages.status.overview',
+  triggersEnter: () => [
+    createLoginTrigger(Routes.login),
+  ],
+  async load () {
+    return import('../../ui/pages/status/overview')
+  },
+  target: null,
+  template: 'statusOverview',
+  roles: null,
+  data: {
+    next (appId) {
+
+    }
+  }
+}
+
+Routes.statusApp = {
+  path: (appId = ':appId') => `/${settings.status}/${appId}`,
+  label: 'pages.status.title',
+  triggersEnter: () => [
+    createLoginTrigger(Routes.login),
+  ],
+  async load () {
+    return import('../../ui/pages/status/app')
+  },
+  target: null,
+  template: 'statusApp',
+  roles: null,
+  data: null
+}
 
 Routes.fallback = {
   path: () => '*',
