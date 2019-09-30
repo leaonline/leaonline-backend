@@ -4,8 +4,8 @@ export const Apps = {}
 
 const _apps = {}
 
-Apps.register = function ({ id, name, url }) {
-  _apps[ id ] = { id, name, url }
+Apps.register = function ({ id, name, url, icon }) {
+  _apps[ id ] = { id, name, url, icon }
 }
 
 Apps.get = function (id) {

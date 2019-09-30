@@ -10,17 +10,20 @@
       "ocpu": {
         "name": "lea.statistics",
         "short": "stat",
-        "url": "http://localhost:6060"
+        "url": "http://localhost:6060",
+        "icon": "calculator"
       },
       "content": {
         "name": "lea.content",
         "short": "content",
-        "url": "http://localhost:3030"
+        "url": "http://localhost:3030",
+        "icon": "file-o"
       },
       "otulea": {
         "name": "otu.lea",
         "short": "otulea",
-        "url": "http://localhost:3000"
+        "url": "http://localhost:3000",
+        "icon": "pencil"
       }
     }
   }
