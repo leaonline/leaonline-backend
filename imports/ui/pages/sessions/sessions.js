@@ -16,7 +16,11 @@ Template.sessions.onCreated(function () {
     }
 
     connection.call('user.methods.recent', (err, recentSessions) => {
-      instance.state.set('recentSessions', recentSessions)
+      if (err) {
+        instance.state.set('err', err)
+      } else {
+        instance.state.set('recentSessions', recentSessions)
+      }
       setTimeout(() => {
         instance.state.set('sessionsLoaded', true)
       }, 150)
@@ -26,6 +30,9 @@ Template.sessions.onCreated(function () {
 })
 
 Template.sessions.helpers({
+  err () {
+    return Template.getState('err')
+  },
   notConnected () {
     return Template.getState('notConnected')
   },

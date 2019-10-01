@@ -41,5 +41,11 @@
       "connection": "Verbindung",
       "overview": "Anwendungen"
     }
+  },
+  "errors": {
+    "permissionDenied": {
+      "title": "Kein Zugriffsrecht",
+      "noUser": "Nicht als Benutzer angemeldet"
+    }
   }
 }

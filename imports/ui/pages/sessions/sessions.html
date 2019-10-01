@@ -9,6 +9,12 @@
 			{{i18n "pages.session.notConnected"}}
 		</div>
 	{{/if}}
+	{{#with err}}
+		<div class="alert alert-danger">
+			<h4 class="alert-heading">{{i18n this.error}}</h4>
+			<span>{{i18n err.reason}}</span>
+		</div>
+	{{/with}}
 
 	{{#with sessions}}
 		<ul class="list-group">
