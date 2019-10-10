@@ -39,7 +39,8 @@
     },
     "status": {
       "connection": "Verbindung",
-      "overview": "Anwendungen"
+      "overview": "Anwendungen",
+      "loggedIn": "Authentifiziert"
     }
   },
   "errors": {
