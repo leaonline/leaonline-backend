@@ -1,31 +1,31 @@
 {
   "hosts": {
     "ocpu": {
+      "label": "lea.statistics",
+      "name": "stat",
+      "url": "http://localhost:6060",
+      "icon": "calculator",
       "username": "ocpu",
       "password": "password"
+    },
+    "otulea": {
+      "username": "admin",
+      "password": "password",
+      "label": "otu.lea",
+      "name": "otulea",
+      "url": "http://localhost:3000",
+      "icon": "edit"
+    },
+    "content": {
+      "name": "content",
+      "username": "admin",
+      "password": "password",
+      "label": "lea.content",
+      "url": "http://localhost:3030",
+      "icon": "file"
     }
   },
   "public": {
-    "hosts": {
-      "ocpu": {
-        "name": "lea.statistics",
-        "short": "stat",
-        "url": "http://localhost:6060",
-        "icon": "calculator"
-      },
-      "content": {
-        "name": "lea.content",
-        "short": "content",
-        "url": "http://localhost:3030",
-        "icon": "file"
-      },
-      "otulea": {
-        "name": "otu.lea",
-        "short": "otulea",
-        "url": "http://localhost:3000",
-        "icon": "edit"
-      }
-    },
     "pages": {
       "sessions": {
         "use": "otulea"
