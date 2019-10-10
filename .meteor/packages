@@ -20,10 +20,17 @@ shell-server@0.4.0            # Server-side component of the `meteor shell` comm
 # Basic tools
 leaonline:errors
 leaonline:utils
+leaonline:factories
 
 # collections
 aldeed:collection2
 dburles:mongo-collection-instances
+
+# methods
+mdg:validated-method
+
+# publications / subscriptions
+ccorcos:subs-cache
 
 # accounts
 alanning:roles
