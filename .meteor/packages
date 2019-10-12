@@ -35,8 +35,10 @@ ccorcos:subs-cache
 # accounts
 alanning:roles
 accounts-base
-accounts-password
+leaonline:accounts-lea
+service-configuration
 ongoworks:ddp-login
+
 
 ostrio:flow-router-extra
 ostrio:files

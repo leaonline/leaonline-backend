@@ -1,4 +1,13 @@
 {
+  "oauth": {
+    "clientId": "0123456890",
+    "secret": "01234568900123456890",
+    "dialogUrl": "http://localhost:8080/oauth/authorize",
+    "accessTokenUrl": "http://localhost:8080/oauth/token",
+    "authorizeUrl": "http://localhost:8080/oauth/authorize",
+    "identityUrl": "http://localhost:8080/oauth/ident",
+    "redirectUrl": "http://localhost:5050/_oauth/lea"
+  },
   "hosts": {
     "ocpu": {
       "label": "lea.statistics",

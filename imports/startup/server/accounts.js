@@ -1,14 +1,22 @@
 import { Meteor } from 'meteor/meteor'
-import { Accounts } from 'meteor/accounts-base'
 import { rateLimitAccounts } from '../../factories/rateLimit'
 
 rateLimitAccounts()
 
-if (Meteor.isDevelopment) {
-  Meteor.startup(() => {
-    if (Meteor.users.find().count() === 0) {
-      const userId = Accounts.createUser({ username: 'admin', password: 'password' })
-      console.info(`Devmode: user created with id ${userId} - login via admin / password`)
+Meteor.startup(() => {
+  const { oauth } = Meteor.settings
+  ServiceConfiguration.configurations.upsert(
+    { service: 'lea' },
+    {
+      $set: {
+        loginStyle: 'popup',
+        clientId: oauth.clientId,
+        secret: oauth.secret,
+        dialogUrl: oauth.dialogUrl,
+        accessTokenUrl: oauth.accessTokenUrl,
+        identityUrl: oauth.identityUrl,
+        redirectUrl: oauth.redirectUrl
+      }
     }
-  })
-}
+  )
+})

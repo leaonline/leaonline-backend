@@ -149,6 +149,28 @@ Routes.sessions = {
   icon: 'user'
 }
 
+
+/**
+ * Competencies
+ */
+
+Routes.competencies = {
+  path: () => `/${settings.competencies}`,
+  label: 'pages.competencies.title',
+  triggersEnter: () => [
+    createLoginTrigger(Routes.login),
+  ],
+  async load () {
+    return import('../../ui/pages/competencies/competencies')
+  },
+  target: null,
+  template: 'competencies',
+  roles: null,
+  data: null,
+  icon: 'language'
+}
+
+
 Routes.fallback = {
   path: () => '*',
   label: 'pages.redirecting.title',

@@ -47,13 +47,11 @@ Template.login.helpers({
 })
 
 Template.login.events({
-  'submit #loginForm' (event, templateInstance) {
+  'click .login-button' (event, templateInstance) {
     event.preventDefault()
-    const insertDoc = formIsValid('loginForm', loginSchema)
-    if (!insertDoc) return
 
     templateInstance.state.set('loggingIn', true)
-    Users.login.call(insertDoc.username, insertDoc.password, by300((err, res) => {
+    Users.login.call(by300((err, res) => {
       templateInstance.state.set('loggingIn', false)
       if (err) {
         return templateInstance.state.set('loginError', err)

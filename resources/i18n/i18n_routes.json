@@ -3,5 +3,6 @@
   "dashboard": "dashboard",
   "login": "anmelden",
   "status": "status",
-  "sessions": "benutzer-sessions"
+  "sessions": "benutzer-sessions",
+  "competencies": "kompetenzen"
 }

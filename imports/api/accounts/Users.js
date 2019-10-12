@@ -40,6 +40,6 @@ Users.login.schema = {
   }
 }
 
-Users.login.call = function (username, password, cb) {
-  Meteor.loginWithPassword(username, password, cb)
+Users.login.call = function (cb) {
+  Meteor.loginWithLea(cb)
 }

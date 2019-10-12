@@ -41,6 +41,12 @@
       "connection": "Verbindung",
       "overview": "Anwendungen",
       "loggedIn": "Authentifiziert"
+    },
+    "competencies": {
+      "title": "Kompetenzen"
+    },
+    "tasks": {
+      "title": "Aufgaben"
     }
   },
   "errors": {
