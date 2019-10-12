@@ -1,8 +1,8 @@
 import { DDP } from 'meteor/ddp-client'
-import { Tracker } from 'meteor/tracker'
-import { onClient, onServer } from '../../utils/arch'
+import { ReactiveDict } from 'meteor/reactive-dict'
 import { getCollection } from '../../utils/collection'
 import { SubsManager } from '../subscriptions/SubsManager'
+import { onClient, onServer } from '../../utils/arch'
 
 export const Apps = {
   name: 'apps',
@@ -10,160 +10,102 @@ export const Apps = {
   icon: 'cubes'
 }
 
-Apps.schema = {
-  name: String,
-  label: String,
-  url: String,
-  icon: String,
-  status: {
-    type: Object,
-    optional: true
-  },
-  'status.connected': {
-    type: Boolean,
-    optional: true
-  },
-  'status.status': {
-    type: String,
-    optional: true
-  },
-  'status.retryCount': {
-    type: Number,
-    optional: true
-  },
-  'status.retryTime': {
-    type: Number,
-    optional: true
-  },
-  'status.reason': {
-    type: String,
-    optional: true
-  },
-  login: {
-    type: Object,
-    optional: true
-  },
-  'login.successful': {
-    type: Boolean,
-    optional: true
-  },
-  'login.error': {
-    type: String,
-    optional: true
+const _apps = new ReactiveDict()
+const _connections = {}
+const _trackers = {}
+
+function connect (name, url) {
+  if (!_connections[ name ]) {
+    _connections[ name ] = DDP.connect(url)
   }
+  return _connections[ name ]
 }
 
-let _collection
-
-Apps.collection = function () {
-  if (!_collection) {
-    _collection = getCollection(Apps.name)
-  }
-  return _collection
+function updateStatus (name, status) {
+  const app = _apps.get(name)
+  app.status = status
+  _apps.set(name, app)
 }
 
-if (Meteor.isServer) {
+function updateLogin (name, userId) {
+  const app = _apps.get(name)
+  app.login = { successful: !!userId }
+  _apps.set(name, app)
+}
 
-  const _trackers = {}
-  const _connections = {}
-
-  const connect = function (name, url) {
-    if (!_connections[ name ]) {
-      _connections[ name ] = DDP.connect(url)
+function track (name, connection) {
+  _trackers[ name ] = Tracker.autorun(() => {
+    // skip this computation if there is
+    // currently no logged in backend user
+    if (!Meteor.user() || !Meteor.userId()) {
+      // logout connection if still connected
+      if (connection.userId()) {
+        connection.call('logout')
+      }
+      return
     }
-    return _connections[ name ]
-  }
 
-  Apps.register = function ({ name, label, url, icon, username, password }) {
-    const AppsCollection = Apps.collection()
-    let appDoc = AppsCollection.findOne({ name })
-    if (!appDoc) {
-      AppsCollection.insert({ name, label, url, icon })
-    } else {
-      AppsCollection.update(appDoc._id, { $set: { name, label, url, icon } })
-    }
-    appDoc = AppsCollection.findOne({ name })
+    // always update status to
+    // trigger reactive Template updates
+    const status = connection.status()
+    updateStatus(name, status)
 
-    const connection = connect(name, url)
+    // also skip if we are not yet connected
+    if (!status.connected) return
 
-    _trackers[ name ] = Tracker.autorun(Meteor.bindEnvironment(computation => {
-      // Tracker instance will rerun on every status update
-      // so we also update the collection to publish the status
-      // to the client application immediately
-      const status = connection.status()
-      if (typeof status !== 'object') return
+    // update userId and skip,
+    // if we are already logged-in
+    const userId = connection.userId()
+    updateLogin(name, userId)
+    if (userId) return
 
-      if (status.connected) {
-        DDP.loginWithPassword(connection, { username }, password, (err) => {
-          if (err) {
-            console.error(err)
-            AppsCollection.update(appDoc._id, { $set: { login: { successful: false, reason: err.message } } })
-          } else {
-            AppsCollection.update(appDoc._id, { $set: { login: { successful: true } } })
-          }
-        })
+
+    Apps.methods.getServiceCredentials.call((err, credentials) => {
+      if (err || !credentials) {
+        // TODO update app login status
+        return
       }
 
-      Meteor.setTimeout(() => {
-        AppsCollection.update(appDoc._id, {$set: { status }})
-      }, 50)
-    }))
+      const options = { accessToken: credentials.accessToken }
+      DDP.loginWithLea(connection, options, (err, result) => {
+        console.log("login with lea", err, result)
+      })
+    })
+  })
+}
 
-    return appDoc
-  }
+Apps.register = function ({ name, label, url, icon }) {
+  const connection = connect(name, url)
+  track(name, connection)
+  return _apps.set(name, { name, label, url, icon })
+}
 
-  Apps.updateStatus = function (name, status) {
-    const appDoc = Apps.collection().findOne({ name })
-    return A
-  }
+Apps.get = function (name) {
+  return _apps.get(name)
+}
 
-  Apps.get = function (name) {
-    return Apps.collection().findOne({ name })
-  }
+Apps.connection = function (name) {
+  return _connections[ name ]
+}
 
+Apps.all = function () {
+  const all = _apps.all()
+  return all && Object.values(all)
 }
 
 Apps.methods = {}
 
-Apps.methods.proxy = {
-  name: 'apps.methods.proxy',
-  isPublic: true, // FIXME once Roles are in package
-  numRequests: 25,
-  timeInterval: 1000,
-  schema: {
-    name: String,
-    label: String,
-    args: {
-      type: Object,
-      optional: true,
-      blackbox: true
-    }
-  },
-  run: onServer(function ({ name, label, args }) {
-    const app = Apps.get(name)
-    if (!app) {
-      throw new Meteor.Error(400, `apps.undefinedApp`, name)
-    }
-
-    return app.connection.call(name, args)
-  }),
-  call: onClient(function (name, label, args, cb) {
-    Meteor.call(Apps.methods.proxy.name, { name, label, args }, cb)
-  })
-}
-
-Apps.publications = {}
-
-Apps.publications.all = {
-  name: 'apps.publications.all',
+Apps.methods.getServiceCredentials = {
+  name: 'apps.methods.getServiceCredentials',
   schema: {},
+  isPublic: true, // fixme,
   numRequests: 1,
   timeInterval: 500,
-  isPublic: true, // FIXME once Roles are in package
   run: onServer(function () {
-    return Apps.collection().find()
+    const user = Meteor.users.findOne(this.userId)
+    return user.services.lea
   }),
-  subscribe: onClient(function () {
-    return SubsManager.subscribe(Apps.publications.all.name)
-  })
+  call: function (cb) {
+    Meteor.call(Apps.methods.getServiceCredentials.name, cb)
+  }
 }

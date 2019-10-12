@@ -34,9 +34,10 @@ ccorcos:subs-cache
 
 # accounts
 alanning:roles
+service-configuration
 accounts-base
 leaonline:accounts-lea
-service-configuration
+leaonline:ddp-login
 ongoworks:ddp-login
 
 

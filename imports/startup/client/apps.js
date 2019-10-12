@@ -1,27 +1,10 @@
-import { RoutesTree } from '../../api/routes/topLevelRoutes'
-import { Routes } from '../../api/routes/Routes'
 import { Apps } from '../../api/apps/Apps'
-import { createCollection} from '../../factories/createCollection'
 
-createCollection(Apps)
-Apps.publications.all.subscribe()
-
-/*
-let routesCreated  = false
+const { hosts } = Meteor.settings.public
+const allHosts = Object.values(hosts)
+allHosts.forEach(host => Apps.register(host))
 
 Tracker.autorun(() => {
-  const appsSub = Apps.publications.all.subscribe()
-  if (appsSub.ready()) {
-    if (!routesCreated) {
-      const mappedHosts = Apps.collection().find().fetch().map(host => {
-        return {
-          label: host.name,
-          args: [ host.short ]
-        }
-      })
-      RoutesTree.children(Routes.statusOverview.path(), Routes.statusApp, mappedHosts)
-      routesCreated = true
-    }
-  }
+  if (!Meteor.userId() || !Meteor.user()) return
+  console.info('logged in')
 })
-*/

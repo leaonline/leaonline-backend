@@ -8,33 +8,27 @@
     "identityUrl": "http://localhost:8080/oauth/ident",
     "redirectUrl": "http://localhost:5050/_oauth/lea"
   },
-  "hosts": {
-    "ocpu": {
-      "label": "lea.statistics",
-      "name": "stat",
-      "url": "http://localhost:6060",
-      "icon": "calculator",
-      "username": "ocpu",
-      "password": "password"
-    },
-    "otulea": {
-      "username": "admin",
-      "password": "password",
-      "label": "otu.lea",
-      "name": "otulea",
-      "url": "http://localhost:3000",
-      "icon": "edit"
-    },
-    "content": {
-      "name": "content",
-      "username": "admin",
-      "password": "password",
-      "label": "lea.content",
-      "url": "http://localhost:3030",
-      "icon": "file"
-    }
-  },
   "public": {
+    "hosts": {
+      "ocpu": {
+        "label": "lea.statistics",
+        "name": "stat",
+        "url": "http://localhost:6060",
+        "icon": "calculator"
+      },
+      "otulea": {
+        "label": "otu.lea",
+        "name": "otulea",
+        "url": "http://localhost:3000",
+        "icon": "edit"
+      },
+      "content": {
+        "name": "content",
+        "label": "lea.content",
+        "url": "http://localhost:3030",
+        "icon": "file"
+      }
+    },
     "pages": {
       "sessions": {
         "use": "otulea"

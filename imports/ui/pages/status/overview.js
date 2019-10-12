@@ -7,6 +7,6 @@ Template.statusOverview.onCreated(function () {
 
 Template.statusOverview.helpers({
   apps () {
-    return Apps.collection().find()
+    return Apps.all()
   }
 })
