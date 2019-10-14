@@ -21,6 +21,7 @@ shell-server@0.4.0            # Server-side component of the `meteor shell` comm
 leaonline:errors
 leaonline:utils
 leaonline:factories
+leaonline:interfaces
 
 # collections
 aldeed:collection2
@@ -41,10 +42,14 @@ leaonline:ddp-login
 ongoworks:ddp-login
 
 
-ostrio:flow-router-extra
+# files
 ostrio:files
+ostrio:autoform-files
+
+ostrio:flow-router-extra
 ostrio:i18n
 
+# UI misc
 jkuester:template-states
 reactive-dict
 

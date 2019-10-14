@@ -1,0 +1,27 @@
+<template name="mediaLib">
+    {{#unless loadComplete}}
+        {{> loading}}
+    {{/unless}}
+
+    <div class="w-100 d-flex justify-content-between align-items-center">
+        <span>{{filesCount}} files</span>
+        <button class="btn btn-success add-file-button">
+            <i class="fa fas fa-fw fa-plus"></i>
+        </button>
+    </div>
+
+    {{#if addFile}}
+        {{> quickForm id="addFileForm" type="normal" schema=addFileSchema}}
+    {{/if}}
+
+    <div class="row">
+        {{#each file in files}}
+            <div class="col-2">
+                {{#with link file}}
+                    <img class="img-thumbnail img-fluid" src="{{this}}" title="{{this}}" />
+                {{/with}}
+            </div>
+        {{/each}}
+    </div>
+
+</template>

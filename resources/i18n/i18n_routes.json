@@ -4,5 +4,6 @@
   "login": "anmelden",
   "status": "status",
   "sessions": "benutzer-sessions",
-  "competencies": "kompetenzen"
+  "competencies": "kompetenzen",
+  "mediaLib": "medien-bibliothek"
 }

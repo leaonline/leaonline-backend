@@ -28,6 +28,7 @@ Object
 ;[
   Routes.dashboard,
   Routes.statusOverview,
+  Routes.mediaLib,
   Routes.competencies,
   Routes.sessions,
 ].forEach(route => RoutesTree.topLevel(route.path(), route))

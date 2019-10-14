@@ -1,7 +1,6 @@
 import { DDP } from 'meteor/ddp-client'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import { getCollection } from '../../utils/collection'
-import { SubsManager } from '../subscriptions/SubsManager'
 import { onClient, onServer } from '../../utils/arch'
 
 export const Apps = {
@@ -59,7 +58,6 @@ function track (name, connection) {
     updateLogin(name, userId)
     if (userId) return
 
-
     Apps.methods.getServiceCredentials.call((err, credentials) => {
       if (err || !credentials) {
         // TODO update app login status
@@ -68,7 +66,7 @@ function track (name, connection) {
 
       const options = { accessToken: credentials.accessToken }
       DDP.loginWithLea(connection, options, (err, result) => {
-        console.log("login with lea", err, result)
+        console.log('login with lea', err, result)
       })
     })
   })
@@ -81,7 +79,9 @@ Apps.register = function ({ name, label, url, icon }) {
 }
 
 Apps.get = function (name) {
-  return _apps.get(name)
+  const app = _apps.get(name)
+  const connection = _connections[ name ]
+  return Object.assign({}, app, { connection })
 }
 
 Apps.connection = function (name) {

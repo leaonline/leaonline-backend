@@ -47,6 +47,9 @@
     },
     "tasks": {
       "title": "Aufgaben"
+    },
+    "mediaLib": {
+      "title": "Medien-Bibliothek"
     }
   },
   "errors": {

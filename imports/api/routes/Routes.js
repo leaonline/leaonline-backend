@@ -149,6 +149,26 @@ Routes.sessions = {
   icon: 'user'
 }
 
+/**
+ * Media Library
+ */
+
+Routes.mediaLib = {
+  path: () => `/${settings.mediaLib}`,
+  label: 'pages.mediaLib.title',
+  triggersEnter: () => [
+    createLoginTrigger(Routes.mediaLib),
+  ],
+  async load () {
+    return import('../../ui/pages/mediaLib/mediaLib')
+  },
+  target: null,
+  template: 'mediaLib',
+  roles: null,
+  data: null,
+  icon: 'images'
+}
+
 
 /**
  * Competencies
