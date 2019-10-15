@@ -12,7 +12,8 @@
     "toOverview": "Zur Übersicht",
     "toWelcome": "Zur Startseite",
     "url": "Url",
-    "yes": "Ja"
+    "yes": "Ja",
+    "login": "Anmelden"
   },
   "contexts": {
     "users": {

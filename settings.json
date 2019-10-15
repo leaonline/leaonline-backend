@@ -14,19 +14,25 @@
         "label": "lea.statistics",
         "name": "stat",
         "url": "http://localhost:6060",
-        "icon": "calculator"
+        "icon": "calculator",
+        "ddpConnect": false,
+        "ddpLogin": false
       },
       "otulea": {
         "label": "otu.lea",
         "name": "otulea",
         "url": "http://localhost:3000",
-        "icon": "edit"
+        "icon": "edit",
+        "ddpConnect": true,
+        "ddpLogin": false
       },
       "content": {
         "name": "content",
         "label": "lea.content",
         "url": "http://localhost:3030",
-        "icon": "file"
+        "icon": "file",
+        "ddpConnect": true,
+        "ddpLogin": true
       }
     },
     "pages": {

@@ -1,5 +1,5 @@
 import { Apps } from '../../api/apps/Apps'
-
+Apps.debug = true
 const { hosts } = Meteor.settings.public
 const allHosts = Object.values(hosts)
 allHosts.forEach(host => Apps.register(host))

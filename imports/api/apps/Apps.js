@@ -6,7 +6,8 @@ import { onClient, onServer } from '../../utils/arch'
 export const Apps = {
   name: 'apps',
   label: 'apps.title',
-  icon: 'cubes'
+  icon: 'cubes',
+  debug: false
 }
 
 const _apps = new ReactiveDict()
@@ -32,7 +33,14 @@ function updateLogin (name, userId) {
   _apps.set(name, app)
 }
 
-function track (name, connection) {
+function log (...args) {
+  if (Apps.debug && Meteor.isDevelopment) {
+    console.info('[Apps]', ...args)
+  }
+}
+
+function track (name, connection, ddpLogin) {
+  const url = connection._stream.rawUrl
   _trackers[ name ] = Tracker.autorun(() => {
     // skip this computation if there is
     // currently no logged in backend user
@@ -50,32 +58,52 @@ function track (name, connection) {
     updateStatus(name, status)
 
     // also skip if we are not yet connected
-    if (!status.connected) return
+    if (!status.connected) {
+      log(url, 'not yet connected -> skip')
+      return
+    }
+
+    // skip if we have not explcitly enabled the DDP login
+    if (!ddpLogin) {
+      return
+    }
 
     // update userId and skip,
     // if we are already logged-in
     const userId = connection.userId()
+    const loggingIn = connection._loggingIn
     updateLogin(name, userId)
-    if (userId) return
+    if (userId || loggingIn) return
 
+    log(url, 'get credentials')
+    connection._loggingIn = true
     Apps.methods.getServiceCredentials.call((err, credentials) => {
       if (err || !credentials) {
-        // TODO update app login status
+        connection._loggingIn = false
+        console.error(err)
+        log(url, 'no credentials received, skip login')
         return
       }
-
-      const options = { accessToken: credentials.accessToken }
-      DDP.loginWithLea(connection, options, (err, result) => {
-        console.log('login with lea', err, result)
+      log(url, 'init login')
+      const options = { accessToken: credentials.accessToken, debug: Apps.debug }
+      DDP.loginWithLea(connection, options, (err, res) => {
+        connection._loggingIn = false
+        if (err) {
+          return console.error(err)
+        } else {
+          log(url, 'logged in with token', !!res)
+        }
       })
     })
   })
 }
 
-Apps.register = function ({ name, label, url, icon }) {
-  const connection = connect(name, url)
-  track(name, connection)
-  return _apps.set(name, { name, label, url, icon })
+Apps.register = function ({ name, label, url, icon, ddpConnect, ddpLogin }) {
+  if (ddpConnect) {
+    const connection = connect(name, url)
+    track(name, connection, ddpLogin)
+  }
+  return _apps.set(name, { name, label, url, icon, ddpConnect, ddpLogin })
 }
 
 Apps.get = function (name) {
@@ -99,7 +127,7 @@ Apps.methods.getServiceCredentials = {
   name: 'apps.methods.getServiceCredentials',
   schema: {},
   isPublic: true, // fixme,
-  numRequests: 1,
+  numRequests: 5,
   timeInterval: 500,
   run: onServer(function () {
     const user = Meteor.users.findOne(this.userId)
