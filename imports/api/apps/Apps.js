@@ -1,4 +1,5 @@
 import { DDP } from 'meteor/ddp-client'
+import { BackendConfig } from '../config/BackendConfig'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import { getCollection } from '../../utils/collection'
 import { onClient, onServer } from '../../utils/arch'
@@ -30,6 +31,12 @@ function updateStatus (name, status) {
 function updateLogin (name, userId) {
   const app = _apps.get(name)
   app.login = { successful: !!userId }
+  _apps.set(name, app)
+}
+
+function updateConfig (name, config) {
+  const app = _apps.get(name)
+  app.config = config
   _apps.set(name, app)
 }
 
@@ -97,6 +104,10 @@ function track (name, connection, ddpLogin) {
           return console.error(err)
         } else {
           log(url, 'logged in with token', !!res)
+          connection.call(BackendConfig.methods.get.name, {}, (err, config) => {
+            log(url, 'backend config received', err, config)
+            updateConfig(name, config)
+          })
         }
       })
     })
