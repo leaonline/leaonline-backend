@@ -24,7 +24,7 @@
         "url": "http://localhost:3000",
         "icon": "edit",
         "ddpConnect": true,
-        "ddpLogin": false
+        "ddpLogin": true
       },
       "content": {
         "name": "content",
