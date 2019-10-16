@@ -119,7 +119,8 @@ const configure = function (name ) {
   const { url } = app
   const { connection } = app
   BackendConfig.parent(name, app)
-  connection.call(BackendConfig.methods.get.name, {}, (err, config) => {
+  const lang = i18n.getLocale()
+  connection.call(BackendConfig.methods.get.name, { lang }, (err, config) => {
     log(url, 'backend config received', config)
     if (err) return console.error(err)
 
