@@ -1,0 +1,20 @@
+<template name="genericList">
+	{{#unless loadComplete}}
+		{{> loading}}
+	{{/unless}}
+
+	<div class="card-body d-flex justify-content-between">
+		<span>
+			<i class="fa fa-fw fa-file"></i>
+			<span>{{count}}</span>
+		</span>
+	</div>
+
+	{{#with documents}}
+		<ul class="list-group">
+			{{#each document in this}}
+				<li class="list-group-item"></li>
+			{{/each}}
+		</ul>
+	{{/with}}
+</template>

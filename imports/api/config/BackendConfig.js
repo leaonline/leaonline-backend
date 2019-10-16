@@ -2,10 +2,36 @@ import { BackendConfig } from 'meteor/leaonline:interfaces/BackendConfig'
 import { createLoginTrigger } from '../routes/triggers'
 import { RoutesTree } from '../routes/topLevelRoutes'
 import { Routes } from '../routes/Routes'
+import { Router } from '../routes/Router'
+import { Apps } from '../apps/Apps'
 
 const loginTrigger = createLoginTrigger(Routes.login)
 
-const createRoute = (config, parentRoute) => {
+const notFoundTemplate = async function () {
+  return import('../../ui/pages/notfound/notFound')
+}
+
+const listTemplate = async function () {
+  return import('../../ui/generic/list/list')
+}
+
+const getTemplate = type => {
+  switch (type) {
+    case BackendConfig.types.list:
+      return {
+        templateName: 'genericList',
+        loadFunction: listTemplate
+      }
+    default:
+      return {
+        templateName: 'notFound',
+        loadFunction: notFoundTemplate
+      }
+  }
+}
+
+const createRoute = (appName, config, parentRoute) => {
+  const template = getTemplate(config.type)
   return {
     path: () => `/${config.name}`,
     icon: config.icon,
@@ -14,14 +40,17 @@ const createRoute = (config, parentRoute) => {
       loginTrigger,
     ],
     async load () {
-      return import('../../ui/pages/notfound/notFound')
+      return template.loadFunction()
     },
     target: null,
-    template: 'notFound',
+    template: template.templateName,
     roles: null,
     args: [],
     data: {
-      config() {
+      app () {
+        return Apps.get(appName)
+      },
+      config () {
         return config
       },
       top () {
@@ -32,12 +61,13 @@ const createRoute = (config, parentRoute) => {
 }
 
 BackendConfig.parent = function (name, config) {
-  Routes[name] = createRoute(config)
-  RoutesTree.topLevel(name, Routes[name])
+  Routes[ name ] = createRoute(name, config, null)
+  RoutesTree.topLevel(name, Routes[ name ])
+  Router.register(Routes[ name ])
 }
 
 BackendConfig.children = function (name, config) {
-  let parentRoute = Routes[name]
+  let parentRoute = Routes[ name ]
   if (!parentRoute) {
     throw new Error(`Could not find any parent for name ${name}`)
   }
@@ -46,9 +76,10 @@ BackendConfig.children = function (name, config) {
 
   const childRoutes = content.map(entry => {
     const fullName = `${name}/${entry.name}`
-    return createRoute(Object.assign({}, entry, { name: fullName }))
+    const route = createRoute(name, Object.assign({}, entry, { name: fullName }), parentRoute)
+    Router.register(route)
+    return route
   })
-  RoutesTree.topLevel(name, parentRoute)
   RoutesTree.children(name, parentRoute, childRoutes)
 }
 

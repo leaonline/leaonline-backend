@@ -77,6 +77,12 @@ Router.loadingTemplate = function (value = 'loading') {
   _loadingTemplate = value
 }
 
+let _defaultTarget
+
+Router.defaultTarget = function (value) {
+  _defaultTarget = value
+}
+
 const paths = {}
 
 /*
@@ -97,7 +103,8 @@ function createRoute (routeDef, onError) {
       // we render by default a "loading" template if the Template has not been loaded yet
       // which can be explicitly prevented by switching showLoading to false
       if (!Template[ routeDef.template ] && routeDef.showLoading !== false) {
-        this.render(routeDef.target, _loadingTemplate, { title: routeDef.label })
+        const renderTarget = routeDef.target || _defaultTarget
+        this.render(renderTarget, _loadingTemplate, { title: routeDef.label })
       }
     },
     waitOn () {
@@ -139,7 +146,9 @@ function createRoute (routeDef, onError) {
       document.title = `${_titlePrefix} ${label}`
 
       try {
-        this.render(routeDef.target, routeDef.template, data)
+        const renderTarget = routeDef.target || _defaultTarget
+        console.log('action', renderTarget, routeDef.template)
+        this.render(renderTarget, routeDef.template, data)
       } catch (e) {
         console.error(e)
         if (typeof onError === 'function') {

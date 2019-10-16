@@ -9,7 +9,7 @@ const defaultTarget = 'main-render-target'
 
 Router.titlePrefix(`lea.online - `)
 Router.loadingTemplate('loading')
-
+Router.defaultTarget(defaultTarget)
 /**
  * Load all routes definitions into the router
  */
