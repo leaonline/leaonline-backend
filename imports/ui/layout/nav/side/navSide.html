@@ -13,8 +13,11 @@
 						<ul class="nav flex-column">
 							{{#each childRoute in this}}
 								<li class="nav-item">
-									<a class="nav-link" href="{{childRoute.href}}">
-										{{childRoute.label}}
+									<a class="nav-link" href="{{childRoute.path}}">
+										{{#if childRoute.icon}}
+											<i class="fa fas fa-{{childRoute.icon}}"></i>
+										{{/if}}
+										{{i18n childRoute.label}}
 									</a>
 								</li>
 							{{/each}}

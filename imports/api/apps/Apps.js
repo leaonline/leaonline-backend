@@ -24,6 +24,9 @@ function connect (name, url) {
 
 function updateStatus (name, status) {
   const app = _apps.get(name)
+  if (!app) {
+    throw new Error(`[Apps] expected app by name ${name}`)
+  }
   app.status = status
   _apps.set(name, app)
 }
@@ -104,13 +107,26 @@ function track (name, connection, ddpLogin) {
           return console.error(err)
         } else {
           log(url, 'logged in with token', !!res)
-          connection.call(BackendConfig.methods.get.name, {}, (err, config) => {
-            log(url, 'backend config received', err, config)
-            updateConfig(name, config)
-          })
+          configure(name)
         }
       })
     })
+  })
+}
+
+const configure = function (name ) {
+  const app = Apps.get(name)
+  const { url } = app
+  const { connection } = app
+  BackendConfig.parent(name, app)
+  connection.call(BackendConfig.methods.get.name, {}, (err, config) => {
+    log(url, 'backend config received', config)
+    if (err) return console.error(err)
+
+    if (config) {
+      updateConfig(name, config)
+      BackendConfig.children(name, config)
+    }
   })
 }
 

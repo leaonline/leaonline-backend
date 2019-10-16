@@ -1,21 +1,22 @@
+import {ReactiveDict} from 'meteor/reactive-dict'
+
 export const RoutesTree = {}
 
-const _routes = {}
+const _routes = new ReactiveDict()
+const _map = {}
 
 RoutesTree.topLevel = function (name, route) {
-  _routes[ name ] = route
+  _routes.set(name, JSON.stringify(route))
+  _map[name] = route
 }
 
 RoutesTree.children = function (parentName, route, data = []) {
-  _routes[ parentName ].children = data.map(entry => {
-    const href = route.path(...entry.args)
-    return {
-      label: entry.label,
-      href: href
-    }
-  })
+  if (!_routes.get(parentName)) return
+  const parentRoute = _map[parentName]
+  parentRoute.children = data
+  _routes.set(parentName, JSON.stringify(route))
 }
 
 RoutesTree.get = function () {
-  return Object.values(_routes)
+  return Object.keys(_routes.all()).map(key => _map[key])
 }
