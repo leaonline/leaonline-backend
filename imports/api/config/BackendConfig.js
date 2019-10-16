@@ -1,18 +1,17 @@
 import { BackendConfig } from 'meteor/leaonline:interfaces/BackendConfig'
-import { createLoggedinTrigger, createLoginTrigger, createNotFoundTrigger } from '../routes/triggers'
+import { createLoginTrigger } from '../routes/triggers'
 import { RoutesTree } from '../routes/topLevelRoutes'
 import { Routes } from '../routes/Routes'
-import { i18n } from '../i18n/I18n'
 
-const loggedInTrigger = createLoggedinTrigger(Routes.login)
+const loginTrigger = createLoginTrigger(Routes.login)
 
-const createRoute = (config) => {
+const createRoute = (config, parentRoute) => {
   return {
     path: () => `/${config.name}`,
     icon: config.icon,
     label: config.label,
     triggersEnter: () => [
-      loggedInTrigger,
+      loginTrigger,
     ],
     async load () {
       return import('../../ui/pages/notfound/notFound')
@@ -26,7 +25,7 @@ const createRoute = (config) => {
         return config
       },
       top () {
-        return Routes.dashboard
+        return parentRoute || Routes.dashboard
       }
     }
   }

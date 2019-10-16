@@ -1,6 +1,7 @@
 import { DDP } from 'meteor/ddp-client'
-import { BackendConfig } from '../config/BackendConfig'
 import { ReactiveDict } from 'meteor/reactive-dict'
+import { i18n } from '../i18n/I18n'
+import { BackendConfig } from '../config/BackendConfig'
 import { getCollection } from '../../utils/collection'
 import { onClient, onServer } from '../../utils/arch'
 
@@ -114,17 +115,18 @@ function track (name, connection, ddpLogin) {
   })
 }
 
-const configure = function (name ) {
+const configure = function (name) {
   const app = Apps.get(name)
   const { url } = app
   const { connection } = app
-  BackendConfig.parent(name, app)
   const lang = i18n.getLocale()
+
   connection.call(BackendConfig.methods.get.name, { lang }, (err, config) => {
     log(url, 'backend config received', config)
     if (err) return console.error(err)
-
     if (config) {
+      BackendConfig.parent(name, config)
+      i18n.add(lang, config.lang)
       updateConfig(name, config)
       BackendConfig.children(name, config)
     }

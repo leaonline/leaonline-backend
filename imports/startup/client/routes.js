@@ -27,10 +27,7 @@ Object
  */
 ;[
   Routes.dashboard,
-  Routes.statusOverview,
-  Routes.mediaLib,
-  Routes.competencies,
-  Routes.sessions,
+  Routes.statusOverview
 ].forEach(route => RoutesTree.topLevel(route.path(), route))
 
 Template.registerHelper('next', function (...args) {

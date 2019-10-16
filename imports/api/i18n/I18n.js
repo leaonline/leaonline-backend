@@ -12,8 +12,13 @@ i18n.get = function (...params) {
   return _translator.get(...params)
 }
 
+i18n.add = function (locale, config) {
+  const l10n = { [ locale ]: config }
+  _translator.addl10n(l10n)
+}
+
 i18n.set = function (lang, options) {
-  return _translator.addl10n({ [lang]: options })
+  return _translator.addl10n({ [ lang ]: options })
 }
 
 i18n.getLocale = function () {
