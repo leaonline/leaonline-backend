@@ -2,6 +2,7 @@ import { Template } from 'meteor/templating'
 import { createCollection } from '../../../factories/createCollection'
 import { getCollection } from '../../../utils/collection'
 import { createFilesCollection } from '../../../factories/createFilesCollection'
+import '../../components/upload/upload'
 import './list.html'
 
 const debug = (...args) => {
@@ -10,12 +11,29 @@ const debug = (...args) => {
   }
 }
 
+const actionSchemas = {}
+
 Template.genericList.onCreated(function () {
   const instance = this
   const app = instance.data.app()
   const { connection } = app
   const config = instance.data.config()
   debug(config)
+
+  const actions = config.actions || {}
+  if (actions.insert) {
+    // TODO
+  }
+  if (actions.update) {
+    // TODO
+  }
+  if (actions.remove) {
+    // TODO
+  }
+  if (actions.upload) {
+    instance.state.set('actionUpload', actions.upload)
+  }
+
 
   if (config.collections) {
     instance.collections = instance.collections || {}
@@ -76,5 +94,14 @@ Template.genericList.helpers({
   documents () {
     const instance = Template.instance()
     return instance.mainCollection.find()
+  },
+  // /////////////////////////////////////////////////
+  //  Upload
+  // /////////////////////////////////////////////////
+  actionUpload () {
+    return Template.instance().state.get('actionUpload')
+  },
+  uploadFilesCollection () {
+    return Template.instance().mainCollection.filesCollection
   }
 })
