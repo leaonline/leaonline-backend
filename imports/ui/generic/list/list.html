@@ -16,7 +16,18 @@
 	{{#with documents}}
 		<ul class="list-group">
 			{{#each document in this}}
-				<li class="list-group-item"></li>
+				<li class="list-group-item d-flex justify-content-between">
+					<span class="text-muted">{{@index}}</span>
+					{{#each fields document}}
+						<span>{{this}}</span>
+					{{/each}}
+					{{#if actionRemove}}
+						<button class="btn btn-sm btn-outline-danger border-0 remove-button"
+								data-target="{{document._id}}">
+							<i class="fa fas fa-fw fa-trash"></i>
+						</button>
+					{{/if}}
+				</li>
 			{{/each}}
 		</ul>
 	{{/with}}

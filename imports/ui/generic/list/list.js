@@ -4,6 +4,7 @@ import { getCollection } from '../../../utils/collection'
 import { createFilesCollection } from '../../../factories/createFilesCollection'
 import '../../components/upload/upload'
 import './list.html'
+import { dataTarget } from '../../../utils/event'
 
 const debug = (...args) => {
   if (Meteor.isDevelopment) {
@@ -21,19 +22,9 @@ Template.genericList.onCreated(function () {
   debug(config)
 
   const actions = config.actions || {}
-  if (actions.insert) {
-    // TODO
-  }
-  if (actions.update) {
-    // TODO
-  }
-  if (actions.remove) {
-    // TODO
-  }
-  if (actions.upload) {
-    instance.state.set('actionUpload', actions.upload)
-  }
-
+  instance.state.set('actionRemove', actions.remove)
+  instance.state.set('actionUpload', actions.upload)
+  instance.state.set('documentFields', Object.keys(config.fields || {}))
 
   if (config.collections) {
     instance.collections = instance.collections || {}
@@ -88,6 +79,10 @@ Template.genericList.helpers({
     const instance = Template.instance()
     return instance.state.get('allSubsComplete')
   },
+  fields (document) {
+    const fields = Template.instance().state.get('documentFields')
+    return fields.map(name => document[name])
+  },
   count () {
     return Template.instance().state.get('documentsCount') || 0
   },
@@ -103,5 +98,26 @@ Template.genericList.helpers({
   },
   uploadFilesCollection () {
     return Template.instance().mainCollection.filesCollection
+  },
+  // /////////////////////////////////////////////////
+  //  Remove
+  // /////////////////////////////////////////////////
+  actionRemove () {
+    return Template.instance().state.get('actionRemove')
+  }
+})
+
+Template.genericList.events({
+  'click .remove-button' (event, templateInstance) {
+    event.preventDefault()
+    const removeContext = templateInstance.state.get('actionRemove')
+    const { method } = removeContext
+    const _id = dataTarget(event, templateInstance)
+    const app = templateInstance.data.app()
+    const { connection } = app
+
+    connection.call(method, { _id }, (err, res) => {
+      console.log(err, res)
+    })
   }
 })
