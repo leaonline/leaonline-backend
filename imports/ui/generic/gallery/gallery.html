@@ -1,0 +1,38 @@
+<template name="genericGallery">
+	{{#unless loadComplete}}
+		{{> loading}}
+	{{/unless}}
+
+	<div class="card">
+	<div class="card-body d-flex">
+		<span class="no-wrap mr-auto">
+			<i class="fa fa-fw fa-file"></i>
+			<span>{{count}}</span>
+		</span>
+		{{#with actionUpload}}
+			{{> upload filesCollection=uploadFilesCollection accept=this.accept class="ml-auto"}}
+		{{/with}}
+	</div>
+	</div>
+
+	{{#with files}}
+		<hr>
+		<div class="row mt-5">
+			{{#each file in this}}
+				<div class="col">
+					<figure class="figure border border-secondary p-1">
+						<img src="{{link file}}" class="figure-img img-fluid rounded" alt="{{file.name}}">
+						<figcaption class="figure-caption">
+							{{file.name}}
+							{{#if actionRemove}}
+								<a class="text-danger remove-button" href data-target="{{file._id}}">
+									<i class="fa fas fa-fw fa-times"></i>
+								</a>
+							{{/if}}
+						</figcaption>
+					</figure>
+				</div>
+			{{/each}}
+		</div>
+	{{/with}}
+</template>

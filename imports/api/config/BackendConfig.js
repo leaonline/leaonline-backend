@@ -15,12 +15,21 @@ const listTemplate = async function () {
   return import('../../ui/generic/list/list')
 }
 
+const galleryTemplate = async function () {
+  return import('../../ui/generic/gallery/genericGallery')
+}
+
 const getTemplate = type => {
   switch (type) {
     case BackendConfig.types.list:
       return {
         templateName: 'genericList',
         loadFunction: listTemplate
+      }
+    case BackendConfig.types.gallery:
+      return {
+        templateName: 'genericGallery',
+        loadFunction: galleryTemplate
       }
     default:
       return {
