@@ -1,0 +1,12 @@
+<template name="genericDocument">
+	{{#unless loadComplete}}
+		{{>loading}}
+	{{else}}
+		<div class="w-100 {{#if isUpdating}}d-unavailable{{/if}}">
+			{{> quickForm id="updateForm" type="normal" schema=updateSchema doc=updateDoc }}
+			{{#if isUpdating}}
+				<span><i class="fa fas fa-fw fa-spinner fa-pulse"></i></span>
+			{{/if}}
+		</div>
+	{{/unless}}
+</template>

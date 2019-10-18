@@ -19,6 +19,10 @@ const galleryTemplate = async function () {
   return import('../../ui/generic/gallery/genericGallery')
 }
 
+const documentTemplate = async function () {
+  return import('../../ui/generic/document/document')
+}
+
 const getTemplate = type => {
   switch (type) {
     case BackendConfig.types.list:
@@ -30,6 +34,11 @@ const getTemplate = type => {
       return {
         templateName: 'genericGallery',
         loadFunction: galleryTemplate
+      }
+    case BackendConfig.types.document:
+      return {
+        templateName: 'genericDocument',
+        loadFunction: documentTemplate
       }
     default:
       return {
