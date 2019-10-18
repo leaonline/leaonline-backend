@@ -1,27 +1,39 @@
 <template name="navSide">
 	<nav class="col-md-2 d-none d-md-block bg-light sidebar">
 		<div class="sidebar-sticky">
-			<ul class="nav flex-column">
+			<ul id="main-sidebar" class="nav flex-column mt-4">
 				{{#each route in topLevelRoutes}}
-					<li class="nav-item">
-						<a class="nav-link" href="{{route.path}}">
-							<i class="fa fas fa-fw fa-{{route.icon}}"></i>
-							{{i18n route.label}}
-						</a>
-					</li>
 					{{#with route.children}}
-						<ul class="nav flex-column">
-							{{#each childRoute in this}}
-								<li class="nav-item">
-									<a class="nav-link" href="{{childRoute.path}}">
-										{{#if childRoute.icon}}
-											<i class="fa fas fa-{{childRoute.icon}}"></i>
-										{{/if}}
-										{{i18n childRoute.label}}
-									</a>
-								</li>
-							{{/each}}
-						</ul>
+						<li class="nav-item">
+							<a class="nav-link no-wrap" href="#item-1" id="navbarDropdown" role="button" data-parent="#main-sidebar"
+							   data-toggle="collapse" aria-haspopup="true" aria-expanded="false">
+								<i class="fa fas fa-fw fa-{{route.icon}}"></i>
+								{{i18n route.label}}
+								<i class="fa fas fa-fw fa-caret-down"></i>
+							</a>
+							<div id="item-1" class="collapse" aria-labelledby="navbarDropdown">
+								<ul class="nav flex-column ml-3">
+								{{#each childRoute in this}}
+									<li class="nav-item">
+										<a class="nav-link no-wrap" href="{{childRoute.path}}">
+											{{#if childRoute.icon}}
+												<i class="fa fas fa-{{childRoute.icon}}"></i>
+											{{/if}}
+											{{i18n childRoute.label}}
+										</a>
+									</li>
+								{{/each}}
+								</ul>
+							</div>
+						</li>
+					{{else}}
+
+						<li class="nav-item">
+							<a class="nav-link no-wrap" href="{{route.path}}">
+								<i class="fa fas fa-fw fa-{{route.icon}}"></i>
+								{{i18n route.label}}
+							</a>
+						</li>
 					{{/with}}
 				{{/each}}
 			</ul>
