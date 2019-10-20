@@ -23,6 +23,23 @@ export const StateVariables = {
   allSubsComplete: 'allSubsComplete'
 }
 
+function reviver (key, value) {
+  switch (value) {
+    case 'String':
+      return String
+    case 'Number':
+      return Number
+    case 'Array':
+      return Array
+    case 'Date':
+      return Date
+    case 'Object':
+      return Object
+    default:
+      return value
+  }
+}
+
 export const wrapOnCreated = function (instance, { debug, onSubscribed }) {
   const logDebug = getDebug(instance, debug)
   const app = instance.data.app()
@@ -38,7 +55,7 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed }) {
   if (actions.update) {
     instance.state.set(StateVariables.actionUpdate, actions.update)
     const parsedSchema = typeof actions.update.schema === 'string'
-      ? JSON.parse(actions.update.schema)
+      ? JSON.parse(actions.update.schema, reviver)
       : actions.update.schema
     instance.actionUpdateSchema = Schema.create(parsedSchema)
   }
