@@ -6,7 +6,7 @@ import './document.html'
 Template.genericDocument.onCreated(function () {
   const instance = this
   const onSubscribed = () => {
-    instance.state.set('updateDoc', instance.mainCollection.findOne())
+    instance.state.set('updateDoc', instance.mainCollection.findOne() || {})
   }
   wrapOnCreated(instance, { debug: true, onSubscribed })
 })
