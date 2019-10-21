@@ -8,3 +8,5 @@ body, wrapper {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+[data-required] label:after {content: ' *'}

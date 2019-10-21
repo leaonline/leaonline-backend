@@ -1,3 +1,4 @@
+import { i18n } from '../../api/i18n/I18n'
 import { getCollection } from '../../utils/collection'
 import { createCollection } from '../../factories/createCollection'
 import { createFilesCollection } from '../../factories/createFilesCollection'
@@ -13,6 +14,7 @@ const getDebug = (instance, debug) => debug
   : () => {}
 
 export const StateVariables = {
+  config: 'config',
   remoteUrl: 'remoteUrl',
   actionRemove: 'actionRemove',
   actionInsert: 'actionInsert',
@@ -23,7 +25,21 @@ export const StateVariables = {
   allSubsComplete: 'allSubsComplete'
 }
 
+export const StateActions = {
+  insert: 'insert',
+  update: 'update',
+  remove: 'remove',
+  upload: 'upload'
+}
+
 function reviver (key, value) {
+  if (key === 'label') {
+    return () => i18n.get(value)
+  }
+  if (key === 'firstOptions') {
+    return () => value
+  }
+
   switch (value) {
     case 'String':
       return String
@@ -40,7 +56,7 @@ function reviver (key, value) {
   }
 }
 
-export const wrapOnCreated = function (instance, { debug, onSubscribed }) {
+export const wrapOnCreated = function (instance, { debug, onSubscribed } = {}) {
   const logDebug = getDebug(instance, debug)
   const app = instance.data.app()
   const { connection } = app
@@ -48,9 +64,22 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed }) {
 
   const config = instance.data.config()
   logDebug(config)
+  instance.state.set(StateVariables.config, config)
 
   const actions = config.actions || {}
   instance.state.set(StateVariables.actionRemove, actions.remove)
+
+  // actions - insert
+
+  if (actions.insert) {
+    instance.state.set(StateVariables.actionInsert, actions.insert)
+    const parsedInsertSchema = typeof actions.insert.schema === 'string'
+      ? JSON.parse(actions.insert.schema, reviver)
+      : actions.insert.schema
+    instance.actionInsertSchema = Schema.create(parsedInsertSchema)
+  }
+
+  // actions - update
 
   if (actions.update) {
     instance.state.set(StateVariables.actionUpdate, actions.update)
@@ -116,6 +145,9 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed }) {
 
 export const wrapHelpers = function (obj) {
   return Object.assign({}, {
+    config () {
+      return Template.instance().state.get(StateVariables.config) || {}
+    },
     fields (document) {
       const fields = Template.instance().state.get(StateVariables.documentFields)
       return fields.map(name => document[ name ])
@@ -140,6 +172,16 @@ export const wrapHelpers = function (obj) {
     },
     uploadFilesCollection () {
       return Template.instance().mainCollection.filesCollection
+    },
+    // /////////////////////////////////////////////////
+    //  insert
+    // /////////////////////////////////////////////////
+    actionInsert () {
+      return Template.instance().state.get(StateVariables.actionInsert)
+    },
+    insertSchema () {
+      const instance = Template.instance()
+      return instance.actionInsertSchema
     },
     // /////////////////////////////////////////////////
     //  update

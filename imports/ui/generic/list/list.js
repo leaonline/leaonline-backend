@@ -1,111 +1,28 @@
 import { Template } from 'meteor/templating'
-import { createCollection } from '../../../factories/createCollection'
+import { StateVariables, StateActions, wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
 import { getCollection } from '../../../utils/collection'
 import { createFilesCollection } from '../../../factories/createFilesCollection'
 import '../../components/upload/upload'
 import './list.html'
 import { dataTarget } from '../../../utils/event'
-
-const debug = (...args) => {
-  if (Meteor.isDevelopment) {
-    console.info('[Template.genericList]', ...args)
-  }
-}
-
-const actionSchemas = {}
+import { Router } from '../../../api/routes/Router'
 
 Template.genericList.onCreated(function () {
   const instance = this
-  const app = instance.data.app()
-  const { connection } = app
-  const config = instance.data.config()
-  debug(config)
-
-  const actions = config.actions || {}
-  instance.state.set('actionRemove', actions.remove)
-  instance.state.set('actionUpload', actions.upload)
-  instance.state.set('documentFields', Object.keys(config.fields || {}))
-
-  if (config.collections) {
-    instance.collections = instance.collections || {}
-    config.collections.forEach(collectionName => {
-      const collection = getCollection(collectionName)
-      if (collection) {
-        instance.collections[ collectionName ] = collection
-      } else {
-        // create filesCollection if flag is truthy
-        instance.collections[ collectionName ] = createCollection({
-          name: collectionName,
-          schema: {}
-        }, { connection })
-        if (config.isFilesCollection) {
-          createFilesCollection({
-            collectionName: collectionName,
-            collection: instance.collections[ collectionName ],
-            ddp: connection
-          })
-        }
-      }
-    })
-    instance.mainCollection = instance.collections[ config.mainCollection ]
-    debug('collections created', instance.collections)
-  }
-
-  if (config.publications) {
-    const allSubs = {}
-    config.publications.forEach(publication => {
-      const { name } = publication
-      allSubs[ name ] = false
-      Tracker.autorun(() => {
-        debug('subscribe to', name)
-        const sub = connection.subscribe(name)
-        if (sub.ready()) {
-          allSubs[ name ] = true
-          debug(name, 'complete')
-        }
-        if (Object.values(allSubs).every(entry => entry === true)) {
-          debug('all subs complete')
-          const count = instance.mainCollection.find().count()
-          instance.state.set('documentsCount', count)
-          instance.state.set('allSubsComplete', true)
-        }
-      })
-    })
-  }
+  wrapOnCreated(instance)
 })
 
-Template.genericList.helpers({
+Template.genericList.helpers(wrapHelpers({
   loadComplete () {
-    const instance = Template.instance()
-    return instance.state.get('allSubsComplete')
+    return Template.instance().state.get(StateVariables.allSubsComplete)
   },
-  fields (document) {
-    const fields = Template.instance().state.get('documentFields')
-    return fields.map(name => document[name])
+  insertForm () {
+    return Template.getState('insertForm')
   },
-  count () {
-    return Template.instance().state.get('documentsCount') || 0
-  },
-  documents () {
-    const instance = Template.instance()
-    return instance.mainCollection.find()
-  },
-  // /////////////////////////////////////////////////
-  //  Upload
-  // /////////////////////////////////////////////////
-  actionUpload () {
-    return Template.instance().state.get('actionUpload')
-  },
-  uploadFilesCollection () {
-    return Template.instance().mainCollection.filesCollection
-  },
-  // /////////////////////////////////////////////////
-  //  Remove
-  // /////////////////////////////////////////////////
-  actionRemove () {
-    return Template.instance().state.get('actionRemove')
+  updateForm () {
+    return Template.getState('updateForm')
   }
-})
+}))
 
 Template.genericList.events({
   'click .remove-button' (event, templateInstance) {
@@ -119,5 +36,15 @@ Template.genericList.events({
     connection.call(method, { _id }, (err, res) => {
       console.log(err, res)
     })
+  },
+  'click .insert-button' (event, templateInstance) {
+    event.preventDefault()
+    Router.queryParam({ action: StateActions.insert })
+    templateInstance.state.set('insertForm', true)
+  },
+  'click .cancel-insert-button' (evenr, templateInstance) {
+    event.preventDefault()
+    Router.queryParam({ action: null })
+    templateInstance.state.set('insertForm', false)
   }
 })

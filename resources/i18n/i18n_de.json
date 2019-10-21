@@ -1,4 +1,9 @@
 {
+  "actions": {
+    "create": "Erstellen",
+    "close": "Schließen",
+    "insertDoc": "Ein neues Dokument anlegen"
+  },
   "common": {
     "back": "Zurück",
     "continue": "Fortsetzen",
@@ -13,7 +18,9 @@
     "toWelcome": "Zur Startseite",
     "url": "Url",
     "yes": "Ja",
-    "login": "Anmelden"
+    "login": "Anmelden",
+    "description": "Beschreibung",
+    "noDocuments": "Es sind (ggf. noch) keine Dokumente vorhanden"
   },
   "contexts": {
     "users": {

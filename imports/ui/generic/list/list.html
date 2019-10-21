@@ -3,32 +3,60 @@
 		{{> loading}}
 	{{/unless}}
 
-	<div class="card-body d-flex">
+	{{#if insertForm}}
+		<div class="card-body d-flex justify-content-between">
+			<h4>{{i18n config.label}} - {{i18n "actions.insertDoc"}}</h4>
+			<button class="btn btn-sm btn-outline-secondary cancel-insert-button">
+				<i class="fa fa-fw fas fa-times"></i>
+			</button>
+		</div>
+
+		<div class="card-body">
+			{{>quickForm id="insertForm" type="normal" schema=insertSchema}}
+		</div>
+	{{else if updateForm}}
+
+	{{else}}
+		<div class="card-body d-flex">
 		<span class="no-wrap mr-auto">
+			<h4>{{i18n config.label}}</h4>
 			<i class="fa fa-fw fa-file"></i>
 			<span>{{count}}</span>
 		</span>
-		{{#with actionUpload}}
+			{{#with actionUpload}}
 				{{> upload filesCollection=uploadFilesCollection accept=this.accept class="ml-auto"}}
-		{{/with}}
-	</div>
+			{{/with}}
+			{{#with actionInsert}}
+				<button class="btn btn-success insert-button">
+					<i class="fas fa fa-fw fa-plus"></i>
+					<span>{{i18n "actions.create"}}</span>
+				</button>
+			{{/with}}
+		</div>
 
-	{{#with documents}}
-		<ul class="list-group">
-			{{#each document in this}}
-				<li class="list-group-item d-flex justify-content-between">
-					<span class="text-muted">{{@index}}</span>
-					{{#each fields document}}
-						<span>{{this}}</span>
-					{{/each}}
-					{{#if actionRemove}}
-						<button class="btn btn-sm btn-outline-danger border-0 remove-button"
-								data-target="{{document._id}}">
-							<i class="fa fas fa-fw fa-trash"></i>
-						</button>
-					{{/if}}
-				</li>
-			{{/each}}
-		</ul>
-	{{/with}}
+		{{#with documents}}
+			<ul class="list-group">
+				{{#each document in this}}
+					<li class="list-group-item d-flex justify-content-between">
+						<span class="text-muted">{{@index}}</span>
+						{{#each fields document}}
+							<span>{{this}}</span>
+						{{/each}}
+						{{#if actionRemove}}
+							<button class="btn btn-sm btn-outline-danger border-0 remove-button"
+									data-target="{{document._id}}">
+								<i class="fa fas fa-fw fa-trash"></i>
+							</button>
+						{{/if}}
+					</li>
+				{{/each}}
+			</ul>
+		{{else}}
+			<div class="card-body">
+				<div class="jumbotron">
+					<p>{{i18n "common.noDocuments"}}</p>
+				</div>
+			</div>
+		{{/with}}
+	{{/if}}
 </template>
