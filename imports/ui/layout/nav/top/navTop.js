@@ -1,8 +1,12 @@
 import './navTop.html'
+import { Router } from '../../../../api/routes/Router'
 
 Template.navTop.events({
   'click .logout-button' (event) {
     event.preventDefault()
-    Meteor.logout()
+    Meteor.logout(err => {
+      if (err) return console.error(err)
+      Router.go('/')
+    })
   }
 })
