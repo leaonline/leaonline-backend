@@ -14,8 +14,8 @@
     "bootstrap": "^4.3.1",
     "dely": "^1.0.0",
     "jquery": "^3.4.1",
+    "lozad": "^1.14.0",
     "meteor-node-stubs": "^0.4.1",
-    "meteor-utils": "file:../extlib/meteor-utils",
     "popper.js": "^1.15.0",
     "simpl-schema": "^1.5.5"
   },

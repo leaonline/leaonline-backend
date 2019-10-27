@@ -22,6 +22,7 @@ leaonline:errors
 leaonline:utils
 leaonline:factories
 leaonline:interfaces
+leaonline:corelib
 
 # collections
 aldeed:collection2
