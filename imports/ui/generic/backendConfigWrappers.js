@@ -1,9 +1,13 @@
-import { i18n } from '../../api/i18n/I18n'
-import { getCollection } from '../../utils/collection'
-import { createCollection } from '../../factories/createCollection'
-import { createFilesCollection } from '../../factories/createFilesCollection'
 import { Template } from 'meteor/templating'
+import { i18n } from '../../api/i18n/I18n'
 import { Schema } from '../../api/schema/Schema'
+import { createCollection } from '../../factories/createCollection'
+import { getCollection } from '../../utils/collection'
+import { createFilesCollection } from '../../factories/createFilesCollection'
+
+// form types
+import '../forms/taskContent/taskContent'
+import '../forms/imageSelect/imageSelect'
 
 const getDebug = (instance, debug) => debug
   ? (...args) => {
@@ -20,9 +24,11 @@ export const StateVariables = {
   actionInsert: 'actionInsert',
   actionUpdate: 'actionUpdate',
   actionUpload: 'actionUpload',
+  updateDoc: 'updateDoc',
   documentFields: 'documentFields',
   documentsCount: 'documentsCount',
-  allSubsComplete: 'allSubsComplete'
+  allSubsComplete: 'allSubsComplete',
+  submitting: 'submitting'
 }
 
 export const StateActions = {
@@ -38,6 +44,30 @@ function reviver (key, value) {
   }
   if (key === 'firstOptions') {
     return () => value
+  }
+  if (key === 'options' && !Array.isArray(value)) {
+    const optionsProjection = Object.assign({}, value.projection)
+    const optonsMapFct = (el) => {
+      return {
+        value: el[value.map && value.map.valueSrc || '_id'],
+        label: el[value.map && value.map.labelSrc || 'label']
+      }
+    }
+
+    return function options () {
+      const OptionsCollection = getCollection(value.collectionName)
+      if (!OptionsCollection) return []
+      const optionsQuery = {}
+      if (value.query) {
+        Object.keys(value.query).forEach(key => {
+          const fieldValue = global.AutoForm.getFieldValue(key)
+          if (fieldValue) {
+            optionsQuery[key] = fieldValue
+          }
+        })
+      }
+      return OptionsCollection.find(optionsQuery, optionsProjection).fetch().map(optonsMapFct)
+    }
   }
 
   switch (value) {
@@ -94,8 +124,14 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed } = {}) {
 
   if (config.collections) {
     instance.collections = instance.collections || {}
-    config.collections.forEach(collectionName => {
+
+    config.collections.forEach(collectionConfig => {
+      const collectionName = typeof collectionConfig === 'string'
+        ? collectionConfig
+        : collectionConfig.name
+      const { isFilesCollection } = collectionConfig
       const collection = getCollection(collectionName)
+
       if (collection) {
         instance.collections[ collectionName ] = collection
       } else {
@@ -104,13 +140,18 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed } = {}) {
           name: collectionName,
           schema: {}
         }, { connection })
-        if (config.isFilesCollection) {
+        if (isFilesCollection) {
           createFilesCollection({
             collectionName: collectionName,
             collection: instance.collections[ collectionName ],
             ddp: connection
           })
         }
+      }
+
+      // sanity check
+      if (!getCollection(collectionName)) {
+        throw new Error(`Expected collection to be created by name <${collectionName}>`)
       }
     })
     instance.mainCollection = instance.collections[ config.mainCollection ]
@@ -155,6 +196,10 @@ export const wrapHelpers = function (obj) {
     count () {
       return Template.instance().state.get(StateVariables.documentsCount) || 0
     },
+    documents () {
+      const instance = Template.instance()
+      return instance.mainCollection.find()
+    },
     files () {
       const instance = Template.instance()
       return instance.mainCollection.find()
@@ -163,6 +208,9 @@ export const wrapHelpers = function (obj) {
       const instance = Template.instance()
       const remoteUrl = instance.state.get(StateVariables.remoteUrl)
       return instance.mainCollection.filesCollection.link(file, 'original', remoteUrl)
+    },
+    submitting () {
+      return Template.instance().state.get(StateVariables.submitting)
     },
     // /////////////////////////////////////////////////
     //  Upload
@@ -192,6 +240,9 @@ export const wrapHelpers = function (obj) {
     updateSchema () {
       const instance = Template.instance()
       return instance.actionUpdateSchema
+    },
+    updateDoc () {
+      return Template.instance().state.get('updateDoc')
     },
     // /////////////////////////////////////////////////
     //  Remove

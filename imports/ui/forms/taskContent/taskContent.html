@@ -1,0 +1,79 @@
+<template name="afLeaTaskContent">
+	<div class="card">
+		<div class="card-body row">
+			{{#each element in elements}}
+				<div class="{{element.width}} p-0 border border-{{#if overElement @index}}secondary{{else}}transparent{{/if}} element-container"
+					 data-index="{{@index}}">
+					{{>TaskRendererFactory content=element}}
+					{{#if overElement @index}}
+					<span class="element-action-buttons bg-white">
+						<button class="btn btn-sm btn-primary edit-element" data-index="{{@index}}">
+							<i class="fa fas fa-fw fa-edit"></i>
+						</button>
+						<button class="btn btn-sm btn-secondary up-element"
+								data-index="{{@index}}" disabled="{{#if firstElement @index}}disabled{{/if}}">
+							<i class="fa fas fa-fw fa-caret-up"></i>
+						</button>
+						<button class="btn btn-sm btn-secondary down-element"
+								data-index="{{@index}}" disabled="{{#if lastElement @index}}disabled{{/if}}">
+							<i class="fa fas fa-fw fa-caret-down"></i>
+						</button>
+						<button class="btn btn-sm btn-danger remove-element" data-index="{{@index}}">
+							<i class="fa fas fa-fw fa-times"></i>
+						</button>
+					</span>
+					{{/if}}
+				</div>
+			{{/each}}
+		</div>
+		<div class="card-footer bg-white">
+			<button class="btn btn-primary add-content-button">
+				<i class="fa fas fa-plus"></i>
+			</button>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="taskContentModel" tabindex="-1" role="dialog" aria-labelledby="taskContentModelTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					{{#if currentTypeToAdd}}
+						<button class="btn btn-outline-secondary modal-back-button">
+							<i class="fa fas fa-fw fa-caret-left"></i> {{i18n "actions.back"}}
+						</button>
+						{{else}}
+						<h5 class="modal-title" id="taskContentModelTitle">{{i18n currentLegalLabel}}</h5>
+					{{/if}}
+					<button type="button" class="close" data-dismiss="modal" aria-label="{{i18n 'actions.close'}}">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{{#with currentTypeToAdd}}
+						{{>quickForm id="afLeaTaskAddContenTypeForm" type="normal" buttonClasses="d-none"
+								schema=currentTypeSchema doc=currentElement}}
+					{{else}}
+						{{#each type in contentTypes}}
+							<button class="btn btn-outline-primary btn-lg select-content-type-button" data-name="{{type.name}}">
+								<span><i class="fa fas fa-fw fa-{{type.icon}}"></i></span>
+								<span>{{i18n type.label}}</span>
+							</button>
+						{{/each}}
+					{{/with}}
+				</div>
+				<div class="modal-footer">
+					{{#if currentTypeToAdd}}
+						<button class="btn btn-primary" type="submit" form="afLeaTaskAddContenTypeForm">
+							{{i18n "actions.submit"}}
+						</button>
+					{{/if}}
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">{{i18n 'actions.close'}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- autoform related -->
+	<input type="hidden" class="afLeaTaskContentHiddenInput" data-schema-key="{{dataSchemaKey}}"/>
+</template>
