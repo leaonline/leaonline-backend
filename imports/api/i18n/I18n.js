@@ -6,6 +6,7 @@ export const i18n = {}
 
 i18n.load = function (config) {
   _translator = new I18N({ i18n: config })
+  return _translator
 }
 
 i18n.get = function (...params) {
