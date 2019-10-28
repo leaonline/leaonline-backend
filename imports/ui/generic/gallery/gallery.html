@@ -20,7 +20,7 @@
 		<div class="row mt-5">
 			{{#each file in this}}
 				<div class="col col-md-6 col-lg-3">
-					<figure class="figure border border-secondary p-1 bg-white">
+					<figure class="w-100 figure border border-secondary p-1 bg-white">
                     <div class="p-1 d-flex justify-content-between">
                         {{file.name}}
                         {{#if actionRemove}}
@@ -31,7 +31,7 @@
                     </div>
                         {{#with link file}}
 						<img src="{{this}}" class="figure-img img-fluid rounded" alt="{{../file.name}}">
-						<figcaption class="figure-caption p-1">
+						<figcaption class="figure-caption p-1" style="word-break: break-all">
                             {{this}}
 						</figcaption>
                         {{/with}}
