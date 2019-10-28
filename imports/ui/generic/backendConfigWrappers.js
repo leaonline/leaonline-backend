@@ -8,6 +8,8 @@ import { createFilesCollection } from '../../factories/createFilesCollection'
 // form types
 import '../forms/taskContent/taskContent'
 import '../forms/imageSelect/imageSelect'
+import { ContextRegistry } from '../../api/ContextRegistry'
+import { BackendConfig } from '../../api/config/BackendConfig'
 
 const getDebug = (instance, debug) => debug
   ? (...args) => {
@@ -120,7 +122,55 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed } = {}) {
   }
 
   instance.state.set(StateVariables.actionUpload, actions.upload)
-  instance.state.set(StateVariables.documentFields, Object.keys(config.fields || {}))
+
+  // fields
+
+  const fieldLabels = {}
+  const fieldResolvers = {}
+  const fields = config.fields || {_id: 1}
+  Object.keys(fields).forEach(fieldKey => {
+    const fieldConfig = fields[fieldKey]
+    fieldLabels[fieldKey] = fieldConfig && fieldConfig.label || fieldKey
+    if (typeof fieldConfig !== 'object') return
+
+
+    fieldResolvers[fieldKey] = (value) => {
+      const isArray = Array.isArray(value)
+      let label
+      switch (fieldConfig.type) {
+        case BackendConfig.fieldTypes.collection:
+          debugger
+          const collection = getCollection(fieldConfig.collection)
+          if (!collection) return value
+
+          const toDocumentField = entry => {
+            const currentDoc = collection.findOne(entry)
+            return currentDoc && currentDoc[fieldConfig.field]
+          }
+
+          if (isArray) {
+            return value.map(toDocumentField)
+          } else {
+            return toDocumentField(value)
+          }
+        case BackendConfig.fieldTypes.context:
+          const context = ContextRegistry.get(fieldConfig.context)
+          if (!context) return value
+          label = context.helpers.resolveField(value)
+          return label && i18n.get(label)
+        case BackendConfig.fieldTypes.keyMap:
+          const contextValue = context[value]
+          if (!contextValue) return value
+          label = contextValue[fieldConfig.srcField]
+          return label && i18n.get(label)
+        default:
+          return value
+      }
+    }
+  })
+  instance.fieldLabels = Object.values(fieldLabels)
+  instance.fieldResolvers = fieldResolvers
+  instance.state.set(StateVariables.documentFields, Object.keys(fields))
 
   if (config.collections) {
     instance.collections = instance.collections || {}
@@ -189,10 +239,6 @@ export const wrapHelpers = function (obj) {
     config () {
       return Template.instance().state.get(StateVariables.config) || {}
     },
-    fields (document) {
-      const fields = Template.instance().state.get(StateVariables.documentFields)
-      return fields.map(name => document[ name ])
-    },
     count () {
       return Template.instance().state.get(StateVariables.documentsCount) || 0
     },
@@ -211,6 +257,27 @@ export const wrapHelpers = function (obj) {
     },
     submitting () {
       return Template.instance().state.get(StateVariables.submitting)
+    },
+    // /////////////////////////////////////////////////
+    //  FIELDS
+    // /////////////////////////////////////////////////
+
+    fields (document) {
+      const instance = Template.instance()
+      const fields = instance.state.get(StateVariables.documentFields)
+      return fields && fields.map(name => {
+        const value = document[ name ]
+        const resolver = instance.fieldResolvers[name]
+
+        if (!resolver) {
+          return value
+        } else {
+          return resolver(value)
+        }
+      })
+    },
+    fieldLabels () {
+      return Template.instance().fieldLabels
     },
     // /////////////////////////////////////////////////
     //  Upload

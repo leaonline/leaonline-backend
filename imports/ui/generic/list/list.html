@@ -54,6 +54,13 @@
 		{{#with documents}}
 			<div class="card-body bg-white">
 			<table class="table table-striped">
+				<tr>
+					<th>#</th>
+					{{#each label in fieldLabels}}
+						<th>{{i18n label}}</th>
+					{{/each}}
+					<th></th>
+				</tr>
 				{{#each document in this}}
 					<tr>
 						<td class="text-muted">{{@index}}</td>
