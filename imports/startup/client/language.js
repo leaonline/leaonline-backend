@@ -8,8 +8,8 @@ const config = {
   de: i18nDE
 }
 
-const translator = i18n.load(config)
-LeaCoreLib.i18n.load(translator)
+i18n.load(config)
+LeaCoreLib.i18n.load(i18n)
 
 Meteor.startup(() => {
   document.documentElement.setAttribute('lang', 'de')
