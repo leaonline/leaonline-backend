@@ -45,3 +45,7 @@ Template.registerHelper('route', function (name, ...args) {
   const path = route.path(...args)
   return Meteor.absoluteUrl(path)
 })
+
+Template.registerHelper('activeRoute', function (path) {
+  return window.location.href.includes(path)
+})

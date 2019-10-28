@@ -1,7 +1,7 @@
 <template name="navSide">
-	<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+	<nav class="col-md-3 d-none d-md-block bg-light sidebar">
 		<div class="sidebar-sticky">
-			<ul id="main-sidebar" class="nav flex-column mt-4">
+			<ul id="main-sidebar" class="nav nav-pills flex-column mt-4">
 				{{#each route in topLevelRoutes}}
 					{{#with route.children}}
 						<li class="nav-item">
@@ -15,9 +15,10 @@
 								<ul class="nav flex-column ml-3">
 								{{#each childRoute in this}}
 									<li class="nav-item">
-										<a class="nav-link no-wrap" href="{{childRoute.path}}">
+										<a class="nav-link no-wrap {{#if activeRoute childRoute.path}}active{{/if}}"
+										   href="{{childRoute.path}}">
 											{{#if childRoute.icon}}
-												<i class="fa fas fa-{{childRoute.icon}}"></i>
+												<i class="fa fas fa-fw fa-{{childRoute.icon}}"></i>
 											{{/if}}
 											{{i18n childRoute.label}}
 										</a>

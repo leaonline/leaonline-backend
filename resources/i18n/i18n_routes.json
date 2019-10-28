@@ -5,5 +5,7 @@
   "status": "status",
   "sessions": "benutzer-sessions",
   "competencies": "kompetenzen",
-  "mediaLib": "medien-bibliothek"
+  "mediaLib": "medien-bibliothek",
+  "task": "aufgaben",
+  "taskSet": "aufgaben-sammlungen"
 }
