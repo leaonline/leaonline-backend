@@ -139,7 +139,6 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed } = {}) {
       let label
       switch (fieldConfig.type) {
         case BackendConfig.fieldTypes.collection:
-          debugger
           const collection = getCollection(fieldConfig.collection)
           if (!collection) return value
 
