@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-body row">
 			{{#each element in elements}}
-				<div class="{{element.width}} p-0 border border-{{#if overElement @index}}secondary{{else}}transparent{{/if}} element-container"
+				<div class="col-12 col-md-{{element.width}} p-0 border border-{{#if overElement @index}}secondary{{else}}transparent{{/if}} element-container"
 					 data-index="{{@index}}">
 					{{>TaskRendererFactory content=element}}
 					{{#if overElement @index}}
