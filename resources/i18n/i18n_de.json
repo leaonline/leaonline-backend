@@ -5,6 +5,7 @@
     "insertDoc": "Ein neues Dokument anlegen"
   },
   "common": {
+    "title": "Titel",
     "back": "Zurück",
     "continue": "Fortsetzen",
     "end": "Beenden",
