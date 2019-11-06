@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
 import { i18n } from '../../api/i18n/I18n'
 import { Schema } from '../../api/schema/Schema'
@@ -8,6 +9,7 @@ import { createFilesCollection } from '../../factories/createFilesCollection'
 // form types
 import '../forms/taskContent/taskContent'
 import '../forms/imageSelect/imageSelect'
+import '../forms/h5p/h5p'
 import { ContextRegistry } from '../../api/ContextRegistry'
 import { BackendConfig } from '../../api/config/BackendConfig'
 
@@ -51,8 +53,8 @@ function reviver (key, value) {
     const optionsProjection = Object.assign({}, value.projection)
     const optonsMapFct = (el) => {
       return {
-        value: el[value.map && value.map.valueSrc || '_id'],
-        label: el[value.map && value.map.labelSrc || 'label']
+        value: el[ (value.map && value.map.valueSrc) || '_id' ],
+        label: el[ (value.map && value.map.labelSrc) || 'label' ]
       }
     }
 
@@ -64,7 +66,7 @@ function reviver (key, value) {
         Object.keys(value.query).forEach(key => {
           const fieldValue = global.AutoForm.getFieldValue(key)
           if (fieldValue) {
-            optionsQuery[key] = fieldValue
+            optionsQuery[ key ] = fieldValue
           }
         })
       }
@@ -127,14 +129,13 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed } = {}) {
 
   const fieldLabels = {}
   const fieldResolvers = {}
-  const fields = config.fields || {_id: 1}
+  const fields = config.fields || { _id: 1 }
   Object.keys(fields).forEach(fieldKey => {
-    const fieldConfig = fields[fieldKey]
-    fieldLabels[fieldKey] = fieldConfig && fieldConfig.label || fieldKey
+    const fieldConfig = fields[ fieldKey ]
+    fieldLabels[ fieldKey ] = fieldConfig && fieldConfig.label || fieldKey
     if (typeof fieldConfig !== 'object') return
 
-
-    fieldResolvers[fieldKey] = (value) => {
+    fieldResolvers[ fieldKey ] = (value) => {
       const isArray = Array.isArray(value)
       let label
       switch (fieldConfig.type) {
@@ -144,7 +145,7 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed } = {}) {
 
           const toDocumentField = entry => {
             const currentDoc = collection.findOne(entry)
-            return currentDoc && currentDoc[fieldConfig.field]
+            return currentDoc && currentDoc[ fieldConfig.field ]
           }
 
           if (isArray) {
@@ -158,9 +159,9 @@ export const wrapOnCreated = function (instance, { debug, onSubscribed } = {}) {
           label = context.helpers.resolveField(value)
           return label && i18n.get(label)
         case BackendConfig.fieldTypes.keyMap:
-          const contextValue = context[value]
+          const contextValue = context[ value ]
           if (!contextValue) return value
-          label = contextValue[fieldConfig.srcField]
+          label = contextValue[ fieldConfig.srcField ]
           return label && i18n.get(label)
         default:
           return value
@@ -266,7 +267,7 @@ export const wrapHelpers = function (obj) {
       const fields = instance.state.get(StateVariables.documentFields)
       return fields && fields.map(name => {
         const value = document[ name ]
-        const resolver = instance.fieldResolvers[name]
+        const resolver = instance.fieldResolvers[ name ]
 
         if (!resolver) {
           return value

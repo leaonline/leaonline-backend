@@ -107,9 +107,11 @@ Template.genericList.events({
       if (err) {
         // TODO handle form error
         return constructor.error(err)
+      } else {
+        console.log(res)
       }
+
       // TODO notify success
-      Router.queryParam({ action: null, doc: null })
     }))
   }
 })

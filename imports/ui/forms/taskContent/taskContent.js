@@ -14,14 +14,15 @@ import './autoform'
 const types = Object.values(TaskRenderers).filter(el => !el.exclude)
 const typeSchemas = {}
 
-const currentTypeSchema = ({ name, imagesCollection, version, uriBase }) => {
+const currentTypeSchema = ({ name, imagesCollection, version, uriBase, h5p }) => {
   if (!typeSchemas[ name ]) {
     typeSchemas[ name ] = Schema.create(TaskRenderers[ name ].schema({
       i18n: i18n.get,
       name,
       imagesCollection,
       version,
-      uriBase
+      uriBase,
+      h5p
     }))
   }
   return typeSchemas[ name ]
@@ -64,7 +65,8 @@ Template.afLeaTaskContent.helpers({
     const imagesCollection = instance.data.atts.imagesCollection
     const version = instance.data.atts.imagesVersion
     const uriBase = instance.data.atts.imagesUriBase
-    return currentTypeSchema({ name, imagesCollection, version, uriBase })
+    const h5p = instance.data.atts.h5p
+    return currentTypeSchema({ name, imagesCollection, version, uriBase, h5p })
   },
   overElement (index) {
     return Template.instance().state.get('overElement') === index
@@ -165,7 +167,7 @@ Template.afLeaTaskContent.events({
     const elements = templateInstance.state.get('elements')
     move(elements, index, index + 1)
     templateInstance.state.set('elements', elements)
-  },
+  }
 })
 
 function move (arr, oldIndex, newIndex) {
