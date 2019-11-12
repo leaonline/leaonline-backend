@@ -47,5 +47,5 @@ Template.registerHelper('route', function (name, ...args) {
 })
 
 Template.registerHelper('activeRoute', function (path) {
-  return window.location.href.includes(path)
+  return window.location.pathname === path
 })
