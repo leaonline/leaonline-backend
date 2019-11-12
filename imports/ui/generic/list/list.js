@@ -1,18 +1,21 @@
 import { Template } from 'meteor/templating'
 import { StateVariables, StateActions, wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
 import { getCollection } from '../../../utils/collection'
-import { createFilesCollection } from '../../../factories/createFilesCollection'
 import { dataTarget } from '../../../utils/event'
 import { Router } from '../../../api/routes/Router'
 import { formIsValid } from '../../../utils/form'
-import {by300} from '../../../utils/dely'
+import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import './list.html'
 
-
 Template.genericList.onCreated(function () {
   const instance = this
-  wrapOnCreated(instance, {debug:true})
+
+  instance.autorun(() => {
+    const data = Template.currentData()
+    instance.state.clear()
+    wrapOnCreated(instance, { data, debug: true })
+  })
 })
 
 Template.genericList.helpers(wrapHelpers({
@@ -55,7 +58,7 @@ Template.genericList.events({
       console.info(target, templateInstance.mainCollection.find().fetch())
       return console.error('no doc found')
     } else {
-      console.log("update doc", updateDoc)
+      console.log('update doc', updateDoc)
     }
     templateInstance.state.set('updateDoc', updateDoc)
     templateInstance.state.set('updateForm', true)
@@ -107,9 +110,11 @@ Template.genericList.events({
       if (err) {
         // TODO handle form error
         return constructor.error(err)
+      } else {
+        console.log(res)
       }
+
       // TODO notify success
-      Router.queryParam({ action: null, doc: null })
     }))
   }
 })
