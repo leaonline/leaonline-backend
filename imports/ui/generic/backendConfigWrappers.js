@@ -13,7 +13,6 @@ import '../forms/taskContent/taskContent'
 import '../forms/imageSelect/imageSelect'
 import '../forms/h5p/h5p'
 
-
 const getDebug = (instance, debug) => debug
   ? (...args) => {
     if (Meteor.isDevelopment) {

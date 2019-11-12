@@ -1,0 +1,32 @@
+<template name="afH5P">
+	{{#if editMode}}
+		<div class="card afh5p-fullscreen">
+			<div class="card-header d-flex">
+				<span>{{label}}</span>
+				<button class="btn btn-sm btn-outline-secondary close-edit-button">
+					<i class="fa fas fa-fw fa-times"></i>
+				</button>
+			</div>
+			<div class="card-body">
+				<div class="embed-responsive embed-responsive-16by9">
+					<iframe class="embed-responsive-item" src="{{editUrl contentId}}"></iframe>
+				</div>
+			</div>
+		</div>
+	{{else}}
+		{{#with contentId}}
+			<div class="p-2"><strong>Content ID:</strong><span>{{this}}</span></div>
+			<div class="embed-responsive embed-responsive-16by9">
+				<iframe class="embed-responsive-item" src="{{playUrl contentId}}"></iframe>
+			</div>
+		{{else}}
+			<button class="btn btn-primary create-new-content-button">Create new</button>
+
+			<div>Then enter contentId here:</div>
+
+			{{> quickForm id="createNewContentForm" type="normal" schema=createContentFormSchema}}
+		{{/with}}
+	{{/if}}
+	<!-- autoform related -->
+	<input type="hidden" class="afH5PContentHiddenInput" data-schema-key="{{dataSchemaKey}}"/>
+</template>

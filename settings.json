@@ -2,10 +2,10 @@
   "oauth": {
     "clientId": "0123456890",
     "secret": "01234568900123456890",
-    "dialogUrl": "http://localhost:8080/oauth/authorize",
-    "accessTokenUrl": "http://localhost:8080/oauth/token",
-    "authorizeUrl": "http://localhost:8080/oauth/authorize",
-    "identityUrl": "http://localhost:8080/oauth/ident",
+    "dialogUrl": "http://localhost:9090/oauth/authorize",
+    "accessTokenUrl": "http://localhost:9090/oauth/token",
+    "authorizeUrl": "http://localhost:9090/oauth/authorize",
+    "identityUrl": "http://localhost:9090/oauth/ident",
     "redirectUrl": "http://localhost:5050/_oauth/lea"
   },
   "public": {
@@ -33,6 +33,15 @@
         "icon": "file",
         "ddpConnect": true,
         "ddpLogin": true
+      },
+      "items": {
+        "name": "items",
+        "label": "lea.items",
+        "url": "http://localhost:8080",
+        "icon": "check",
+        "ddpConnect": false,
+        "ddpLogin": false,
+        "renderUrl": "http://localhost:8080/play?contentId="
       }
     },
     "pages": {
