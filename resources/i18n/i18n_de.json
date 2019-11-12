@@ -1,9 +1,26 @@
 {
   "actions": {
     "create": "Erstellen",
+    "back": "Zurück",
+    "submit": "Absenden",
     "close": "Schließen",
     "insertDoc": "Ein neues Dokument anlegen",
     "confirmRemove": "Möchten Sie wirklich das Dokument löschen?"
+  },
+  "grid": {
+    "title": "Layout",
+    "2": "16%",
+    "3": "25%",
+    "4": "33%",
+    "6": "50%",
+    "8": "66%",
+    "10": "83%",
+    "12": "100%"
+  },
+  "taskRenderers": {
+    "text": "Text",
+    "image": "Bild",
+    "h5p": "H5P Format"
   },
   "common": {
     "title": "Titel",
