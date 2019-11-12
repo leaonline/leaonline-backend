@@ -7,6 +7,7 @@ import '../imports/startup/client/bootstrap'
 import '../imports/startup/client/schema'
 import '../imports/startup/client/autoform'
 import '../imports/startup/client/templateHelpers'
+import '../imports/startup/client/corelib'
 
 // contexts
 import '../imports/startup/client/contexts/users'

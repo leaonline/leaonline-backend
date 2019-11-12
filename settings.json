@@ -44,6 +44,9 @@
         "renderUrl": "http://localhost:8080/play?contentId="
       }
     },
+    "tts": {
+      "url": "http://localhost:3030/tts"
+    },
     "pages": {
       "sessions": {
         "use": "otulea"
