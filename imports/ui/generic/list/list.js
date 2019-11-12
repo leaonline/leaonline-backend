@@ -5,6 +5,7 @@ import { dataTarget } from '../../../utils/event'
 import { Router } from '../../../api/routes/Router'
 import { formIsValid } from '../../../utils/form'
 import { by300 } from '../../../utils/dely'
+import { i18n } from '../../../api/i18n/I18n'
 import '../../components/upload/upload'
 import './list.html'
 
@@ -32,6 +33,9 @@ Template.genericList.helpers(wrapHelpers({
 Template.genericList.events({
   'click .remove-button' (event, templateInstance) {
     event.preventDefault()
+
+    if (!confirm(i18n.get('actions.confirmRemove'))) return
+
     const removeContext = templateInstance.state.get('actionRemove')
     const { method } = removeContext
     const _id = dataTarget(event, templateInstance)

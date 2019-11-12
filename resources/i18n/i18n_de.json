@@ -2,7 +2,8 @@
   "actions": {
     "create": "Erstellen",
     "close": "Schließen",
-    "insertDoc": "Ein neues Dokument anlegen"
+    "insertDoc": "Ein neues Dokument anlegen",
+    "confirmRemove": "Möchten Sie wirklich das Dokument löschen?"
   },
   "common": {
     "title": "Titel",
