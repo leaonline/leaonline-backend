@@ -13,7 +13,6 @@ Template.genericList.onCreated(function () {
 
   instance.autorun(() => {
     const data = Template.currentData()
-    instance.state.clear()
     wrapOnCreated(instance, { data, debug: true })
   })
 })
