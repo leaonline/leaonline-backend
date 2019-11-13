@@ -12,6 +12,7 @@
 					<iframe class="embed-responsive-item" src="{{editUrl contentId}}"></iframe>
 				</div>
 			</div>
+			<button class="btn btn-primary close-edit-button">Ok</button>
 		</div>
 	{{else}}
 		{{#with contentId}}
@@ -19,6 +20,7 @@
 			<div class="embed-responsive embed-responsive-16by9">
 				<iframe class="embed-responsive-item" src="{{playUrl contentId}}"></iframe>
 			</div>
+			<button class="btn btn-primary edit-content-button">Edit</button>
 		{{else}}
 			<button class="btn btn-primary create-new-content-button">Create new</button>
 

@@ -1,6 +1,6 @@
+import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
 import { ReactiveDict } from 'meteor/reactive-dict'
-import { getCollection } from '../../../utils/collection'
 import { TaskRenderers } from '../../../api/task/TaskRenderers'
 import { dataTarget } from '../../../utils/event'
 import { Schema } from '../../../api/schema/Schema'
@@ -10,6 +10,9 @@ import { i18n } from '../../../api/i18n/I18n'
 import './taskContent.css'
 import './taskContent.html'
 import './autoform'
+
+const { renderUrl } = Meteor.settings.public.hosts.items
+TaskRenderers.h5p.configure({ renderUrl })
 
 const types = Object.values(TaskRenderers).filter(el => !el.exclude)
 const typeSchemas = {}

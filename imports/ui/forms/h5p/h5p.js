@@ -77,6 +77,10 @@ Template.afH5P.events({
     const createUrl = templateInstance.state.get('createUrl')
     windows[ createUrl ] = window.open(createUrl, createUrl)
   },
+  'click .edit-content-button' (event, templateInstance) {
+    event.preventDefault()
+    templateInstance.state.set('editMode', true)
+  },
   'submit #createNewContentForm' (event, templateInstance) {
     event.preventDefault()
 
