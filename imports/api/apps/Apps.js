@@ -1,9 +1,11 @@
+/* global localStorage */
+import { Meteor } from 'meteor/meteor'
+import { Tracker } from 'meteor/tracker'
 import { DDP } from 'meteor/ddp-client'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import { i18n } from '../i18n/I18n'
 import { BackendConfig } from '../config/BackendConfig'
-import { getCollection } from '../../utils/collection'
-import { onClient, onServer } from '../../utils/arch'
+import { onServer } from '../../utils/arch'
 
 export const Apps = {
   name: 'apps',
@@ -17,10 +19,10 @@ const _connections = {}
 const _trackers = {}
 
 function connect (name, url) {
-  if (!_connections[ name ]) {
-    _connections[ name ] = DDP.connect(url)
+  if (!_connections[name]) {
+    _connections[name] = DDP.connect(url)
   }
-  return _connections[ name ]
+  return _connections[name]
 }
 
 function updateStatus (name, status) {
@@ -52,7 +54,7 @@ function log (...args) {
 
 function track (name, connection, ddpLogin) {
   const url = connection._stream.rawUrl
-  _trackers[ name ] = Tracker.autorun(() => {
+  _trackers[name] = Tracker.autorun(() => {
     // skip this computation if there is
     // currently no logged in backend user
     if (!Meteor.user() || !Meteor.userId()) {
@@ -143,12 +145,12 @@ Apps.register = function ({ name, label, url, icon, ddpConnect, ddpLogin }) {
 
 Apps.get = function (name) {
   const app = _apps.get(name)
-  const connection = _connections[ name ]
+  const connection = _connections[name]
   return Object.assign({}, app, { connection })
 }
 
 Apps.connection = function (name) {
-  return _connections[ name ]
+  return _connections[name]
 }
 
 Apps.all = function () {

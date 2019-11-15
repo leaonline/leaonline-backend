@@ -1,3 +1,6 @@
+import { Meteor } from 'meteor/meteor'
+import { Tracker } from 'meteor/tracker'
+
 import { Apps } from '../../api/apps/Apps'
 Apps.debug = true
 const { hosts } = Meteor.settings.public

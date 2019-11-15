@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor'
+import { Template } from 'meteor/templating'
 import { Apps } from '../../../api/apps/Apps'
 import './sessions.html'
 
@@ -24,7 +26,6 @@ Template.sessions.onCreated(function () {
       setTimeout(() => {
         instance.state.set('sessionsLoaded', true)
       }, 150)
-
     })
   })
 })

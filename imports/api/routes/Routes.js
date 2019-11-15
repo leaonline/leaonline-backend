@@ -94,7 +94,7 @@ Routes.statusOverview = {
   path: () => `/${settings.status}`,
   label: 'pages.status.overview',
   triggersEnter: () => [
-    createLoginTrigger(Routes.login),
+    createLoginTrigger(Routes.login)
   ],
   async load () {
     return import('../../ui/pages/status/overview')
@@ -126,5 +126,5 @@ Routes.fallback = {
 }
 
 Object.keys(Routes).forEach(key => {
-  Routes[ key ].key = key
+  Routes[key].key = key
 })

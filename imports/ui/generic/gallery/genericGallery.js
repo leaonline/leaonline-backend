@@ -1,4 +1,6 @@
+import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
+import { Tracker } from 'meteor/tracker'
 import { createCollection } from '../../../factories/createCollection'
 import { getCollection } from '../../../utils/collection'
 import { createFilesCollection } from '../../../factories/createFilesCollection'
@@ -11,8 +13,6 @@ const debug = (...args) => {
     console.info('[Template.genericList]', ...args)
   }
 }
-
-const actionSchemas = {}
 
 Template.genericGallery.onCreated(function () {
   const instance = this
@@ -34,23 +34,23 @@ Template.genericGallery.onCreated(function () {
     config.collections.forEach(collectionName => {
       const collection = getCollection(collectionName)
       if (collection) {
-        instance.collections[ collectionName ] = collection
+        instance.collections[collectionName] = collection
       } else {
         // create filesCollection if flag is truthy
-        instance.collections[ collectionName ] = createCollection({
+        instance.collections[collectionName] = createCollection({
           name: collectionName,
           schema: {}
         }, { connection })
         if (config.isFilesCollection) {
           createFilesCollection({
             collectionName: collectionName,
-            collection: instance.collections[ collectionName ],
+            collection: instance.collections[collectionName],
             ddp: connection
           })
         }
       }
     })
-    instance.mainCollection = instance.collections[ config.mainCollection ]
+    instance.mainCollection = instance.collections[config.mainCollection]
     debug('collections created', instance.collections)
   }
 
@@ -58,12 +58,12 @@ Template.genericGallery.onCreated(function () {
     const allSubs = {}
     config.publications.forEach(publication => {
       const { name } = publication
-      allSubs[ name ] = false
+      allSubs[name] = false
       Tracker.autorun(() => {
         debug('subscribe to', name)
         const sub = connection.subscribe(name)
         if (sub.ready()) {
-          allSubs[ name ] = true
+          allSubs[name] = true
           debug(name, 'complete')
         }
         if (Object.values(allSubs).every(entry => entry === true)) {
@@ -121,7 +121,7 @@ Template.genericGallery.events({
     const _id = dataTarget(event, templateInstance)
     const file = templateInstance.mainCollection.findOne(_id)
 
-    if (!file || !confirm(`Really delete ${file.name}?`)) {
+    if (!file || !global.confirm(`Really delete ${file.name}?`)) {
       return
     }
 

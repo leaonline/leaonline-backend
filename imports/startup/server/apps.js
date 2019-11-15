@@ -1,4 +1,4 @@
-import {Apps} from '../../api/apps/Apps'
+import { Apps } from '../../api/apps/Apps'
 import { rateLimitMethods } from '../../factories/rateLimit'
 import { createMethods } from '../../factories/createMethods'
 

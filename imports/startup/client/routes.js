@@ -7,7 +7,7 @@ import '../../ui/pages/loading/loading'
 
 const defaultTarget = 'main-render-target'
 
-Router.titlePrefix(`lea.online - `)
+Router.titlePrefix('lea.online - ')
 Router.loadingTemplate('loading')
 Router.defaultTarget(defaultTarget)
 /**
@@ -40,7 +40,7 @@ Template.registerHelper('next', function (...args) {
 
 Template.registerHelper('route', function (name, ...args) {
   args.pop()
-  const route = Routes[ name ]
+  const route = Routes[name]
   if (!route) return
   const path = route.path(...args)
   return Meteor.absoluteUrl(path)

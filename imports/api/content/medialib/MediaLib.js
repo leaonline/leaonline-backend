@@ -3,7 +3,7 @@ import { getCollection } from '../../../utils/collection'
 import { Apps } from '../../apps/Apps'
 
 let _mediaLibColelction
-MediaLib.collection = function( ) {
+MediaLib.collection = function () {
   if (!_mediaLibColelction) {
     _mediaLibColelction = getCollection(MediaLib)
   }
@@ -17,13 +17,13 @@ MediaLib.connection = function () {
 
 MediaLib.publications.all.subscribe = function () {
   const app = Apps.get(MediaLib.appId)
-  if (!app.connection.status().connected || !app.connection.userId()) return { ready() { return false }}
+  if (!app.connection.status().connected || !app.connection.userId()) return { ready () { return false } }
   return app.connection.subscribe(MediaLib.publications.all.name)
 }
 
 MediaLib.upload = {}
 
-MediaLib.upload.schema =  {
+MediaLib.upload.schema = {
   file: {
     type: String,
     autoform: {

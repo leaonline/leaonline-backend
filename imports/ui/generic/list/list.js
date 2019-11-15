@@ -1,6 +1,5 @@
 import { Template } from 'meteor/templating'
 import { StateVariables, StateActions, wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
-import { getCollection } from '../../../utils/collection'
 import { dataTarget } from '../../../utils/event'
 import { Router } from '../../../api/routes/Router'
 import { formIsValid } from '../../../utils/form'
@@ -34,7 +33,7 @@ Template.genericList.events({
   'click .remove-button' (event, templateInstance) {
     event.preventDefault()
 
-    if (!confirm(i18n.get('actions.confirmRemove'))) return
+    if (!global.confirm(i18n.get('actions.confirmRemove'))) return
 
     const removeContext = templateInstance.state.get('actionRemove')
     const { method } = removeContext
@@ -66,7 +65,7 @@ Template.genericList.events({
     templateInstance.state.set('updateDoc', updateDoc)
     templateInstance.state.set('updateForm', true)
   },
-  'click .cancel-form-button' (evenr, templateInstance) {
+  'click .cancel-form-button' (event, templateInstance) {
     event.preventDefault()
     Router.queryParam({ action: null })
     templateInstance.state.set('insertForm', false)

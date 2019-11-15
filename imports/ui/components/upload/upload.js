@@ -1,4 +1,4 @@
-import { Template } from "meteor/templating"
+import { Template } from 'meteor/templating'
 import { ReactiveVar } from 'meteor/reactive-var'
 import './upload.html'
 
@@ -28,7 +28,7 @@ Template.upload.helpers({
     console.log(Template.instance().currentUpload.get())
     return Template.instance().currentUpload.get()
   },
-  uploadError() {
+  uploadError () {
     return Template.instance().state.get('uploadError')
   },
   uploadedFile () {
@@ -48,7 +48,6 @@ Template.upload.events({
 
     const insertConfig = templateInstance.state.get('insertConfig')
     const files = templateInstance.$('#list-file-upload')[0].files
-    const file = files[0]
 
     if (!files) {
       console.warn('[Template.upload] skip attempt to upload without file')
@@ -57,7 +56,7 @@ Template.upload.events({
 
     const opts = Object.assign({}, defaultInsertOpts, insertConfig, {
       file: files[0]
-    });
+    })
 
     const upload = templateInstance.data.filesCollection.insert(opts, false)
 

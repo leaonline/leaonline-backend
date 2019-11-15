@@ -29,7 +29,7 @@ Template.afH5P.onCreated(function () {
   instance.state.set('listUrl', listUrl)
   instance.state.set('editUrl', editUrl)
   instance.state.set('playUrl', playUrl)
-  instance.state.set('dataSchemaKey', atts[ 'data-schema-key' ])
+  instance.state.set('dataSchemaKey', atts['data-schema-key'])
 
   HTTP.get(listUrl, (err, res) => {
     if (err) return console.error(err) // todo display in Template
@@ -75,7 +75,7 @@ Template.afH5P.events({
   'click .create-new-content-button' (event, templateInstance) {
     event.preventDefault()
     const createUrl = templateInstance.state.get('createUrl')
-    windows[ createUrl ] = window.open(createUrl, createUrl)
+    windows[createUrl] = window.open(createUrl, createUrl)
   },
   'click .edit-content-button' (event, templateInstance) {
     event.preventDefault()

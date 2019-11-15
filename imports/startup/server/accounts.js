@@ -1,3 +1,4 @@
+/* global ServiceConfiguration */
 import { Meteor } from 'meteor/meteor'
 import { rateLimitAccounts } from '../../factories/rateLimit'
 

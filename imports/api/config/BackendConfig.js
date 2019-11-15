@@ -55,7 +55,7 @@ const createRoute = (appName, config, parentRoute) => {
     icon: config.icon,
     label: config.label,
     triggersEnter: () => [
-      loginTrigger,
+      loginTrigger
     ],
     async load () {
       return template.loadFunction()
@@ -79,13 +79,13 @@ const createRoute = (appName, config, parentRoute) => {
 }
 
 BackendConfig.parent = function (name, config) {
-  Routes[ name ] = createRoute(name, config, null)
-  RoutesTree.topLevel(name, Routes[ name ])
-  Router.register(Routes[ name ])
+  Routes[name] = createRoute(name, config, null)
+  RoutesTree.topLevel(name, Routes[name])
+  Router.register(Routes[name])
 }
 
 BackendConfig.children = function (name, config) {
-  let parentRoute = Routes[ name ]
+  const parentRoute = Routes[name]
   if (!parentRoute) {
     throw new Error(`Could not find any parent for name ${name}`)
   }

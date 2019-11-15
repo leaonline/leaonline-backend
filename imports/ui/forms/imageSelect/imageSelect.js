@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating'
+import { Mongo } from 'meteor/mongo'
 import './autoform'
 import './imageSelect.css'
 import './imageSelect.html'
@@ -42,12 +44,12 @@ Template.afImageSelect.onCreated(function () {
   }
 
   instance.state.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
-  instance.state.set('disabled', atts.hasOwnProperty('disabled'))
-  instance.state.set('dataSchemaKey', atts[ 'data-schema-key' ])
+  instance.state.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
+  instance.state.set('dataSchemaKey', atts['data-schema-key'])
 })
 
 Template.afImageSelect.helpers({
-  dataSchemaKey() {
+  dataSchemaKey () {
     return Template.instance().state.get('dataSchemaKey')
   },
   images () {

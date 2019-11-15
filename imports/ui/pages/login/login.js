@@ -1,8 +1,8 @@
+import { Template } from 'meteor/templating'
 import { Schema } from '../../../api/schema/Schema'
 import { Users } from '../../../api/accounts/Users'
 import { loggedIn } from '../../../utils/accounts'
 import { Router } from '../../../api/routes/Router'
-import { formIsValid } from '../../../utils/form'
 import dely from 'dely'
 import './login.html'
 

@@ -18,8 +18,8 @@ const types = Object.values(TaskRenderers).filter(el => !el.exclude)
 const typeSchemas = {}
 
 const currentTypeSchema = ({ name, imagesCollection, version, uriBase, h5p }) => {
-  if (!typeSchemas[ name ]) {
-    typeSchemas[ name ] = Schema.create(TaskRenderers[ name ].schema({
+  if (!typeSchemas[name]) {
+    typeSchemas[name] = Schema.create(TaskRenderers[name].schema({
       i18n: i18n.get,
       name,
       imagesCollection,
@@ -28,7 +28,7 @@ const currentTypeSchema = ({ name, imagesCollection, version, uriBase, h5p }) =>
       h5p
     }))
   }
-  return typeSchemas[ name ]
+  return typeSchemas[name]
 }
 
 TaskRenderers.factory.load()
@@ -42,13 +42,13 @@ Template.afLeaTaskContent.onCreated(function () {
 
   instance.state.set('elements', data.value || [])
   instance.state.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
-  instance.state.set('disabled', atts.hasOwnProperty('disabled'))
-  instance.state.set('dataSchemaKey', atts[ 'data-schema-key' ])
+  instance.state.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
+  instance.state.set('dataSchemaKey', atts['data-schema-key'])
 })
 
 Template.afLeaTaskContent.helpers({
   dataSchemaKey () {
-    return Template.instance().data.atts[ 'data-schema-key' ]
+    return Template.instance().data.atts['data-schema-key']
   },
   elements () {
     return Template.instance().state.get('elements')
@@ -144,7 +144,7 @@ Template.afLeaTaskContent.events({
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.state.get('elements')
-    const currentElement = elements[ index ]
+    const currentElement = elements[index]
     templateInstance.state.set('currentTypeToAdd', currentElement.subtype)
     templateInstance.state.set('currentElement', currentElement)
     templateInstance.state.set('currentElementIndex', index)
@@ -174,6 +174,6 @@ Template.afLeaTaskContent.events({
 })
 
 function move (arr, oldIndex, newIndex) {
-  arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[ 0 ])
+  arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0])
   return arr
 }

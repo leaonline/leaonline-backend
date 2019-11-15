@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor'
+
 export const Users = {
   name: 'users',
   label: 'contexts.users.title',

@@ -6,6 +6,6 @@ export const Competencies = {
 
 Competencies.schema = {
   dimension: String,
-  level: String,
+  level: String
 
 }

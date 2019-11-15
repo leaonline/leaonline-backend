@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
+import { Tracker } from 'meteor/tracker'
 import { i18n } from '../../api/i18n/I18n'
 import { Schema } from '../../api/schema/Schema'
 import { createCollection } from '../../factories/createCollection'
@@ -53,8 +54,8 @@ function reviver (key, value) {
     const optionsProjection = Object.assign({}, value.projection)
     const optonsMapFct = (el) => {
       return {
-        value: el[ (value.map && value.map.valueSrc) || '_id' ],
-        label: el[ (value.map && value.map.labelSrc) || 'label' ]
+        value: el[(value.map && value.map.valueSrc) || '_id'],
+        label: el[(value.map && value.map.labelSrc) || 'label']
       }
     }
 
@@ -66,7 +67,7 @@ function reviver (key, value) {
         Object.keys(value.query).forEach(key => {
           const fieldValue = global.AutoForm.getFieldValue(key)
           if (fieldValue) {
-            optionsQuery[ key ] = fieldValue
+            optionsQuery[key] = fieldValue
           }
         })
       }
@@ -88,6 +89,37 @@ function reviver (key, value) {
     default:
       return value
   }
+}
+
+const fieldsFromCollection = function ({ value, fieldConfig, isArray }) {
+  const collection = getCollection(fieldConfig.collection)
+  if (!collection) return value
+
+  const toDocumentField = entry => {
+    const currentDoc = collection.findOne(entry)
+    return currentDoc && currentDoc[fieldConfig.field]
+  }
+
+  if (isArray) {
+    return value.map(toDocumentField)
+  } else {
+    return toDocumentField(value)
+  }
+}
+
+const fieldsFromContext = function ({ fieldConfig, value }) {
+  const context = ContextRegistry.get(fieldConfig.context)
+  if (!context) return value
+  const label = context.helpers.resolveField(value)
+  return label && i18n.get(label)
+}
+
+const fieldsFromKeyMap = function ({ fieldConfig, value }) {
+  const context = ContextRegistry.get(fieldConfig.context)
+  const contextValue = context[value]
+  if (!contextValue) return value
+  const label = contextValue[fieldConfig.srcField]
+  return label && i18n.get(label)
 }
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
@@ -131,38 +163,19 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   const fieldResolvers = {}
   const fields = config.fields || { _id: 1 }
   Object.keys(fields).forEach(fieldKey => {
-    const fieldConfig = fields[ fieldKey ]
-    fieldLabels[ fieldKey ] = fieldConfig && fieldConfig.label || fieldKey
+    const fieldConfig = fields[fieldKey]
+    fieldLabels[fieldKey] = (fieldConfig && fieldConfig.label) || fieldKey
     if (typeof fieldConfig !== 'object') return
 
-    fieldResolvers[ fieldKey ] = (value) => {
+    fieldResolvers[fieldKey] = (value) => {
       const isArray = Array.isArray(value)
-      let label
       switch (fieldConfig.type) {
         case BackendConfig.fieldTypes.collection:
-          const collection = getCollection(fieldConfig.collection)
-          if (!collection) return value
-
-          const toDocumentField = entry => {
-            const currentDoc = collection.findOne(entry)
-            return currentDoc && currentDoc[ fieldConfig.field ]
-          }
-
-          if (isArray) {
-            return value.map(toDocumentField)
-          } else {
-            return toDocumentField(value)
-          }
+          return fieldsFromCollection({ value, fieldConfig, isArray })
         case BackendConfig.fieldTypes.context:
-          const context = ContextRegistry.get(fieldConfig.context)
-          if (!context) return value
-          label = context.helpers.resolveField(value)
-          return label && i18n.get(label)
+          return fieldsFromContext({ fieldConfig, value })
         case BackendConfig.fieldTypes.keyMap:
-          const contextValue = context[ value ]
-          if (!contextValue) return value
-          label = contextValue[ fieldConfig.srcField ]
-          return label && i18n.get(label)
+          return fieldsFromKeyMap({ fieldConfig, value })
         default:
           return value
       }
@@ -183,17 +196,17 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
       const collection = getCollection(collectionName)
 
       if (collection) {
-        instance.collections[ collectionName ] = collection
+        instance.collections[collectionName] = collection
       } else {
         // create filesCollection if flag is truthy
-        instance.collections[ collectionName ] = createCollection({
+        instance.collections[collectionName] = createCollection({
           name: collectionName,
           schema: {}
         }, { connection })
         if (isFilesCollection) {
           createFilesCollection({
             collectionName: collectionName,
-            collection: instance.collections[ collectionName ],
+            collection: instance.collections[collectionName],
             ddp: connection
           })
         }
@@ -204,7 +217,7 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
         throw new Error(`Expected collection to be created by name <${collectionName}>`)
       }
     })
-    instance.mainCollection = instance.collections[ config.mainCollection ]
+    instance.mainCollection = instance.collections[config.mainCollection]
     logDebug('collections created', instance.collections)
   }
 
@@ -212,12 +225,12 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
     const allSubs = {}
     config.publications.forEach(publication => {
       const { name } = publication
-      allSubs[ name ] = false
+      allSubs[name] = false
       Tracker.autorun(() => {
         logDebug('subscribe to', name)
         const sub = connection.subscribe(name, {})
         if (sub.ready()) {
-          allSubs[ name ] = true
+          allSubs[name] = true
           logDebug(name, 'complete')
         }
         if (Object.values(allSubs).every(entry => entry === true)) {
@@ -266,8 +279,8 @@ export const wrapHelpers = function (obj) {
       const instance = Template.instance()
       const fields = instance.state.get(StateVariables.documentFields)
       return fields && fields.map(name => {
-        const value = document[ name ]
-        const resolver = instance.fieldResolvers[ name ]
+        const value = document[name]
+        const resolver = instance.fieldResolvers[name]
 
         if (!resolver) {
           return value
