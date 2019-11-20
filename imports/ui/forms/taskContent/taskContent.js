@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
 import { ReactiveDict } from 'meteor/reactive-dict'
-import { TaskRenderers } from '../../../api/task/TaskRenderers'
+import { TaskRenderers, RendererGroups } from '../../../api/task/TaskRenderers'
 import { dataTarget } from '../../../utils/event'
 import { Schema } from '../../../api/schema/Schema'
 import { formIsValid } from '../../../utils/form'
@@ -15,6 +15,7 @@ const { renderUrl } = Meteor.settings.public.hosts.items
 TaskRenderers.h5p.configure({ renderUrl })
 
 const types = Object.values(TaskRenderers).filter(el => !el.exclude)
+const rendererGroups = Object.values(RendererGroups)
 const typeSchemas = {}
 
 const currentTypeSchema = ({ name, imagesCollection, version, uriBase, h5p }) => {
@@ -56,8 +57,11 @@ Template.afLeaTaskContent.helpers({
   stringify (src) {
     return JSON.stringify(src)
   },
-  contentTypes () {
-    return types
+  contentGroups () {
+    return rendererGroups
+  },
+  contentTypes (group) {
+    return types.filter(entry => entry.group.name === group)
   },
   currentTypeToAdd () {
     return Template.instance().state.get('currentTypeToAdd')

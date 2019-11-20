@@ -54,11 +54,15 @@
 						{{>quickForm id="afLeaTaskAddContenTypeForm" type="normal" buttonClasses="d-none"
 								schema=currentTypeSchema doc=currentElement}}
 					{{else}}
-						{{#each type in contentTypes}}
-							<button class="btn btn-outline-primary btn-lg select-content-type-button" data-name="{{type.name}}">
-								<span><i class="fa fas fa-fw fa-{{type.icon}}"></i></span>
-								<span>{{i18n type.label}}</span>
-							</button>
+						{{#each group in contentGroups}}
+							<h4>{{i18n group.label}}</h4>
+							{{#each type in (contentTypes group.name)}}
+								<button class="btn btn-outline-primary btn-lg select-content-type-button" data-name="{{type.name}}">
+									<span><i class="fa fas fa-fw fa-{{type.icon}}"></i></span>
+									<span>{{i18n type.label}}</span>
+								</button>
+							{{/each}}
+
 						{{/each}}
 					{{/with}}
 				</div>
