@@ -31,7 +31,6 @@ Object
 
 Template.registerHelper('next', function (...args) {
   args.pop()
-  debugger
   const instance = Template.instance()
   const route = instance && instance.data.next()
   const path = route && route.path(...args)
