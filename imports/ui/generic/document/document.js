@@ -8,7 +8,11 @@ Template.genericDocument.onCreated(function () {
   const onSubscribed = () => {
     instance.state.set('updateDoc', instance.mainCollection.findOne() || {})
   }
-  wrapOnCreated(instance, { debug: true, onSubscribed })
+
+  instance.autorun(() => {
+    const data = Template.currentData()
+    wrapOnCreated(instance, { data, onSubscribed, debug: true })
+  })
 })
 
 Template.genericDocument.helpers(wrapHelpers({
