@@ -32,10 +32,11 @@ Object
 
 Template.registerHelper('next', function (...args) {
   args.pop()
+  debugger
   const instance = Template.instance()
   const route = instance && instance.data.next()
   const path = route && route.path(...args)
-  return path && Meteor.absoluteUrl(path)
+  return Meteor.absoluteUrl(path)
 })
 
 Template.registerHelper('route', function (name, ...args) {
