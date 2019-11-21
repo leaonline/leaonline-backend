@@ -75,7 +75,7 @@ Routes.root = {
   label: 'pages.redirecting.title',
   triggersEnter: () => [
     createLoginTrigger(Routes.login),
-    createLoggedinTrigger(Routes.dashboard)
+    createLoggedinTrigger(Routes.statusOverview)
   ],
   async load () {
     return true
