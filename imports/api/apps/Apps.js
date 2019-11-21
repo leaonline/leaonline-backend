@@ -60,9 +60,9 @@ function track (name, connection, ddpLogin) {
     if (!Meteor.user() || !Meteor.userId()) {
       // clear localStorage entries from previous
       // login results to avoid follow-up 403 errors
-      localStorage.removeItem(`${url}/lea/userId`)
-      localStorage.removeItem(`${url}/lea/loginToken`)
-      localStorage.removeItem(`${url}/lea/loginTokenExpires`)
+      // localStorage.removeItem(`${url}/lea/userId`)
+      // localStorage.removeItem(`${url}/lea/loginToken`)
+      // localStorage.removeItem(`${url}/lea/loginTokenExpires`)
       // logout connection if still connected
       if (connection.userId()) {
         connection.call('logout')
