@@ -136,11 +136,12 @@ const configure = function (name) {
 }
 
 Apps.register = function ({ name, label, url, icon, ddpConnect, ddpLogin }) {
+  const app = _apps.set(name, { name, label, url, icon, ddpConnect, ddpLogin })
   if (ddpConnect) {
     const connection = connect(name, url)
     track(name, connection, ddpLogin)
   }
-  return _apps.set(name, { name, label, url, icon, ddpConnect, ddpLogin })
+  return app
 }
 
 Apps.get = function (name) {
