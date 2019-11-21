@@ -32,6 +32,7 @@ Routes.dashboard = {
   path: () => `/${settings.dashboard}`,
   label: 'pages.dashboard.title',
   triggersEnter: () => [
+    createLoggedinTrigger(Routes.statusOverview),
     createLoginTrigger(Routes.login)
   ],
   async load () {
