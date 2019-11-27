@@ -30,7 +30,7 @@
                         {{/if}}
                     </div>
                         {{#with link file}}
-						<img src="{{this}}" class="figure-img img-fluid rounded" alt="{{../file.name}}">
+							{{> image src=this alt=../file.name class="figure-img img-fluid rounded"}}
 						<figcaption class="figure-caption p-1" style="word-break: break-all">
                             {{this}}
 						</figcaption>

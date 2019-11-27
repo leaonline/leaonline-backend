@@ -5,6 +5,7 @@ import { createCollection } from '../../../factories/createCollection'
 import { getCollection } from '../../../utils/collection'
 import { createFilesCollection } from '../../../factories/createFilesCollection'
 import { dataTarget } from '../../../utils/event'
+import { LeaCoreLib } from '../../../api/core/LeaCoreLib'
 import '../../components/upload/upload'
 import './gallery.html'
 
@@ -13,6 +14,9 @@ const debug = (...args) => {
     console.info('[Template.genericList]', ...args)
   }
 }
+
+const components = LeaCoreLib.components
+const coreComponentsLoaded = components.load([components.template.image])
 
 Template.genericGallery.onCreated(function () {
   const instance = this
@@ -80,7 +84,7 @@ Template.genericGallery.onCreated(function () {
 Template.genericGallery.helpers({
   loadComplete () {
     const instance = Template.instance()
-    return instance.state.get('allSubsComplete')
+    return coreComponentsLoaded.get() && instance.state.get('allSubsComplete')
   },
   fields (document) {
     const fields = Template.instance().state.get('documentFields')
