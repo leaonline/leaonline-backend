@@ -95,7 +95,7 @@ Template.genericGallery.helpers({
   },
   files () {
     const instance = Template.instance()
-    return instance.mainCollection.find()
+    return coreComponentsLoaded.get() && instance.mainCollection.find()
   },
   link (file) {
     const instance = Template.instance()
