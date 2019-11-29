@@ -106,7 +106,6 @@ Template.afLeaTaskContent.events({
   },
   'submit #afLeaTaskAddContenTypeForm' (event, templateInstance) {
     event.preventDefault()
-
     const name = templateInstance.state.get('currentTypeToAdd')
     const schema = currentTypeSchema({ name })
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', schema)
@@ -122,9 +121,7 @@ Template.afLeaTaskContent.events({
       elements.push(insertDoc)
     }
 
-    templateInstance.state.set('elements', elements)
-    const val = JSON.stringify(elements)
-    templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
+    updateElements(elements, templateInstance)
     templateInstance.$('#taskContentModel').modal('hide')
   },
   'hidden.bs.modal' (event, templateInstance) {
@@ -159,25 +156,32 @@ Template.afLeaTaskContent.events({
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.state.get('elements')
     elements.splice(index, 1)
-    templateInstance.state.set('elements', elements)
+    updateElements(elements, templateInstance)
   },
   'click .up-element' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.state.get('elements')
     move(elements, index, index - 1)
-    templateInstance.state.set('elements', elements)
+    updateElements(elements, templateInstance)
   },
   'click .down-element' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.state.get('elements')
     move(elements, index, index + 1)
-    templateInstance.state.set('elements', elements)
+    updateElements(elements, templateInstance)
   }
 })
 
 function move (arr, oldIndex, newIndex) {
   arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0])
   return arr
+}
+
+function updateElements (elements, templateInstance) {
+  templateInstance.state.set('elements', elements)
+  const val = JSON.stringify(elements)
+  templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
+
 }
