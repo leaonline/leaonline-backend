@@ -62,3 +62,9 @@ seba:minifiers-autoprefixer
 aldeed:autoform
 imajus:autoform-bootstrap4
 d3k4y:autoform-markdown
+
+#========================================
+# SECURITY
+#========================================
+audit-argument-checks
+force-ssl
