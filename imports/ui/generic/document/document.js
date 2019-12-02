@@ -1,7 +1,6 @@
 import { Template } from 'meteor/templating'
 import { StateVariables, wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
 import { formIsValid } from '../../../utils/form'
-import { Router } from '../../../api/routes/Router'
 import './document.html'
 
 Template.genericDocument.onCreated(function () {
@@ -10,8 +9,7 @@ Template.genericDocument.onCreated(function () {
 
   instance.autorun(() => {
     const data = Template.currentData()
-    const route = Router.current()
-    const { pathname } = route.context
+    const { pathname } = window.location
     const lastPath = instance.state.get('lastPath')
     if (lastPath !== pathname) {
       instance.state.clear()
