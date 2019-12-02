@@ -1,0 +1,20 @@
+<template name="preview">
+	<div class="modal fade" id="taskContentModel" tabindex="-1" role="dialog" aria-labelledby="taskContentModelTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4>{{titleField}}</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="{{i18n 'actions.close'}}">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{{>Template.dynamic template=templateTarget data=templateData}}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">{{i18n 'actions.close'}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

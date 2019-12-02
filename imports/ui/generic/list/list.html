@@ -53,37 +53,43 @@
 
 		{{#with documents}}
 			<div class="card-body bg-white">
-			<table class="table table-striped">
-				<tr>
-					<th>#</th>
-					{{#each label in fieldLabels}}
-						<th>{{i18n label}}</th>
-					{{/each}}
-					<th></th>
-				</tr>
-				{{#each document in this}}
+				<table class="table table-striped">
 					<tr>
-						<td class="text-muted">{{@index}}</td>
-						{{#each fields document}}
-							<td>{{this}}</td>
+						<th>#</th>
+						{{#each label in fieldLabels}}
+							<th>{{i18n label}}</th>
 						{{/each}}
-						<td class="text-right no-wrap">
-							{{#if actionUpdate}}
-								<button class="btn btn-sm btn-outline-primary border-0 edit-button"
-										data-target="{{document._id}}">
-									<i class="fa fas fa-fw fa-edit"></i>
-								</button>
-							{{/if}}
-						{{#if actionRemove}}
-							<button class="btn btn-sm btn-outline-danger border-0 remove-button"
-									data-target="{{document._id}}">
-								<i class="fa fas fa-fw fa-trash"></i>
-							</button>
-						{{/if}}
-						</td>
+						<th></th>
 					</tr>
-				{{/each}}
-			</table>
+					{{#each document in this}}
+						<tr>
+							<td class="text-muted">{{@index}}</td>
+							{{#each fields document}}
+								<td>{{this}}</td>
+							{{/each}}
+							<td class="text-right no-wrap">
+								{{#if actionPreview}}
+									<button class="btn btn-sm btn-outline-primary border-0 preview-button"
+											data-target="{{document._id}}">
+										<i class="fa fas fa-fw fa-eye"></i>
+									</button>
+								{{/if}}
+								{{#if actionUpdate}}
+									<button class="btn btn-sm btn-outline-primary border-0 edit-button"
+											data-target="{{document._id}}">
+										<i class="fa fas fa-fw fa-edit"></i>
+									</button>
+								{{/if}}
+								{{#if actionRemove}}
+									<button class="btn btn-sm btn-outline-danger border-0 remove-button"
+											data-target="{{document._id}}">
+										<i class="fa fas fa-fw fa-trash"></i>
+									</button>
+								{{/if}}
+							</td>
+						</tr>
+					{{/each}}
+				</table>
 			</div>
 		{{else}}
 			<div class="card-body">
@@ -91,6 +97,9 @@
 					<p>{{i18n "common.noDocuments"}}</p>
 				</div>
 			</div>
+		{{/with}}
+		{{#with previewTarget}}
+			{{> preview doc=this.doc template=this.template onClosed=onClosed titleField=this.titleField }}
 		{{/with}}
 	{{/if}}
 </template>

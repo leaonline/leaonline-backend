@@ -6,6 +6,7 @@ import { formIsValid } from '../../../utils/form'
 import { by300 } from '../../../utils/dely'
 import { i18n } from '../../../api/i18n/I18n'
 import '../../components/upload/upload'
+import '../../components/preview/preview'
 import './list.html'
 
 Template.genericList.onCreated(function () {
@@ -26,6 +27,14 @@ Template.genericList.helpers(wrapHelpers({
   },
   updateForm () {
     return Template.getState('updateForm')
+  },
+  previewTarget () {
+    const instance = Template.instance()
+    return instance.state.get('previewTarget')
+  },
+  onClosed () {
+    const instance = Template.instance()
+    return onClosed.bind(instance)
   }
 }))
 
@@ -70,6 +79,15 @@ Template.genericList.events({
     Router.queryParam({ action: null })
     templateInstance.state.set('insertForm', false)
     templateInstance.state.set('updateForm', false)
+  },
+  'click .preview-button' (event, templateInstance) {
+    event.preventDefault()
+    const { template, titleField } = templateInstance.state.get(StateVariables.actionPreview)
+    if (!template) return
+    const targetId = dataTarget(event, templateInstance)
+    const doc = templateInstance.mainCollection.findOne(targetId)
+    if (!doc) return
+    templateInstance.state.set('previewTarget', { doc, template, titleField })
   },
   // //////////////////////////////////////////////////////
   // FORM EVENTS
@@ -120,3 +138,7 @@ Template.genericList.events({
     }))
   }
 })
+
+function onClosed () {
+  this.state.set('previewTarget', null)
+}

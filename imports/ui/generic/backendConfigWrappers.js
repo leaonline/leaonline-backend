@@ -8,6 +8,7 @@ import { getCollection } from '../../utils/collection'
 import { createFilesCollection } from '../../factories/createFilesCollection'
 import { ContextRegistry } from '../../api/ContextRegistry'
 import { BackendConfig } from '../../api/config/BackendConfig'
+import { LeaCoreLib } from '../../api/core/LeaCoreLib'
 
 // form types
 import '../forms/taskContent/taskContent'
@@ -29,6 +30,7 @@ export const StateVariables = {
   actionInsert: 'actionInsert',
   actionUpdate: 'actionUpdate',
   actionUpload: 'actionUpload',
+  actionPreview: 'actionPreview',
   updateDoc: 'updateDoc',
   documentFields: 'documentFields',
   documentsCount: 'documentsCount',
@@ -134,6 +136,18 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
 
   const actions = config.actions || {}
   instance.state.set(StateVariables.actionRemove, actions.remove)
+
+  // actions - preview
+  if (actions.preview) {
+    logDebug('load preview', actions.preview.type, actions.preview.name)
+    LeaCoreLib[actions.preview.type][actions.preview.name]
+      .load()
+      .then(() => {
+        logDebug('loaded', actions.preview.name)
+        instance.state.set(StateVariables.actionPreview, actions.preview)
+      })
+      .catch(e => console.error(e))
+  }
 
   // actions - insert
 
@@ -291,6 +305,12 @@ export const wrapHelpers = function (obj) {
     },
     fieldLabels () {
       return Template.instance().fieldLabels
+    },
+    // /////////////////////////////////////////////////
+    //  Preview
+    // /////////////////////////////////////////////////
+    actionPreview () {
+      return Template.instance().state.get(StateVariables.actionPreview)
     },
     // /////////////////////////////////////////////////
     //  Upload
