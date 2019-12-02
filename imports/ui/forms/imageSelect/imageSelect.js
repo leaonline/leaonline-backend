@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating'
+import { ReactiveDict } from 'meteor/reactive-dict'
 import { Mongo } from 'meteor/mongo'
 import './autoform'
 import './imageSelect.css'
@@ -17,6 +18,7 @@ const StateVariables = {
 
 Template.afImageSelect.onCreated(function () {
   const instance = this
+  instance.stateVars = new ReactiveDict()
   const { data } = instance
   const { atts } = data
 
@@ -28,7 +30,7 @@ Template.afImageSelect.onCreated(function () {
   const saveType = (atts.save === SaveType.url)
     ? SaveType.url
     : SaveType.id
-  instance.state.set(StateVariables.saveType, saveType)
+  instance.stateVars.set(StateVariables.saveType, saveType)
 
   if (data.value) {
     let valueDoc = instance.imagesCollection.findOne(data.value)
@@ -43,20 +45,25 @@ Template.afImageSelect.onCreated(function () {
     }, 100)
   }
 
-  instance.state.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
-  instance.state.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
-  instance.state.set('dataSchemaKey', atts['data-schema-key'])
+  instance.stateVars.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
+  instance.stateVars.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
+  instance.stateVars.set('dataSchemaKey', atts['data-schema-key'])
+})
+
+Template.afImageSelect.onDestroyed(function () {
+  const instance = this
+  instance.stateVars.clear()
 })
 
 Template.afImageSelect.helpers({
   dataSchemaKey () {
-    return Template.instance().state.get('dataSchemaKey')
+    return Template.instance().stateVars.get('dataSchemaKey')
   },
   images () {
     return Template.instance().imagesCollection.find()
   },
   galleryMode () {
-    return Template.instance().state.get(StateVariables.galleryMode)
+    return Template.instance().stateVars.get(StateVariables.galleryMode)
   },
   link (doc) {
     const instance = Template.instance()
@@ -66,8 +73,7 @@ Template.afImageSelect.helpers({
   },
   selectedImage () {
     const instance = Template.instance()
-    const imageId = instance.state.get(StateVariables.selectedImage)
-    console.log(imageId)
+    const imageId = instance.stateVars.get(StateVariables.selectedImage)
     return imageId && instance.imagesCollection.findOne(imageId)
   }
 })
@@ -75,22 +81,26 @@ Template.afImageSelect.helpers({
 Template.afImageSelect.events({
   'click .open-gallery-button' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.state.set(StateVariables.galleryMode, true)
+    templateInstance.stateVars.set(StateVariables.galleryMode, true)
   },
   'click .close-gallery-button' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.state.set(StateVariables.galleryMode, false)
+    templateInstance.stateVars.set(StateVariables.galleryMode, false)
   },
   'click .image-select' (event, templateInstance) {
     event.preventDefault()
     const target = templateInstance.$(event.currentTarget).data('target')
     updateTarget(target, templateInstance)
-    templateInstance.state.set(StateVariables.galleryMode, false)
+    templateInstance.stateVars.set(StateVariables.galleryMode, false)
+  },
+  'click .remove-image-button' (event, templateInstance) {
+    event.preventDefault()
+    updateTarget(null, templateInstance)
   }
 })
 
 function updateTarget (targetId, templateInstance) {
-  const saveType = templateInstance.state.get(StateVariables.saveType)
+  const saveType = templateInstance.stateVars.get(StateVariables.saveType)
   const $hiddenInput = templateInstance.$('.afImageSelectHiddenInput')
 
   // update the underlying field
@@ -99,7 +109,8 @@ function updateTarget (targetId, templateInstance) {
     const ImagesFilesCollection = templateInstance.imagesCollection.filesCollection
     const version = templateInstance.data.atts.version
     const uriBase = templateInstance.data.atts.uriBase
-    const link = ImagesFilesCollection.findOne(targetId).link(version, uriBase)
+    const file = ImagesFilesCollection.findOne(targetId)
+    const link = file && file.link(version, uriBase)
     $hiddenInput.val(link)
   } else {
     $hiddenInput.val(targetId)
@@ -107,5 +118,5 @@ function updateTarget (targetId, templateInstance) {
 
   // cache selection, in case we reopen the
   // galleryMode view to scroll to the selection
-  templateInstance.state.set(StateVariables.selectedImage, targetId)
+  templateInstance.stateVars.set(StateVariables.selectedImage, targetId)
 }
