@@ -14,6 +14,13 @@ Template.genericList.onCreated(function () {
 
   instance.autorun(() => {
     const data = Template.currentData()
+    const route = Router.current()
+    const { pathname } = route.context
+    const lastPath = instance.state.get('lastPath')
+    if (lastPath !== pathname) {
+      instance.state.clear()
+      instance.state.set('lastPath', pathname)
+    }
     wrapOnCreated(instance, { data, debug: true })
   })
 })
