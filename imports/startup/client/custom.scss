@@ -1,0 +1,69 @@
+/* custom.scss */
+/* import the necessary Bootstrap files */
+@import "{}/node_modules/bootstrap/scss/functions";
+@import "{}/node_modules/bootstrap/scss/variables";
+@import "{}/node_modules/bootstrap/scss/mixins/buttons";
+@import "./leacolors";
+
+/* -------begin customization-------- */
+
+
+/* simply assign the value */
+$body-bg: $lea-gray-lighter;
+
+/* or, use an existing variable */
+$theme-colors: (
+        warning: $lea-warning,
+        danger: $lea-danger,
+        success: $lea-success,
+        primary: $lea-primary,
+        secondary: $lea-secondary,
+        light: $lea-light,
+        gray: $lea-gray
+);
+
+@each $color, $value in $theme-colors {
+  .btn-#{$color} {
+    color: white !important;
+    &:hover {
+      color: white !important;
+    }
+    &.active {
+      color: white !important;
+    }
+  }
+}
+
+@each $color, $value in $theme-colors {
+  .btn-outline-#{$color} {
+    &:hover {
+      color: white !important;
+    }
+    &.active {
+      color: white !important;
+    }
+  }
+}
+
+
+.border-gray {
+  border: solid $lea-gray !important;
+}
+
+.lea-outline-secondary {
+  background: white !important;
+}
+
+.lea-outline-secondary:hover {
+  background: $lea-secondary !important;
+  color: white !important;
+}
+
+.card {
+  border-radius: 0px !important;
+}
+
+/* -------end customization-------- */
+
+/* finally, import Bootstrap to set the changes! */
+@import "{}/node_modules/bootstrap/scss/bootstrap.scss";
