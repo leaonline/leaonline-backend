@@ -101,18 +101,18 @@ Template.genericList.events({
   'submit #insertForm' (event, templateInstance) {
     event.preventDefault()
 
-    const inserDoc = formIsValid('insertForm', templateInstance.actionInsertSchema)
-    if (!inserDoc) return
+    const insertDoc = formIsValid('insertForm', templateInstance.actionInsertSchema)
+    if (!insertDoc) return
 
     templateInstance.state.set(StateVariables.submitting, true)
     const actionInsert = templateInstance.state.get('actionInsert')
     const app = templateInstance.data.app()
     const { connection } = app
-    connection.call(actionInsert.method, inserDoc, by300((err, res) => {
+    connection.call(actionInsert.method, insertDoc, by300((err, res) => {
       templateInstance.state.set(StateVariables.submitting, false)
       if (err) {
         // TODO handle form error
-        return constructor.error(err)
+        return console.error(err)
       }
       Router.queryParam({ action: null })
       templateInstance.state.set('insertForm', false)
@@ -135,7 +135,7 @@ Template.genericList.events({
       templateInstance.state.set(StateVariables.submitting, false)
       if (err) {
         // TODO handle form error
-        return constructor.error(err)
+        return console.error(err)
       } else {
         console.log(res)
       }
