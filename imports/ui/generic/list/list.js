@@ -118,6 +118,12 @@ Template.genericList.events({
       templateInstance.state.set('insertForm', false)
     }))
   },
+  'click .show-source-button' (event, templateInstance) {
+    event.preventDefault()
+    const doc = templateInstance.state.get('updateDoc')
+    const template = 'fallBack'
+    templateInstance.state.set('previewTarget', { doc, template })
+  },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
 
