@@ -5,6 +5,7 @@
     "submit": "Absenden",
     "close": "Schließen",
     "insertDoc": "Ein neues Dokument anlegen",
+    "updateDoc": "Ein Dokument bearbeiten",
     "confirmRemove": "Möchten Sie wirklich das Dokument löschen?"
   },
   "grid": {
@@ -23,6 +24,7 @@
     "h5p": "H5P Format"
   },
   "common": {
+    "ok": "OK",
     "title": "Titel",
     "back": "Zurück",
     "continue": "Fortsetzen",
@@ -40,6 +42,9 @@
     "login": "Anmelden",
     "description": "Beschreibung",
     "noDocuments": "Es sind (ggf. noch) keine Dokumente vorhanden"
+  },
+  "upload": {
+    "successful": "Upload erfolgreich!"
   },
   "contexts": {
     "users": {

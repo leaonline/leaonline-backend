@@ -1,0 +1,37 @@
+<template name="preview">
+	<div class="modal fade" id="taskContentModel" tabindex="-1" role="dialog" aria-labelledby="taskContentModelTitle"
+		 aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable {{modalSize}}" role="document">
+			<div class="modal-content">
+				<div class="modal-header d-flex justify-content-between">
+					<span>
+						<button type="button" data-target="xl" class="size-button btn {{#if size 'xl'}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
+							<i class="fa fas fa-fw fa-desktop"></i> +
+						</button>
+						<button type="button" data-target="lg" class="size-button btn {{#if size 'lg'}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
+							<i class="fa fas fa-fw fa-desktop"></i>
+						</button>
+						<button type="button" data-target="default" class="size-button btn {{#if size 'default'}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
+							<i class="fa fas fa-fw fa-tablet-alt"></i>
+						</button>
+						<button type="button" data-target="sm" class="size-button btn {{#if size 'sm'}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
+							<i class="fa fas fa-fw fa-mobile-alt"></i>
+						</button>
+					</span>
+					<button type="button" class="close" data-dismiss="modal" aria-label="{{i18n 'actions.close'}}">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<h4>{{titleField}}</h4>
+					<hr>
+					{{>Template.dynamic template=templateTarget data=templateData}}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">{{i18n
+							'actions.close'}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

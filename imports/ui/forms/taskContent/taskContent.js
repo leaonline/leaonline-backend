@@ -36,15 +36,25 @@ TaskRenderers.factory.load()
 
 Template.afLeaTaskContent.onCreated(function () {
   const instance = this
-  instance.state = new ReactiveDict()
+  instance.stateVars = new ReactiveDict()
 
   const { data } = instance
   const { atts } = data
 
-  instance.state.set('elements', data.value || [])
-  instance.state.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
-  instance.state.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
-  instance.state.set('dataSchemaKey', atts['data-schema-key'])
+  instance.stateVars.set('elements', data.value || [])
+  instance.stateVars.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
+  instance.stateVars.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
+  instance.stateVars.set('dataSchemaKey', atts['data-schema-key'])
+})
+
+Template.afLeaTaskContent.onRendered(function () {
+  const instance = this
+  const { data } = instance
+
+  // update initial value to underlying hidden input
+  if (data.value && data.value.length > 0) {
+    updateElements( data.value || [], instance)
+  }
 })
 
 Template.afLeaTaskContent.helpers({
@@ -52,7 +62,7 @@ Template.afLeaTaskContent.helpers({
     return Template.instance().data.atts['data-schema-key']
   },
   elements () {
-    return Template.instance().state.get('elements')
+    return Template.instance().stateVars.get('elements')
   },
   stringify (src) {
     return JSON.stringify(src)
@@ -64,11 +74,11 @@ Template.afLeaTaskContent.helpers({
     return types.filter(entry => entry.group.name === group)
   },
   currentTypeToAdd () {
-    return Template.instance().state.get('currentTypeToAdd')
+    return Template.instance().stateVars.get('currentTypeToAdd')
   },
   currentTypeSchema () {
     const instance = Template.instance()
-    const name = instance.state.get('currentTypeToAdd')
+    const name = instance.stateVars.get('currentTypeToAdd')
     const imagesCollection = instance.data.atts.imagesCollection
     const version = instance.data.atts.imagesVersion
     const uriBase = instance.data.atts.imagesUriBase
@@ -76,16 +86,16 @@ Template.afLeaTaskContent.helpers({
     return currentTypeSchema({ name, imagesCollection, version, uriBase, h5p })
   },
   overElement (index) {
-    return Template.instance().state.get('overElement') === index
+    return Template.instance().stateVars.get('overElement') === index
   },
   currentElement () {
-    return Template.instance().state.get('currentElement')
+    return Template.instance().stateVars.get('currentElement')
   },
   firstElement (index) {
     return index < 1
   },
   lastElement (index) {
-    const elements = Template.instance().state.get('elements')
+    const elements = Template.instance().stateVars.get('elements')
     return index > (elements.length - 2)
   }
 })
@@ -98,23 +108,22 @@ Template.afLeaTaskContent.events({
   'click .select-content-type-button' (event, templateInstance) {
     event.preventDefault()
     const name = dataTarget(event, templateInstance, 'name')
-    templateInstance.state.set('currentTypeToAdd', name)
+    templateInstance.stateVars.set('currentTypeToAdd', name)
   },
   'click .modal-back-button' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.state.set('currentTypeToAdd', null)
+    templateInstance.stateVars.set('currentTypeToAdd', null)
   },
   'submit #afLeaTaskAddContenTypeForm' (event, templateInstance) {
     event.preventDefault()
-
-    const name = templateInstance.state.get('currentTypeToAdd')
+    const name = templateInstance.stateVars.get('currentTypeToAdd')
     const schema = currentTypeSchema({ name })
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', schema)
 
     if (!insertDoc) return
 
-    const elements = templateInstance.state.get('elements')
-    const currentElementIndex = templateInstance.state.get('currentElementIndex')
+    const elements = templateInstance.stateVars.get('elements')
+    const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
 
     if (typeof currentElementIndex === 'number') {
       elements.splice(currentElementIndex, 1, insertDoc)
@@ -122,62 +131,67 @@ Template.afLeaTaskContent.events({
       elements.push(insertDoc)
     }
 
-    templateInstance.state.set('elements', elements)
-    const val = JSON.stringify(elements)
-    templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
+    updateElements(elements, templateInstance)
     templateInstance.$('#taskContentModel').modal('hide')
   },
   'hidden.bs.modal' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.state.set('currentTypeToAdd', null)
-    templateInstance.state.set('currentElement', null)
-    templateInstance.state.set('currentElementIndex', null)
+    templateInstance.stateVars.set('currentTypeToAdd', null)
+    templateInstance.stateVars.set('currentElement', null)
+    templateInstance.stateVars.set('currentElementIndex', null)
   },
   'mouseover .element-container' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
-    templateInstance.state.set('overElement', index)
+    templateInstance.stateVars.set('overElement', index)
   },
   'mouseout .element-container' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
-    const currentIndex = templateInstance.state.get('overElement')
-    if (index === currentIndex) templateInstance.state.set('overElement', null)
+    const currentIndex = templateInstance.stateVars.get('overElement')
+    if (index === currentIndex) templateInstance.stateVars.set('overElement', null)
   },
   'click .edit-element' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
-    const elements = templateInstance.state.get('elements')
+    const elements = templateInstance.stateVars.get('elements')
     const currentElement = elements[index]
-    templateInstance.state.set('currentTypeToAdd', currentElement.subtype)
-    templateInstance.state.set('currentElement', currentElement)
-    templateInstance.state.set('currentElementIndex', index)
+    templateInstance.stateVars.set('currentTypeToAdd', currentElement.subtype)
+    templateInstance.stateVars.set('currentElement', currentElement)
+    templateInstance.stateVars.set('currentElementIndex', index)
     templateInstance.$('#taskContentModel').modal('show')
   },
   'click .remove-element' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
-    const elements = templateInstance.state.get('elements')
+    const elements = templateInstance.stateVars.get('elements')
     elements.splice(index, 1)
-    templateInstance.state.set('elements', elements)
+    updateElements(elements, templateInstance)
   },
   'click .up-element' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
-    const elements = templateInstance.state.get('elements')
+    const elements = templateInstance.stateVars.get('elements')
     move(elements, index, index - 1)
-    templateInstance.state.set('elements', elements)
+    updateElements(elements, templateInstance)
   },
   'click .down-element' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
-    const elements = templateInstance.state.get('elements')
+    const elements = templateInstance.stateVars.get('elements')
     move(elements, index, index + 1)
-    templateInstance.state.set('elements', elements)
+    updateElements(elements, templateInstance)
   }
 })
 
 function move (arr, oldIndex, newIndex) {
   arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0])
   return arr
+}
+
+function updateElements (elements, templateInstance) {
+  templateInstance.stateVars.set('elements', elements)
+  const val = JSON.stringify(elements)
+  templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
+
 }

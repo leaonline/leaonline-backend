@@ -6,6 +6,7 @@ import { formIsValid } from '../../../utils/form'
 import { by300 } from '../../../utils/dely'
 import { i18n } from '../../../api/i18n/I18n'
 import '../../components/upload/upload'
+import '../../components/preview/preview'
 import './list.html'
 
 Template.genericList.onCreated(function () {
@@ -13,7 +14,13 @@ Template.genericList.onCreated(function () {
 
   instance.autorun(() => {
     const data = Template.currentData()
+    const { pathname } = window.location
+    const lastPath = instance.state.get('lastPath')
+    if (lastPath !== pathname) {
+      instance.state.clear()
+    }
     wrapOnCreated(instance, { data, debug: true })
+    instance.state.set('lastPath', pathname)
   })
 })
 
@@ -26,6 +33,14 @@ Template.genericList.helpers(wrapHelpers({
   },
   updateForm () {
     return Template.getState('updateForm')
+  },
+  previewTarget () {
+    const instance = Template.instance()
+    return instance.state.get('previewTarget')
+  },
+  onClosed () {
+    const instance = Template.instance()
+    return onClosed.bind(instance)
   }
 }))
 
@@ -71,28 +86,43 @@ Template.genericList.events({
     templateInstance.state.set('insertForm', false)
     templateInstance.state.set('updateForm', false)
   },
+  'click .preview-button' (event, templateInstance) {
+    event.preventDefault()
+    const { template, titleField } = templateInstance.state.get(StateVariables.actionPreview)
+    if (!template) return
+    const targetId = dataTarget(event, templateInstance)
+    const doc = templateInstance.mainCollection.findOne(targetId)
+    if (!doc) return
+    templateInstance.state.set('previewTarget', { doc, template, titleField })
+  },
   // //////////////////////////////////////////////////////
   // FORM EVENTS
   // //////////////////////////////////////////////////////
   'submit #insertForm' (event, templateInstance) {
     event.preventDefault()
 
-    const inserDoc = formIsValid('insertForm', templateInstance.actionInsertSchema)
-    if (!inserDoc) return
+    const insertDoc = formIsValid('insertForm', templateInstance.actionInsertSchema)
+    if (!insertDoc) return
 
     templateInstance.state.set(StateVariables.submitting, true)
     const actionInsert = templateInstance.state.get('actionInsert')
     const app = templateInstance.data.app()
     const { connection } = app
-    connection.call(actionInsert.method, inserDoc, by300((err, res) => {
+    connection.call(actionInsert.method, insertDoc, by300((err, res) => {
       templateInstance.state.set(StateVariables.submitting, false)
       if (err) {
         // TODO handle form error
-        return constructor.error(err)
+        return console.error(err)
       }
       Router.queryParam({ action: null })
       templateInstance.state.set('insertForm', false)
     }))
+  },
+  'click .show-source-button' (event, templateInstance) {
+    event.preventDefault()
+    const doc = templateInstance.state.get('updateDoc')
+    const template = 'fallBack'
+    templateInstance.state.set('previewTarget', { doc, template })
   },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
@@ -111,7 +141,7 @@ Template.genericList.events({
       templateInstance.state.set(StateVariables.submitting, false)
       if (err) {
         // TODO handle form error
-        return constructor.error(err)
+        return console.error(err)
       } else {
         console.log(res)
       }
@@ -120,3 +150,7 @@ Template.genericList.events({
     }))
   }
 })
+
+function onClosed () {
+  this.state.set('previewTarget', null)
+}
