@@ -128,6 +128,7 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   const logDebug = getDebug(instance, debug)
   const app = data.app()
   const { connection } = app
+  console.log(connection, connection.status())
   instance.state.set(StateVariables.remoteUrl, app.url)
 
   const config = data.config()
@@ -215,8 +216,11 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
         // create filesCollection if flag is truthy
         instance.collections[collectionName] = createCollection({
           name: collectionName,
-          schema: {}
-        }, { connection })
+          schema: {},
+          connection: connection
+        })
+
+        // additionally create files collection
         if (isFilesCollection) {
           createFilesCollection({
             collectionName: collectionName,
@@ -240,23 +244,29 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
     config.publications.forEach(publication => {
       const { name } = publication
       allSubs[name] = false
-      Tracker.autorun(() => {
-        logDebug('subscribe to', name)
-        const sub = connection.subscribe(name, {})
-        if (sub.ready()) {
-          allSubs[name] = true
-          logDebug(name, 'complete')
+      const onStop = function (err) {
+        if (err) {
+          console.error(name, err)
+          if (err.message) {
+            alert(err.message)
+          }
         }
+      }
+      const onReady = function () {
+        logDebug(name, `complete`)
+        allSubs[name] = true
         if (Object.values(allSubs).every(entry => entry === true)) {
           logDebug('all subs complete')
           if (onSubscribed) {
             onSubscribed()
           }
           const count = instance.mainCollection.find().count()
+          logDebug(instance.mainCollection, instance.mainCollection.find().fetch())
           instance.state.set(StateVariables.documentsCount, count)
           instance.state.set(StateVariables.allSubsComplete, true)
         }
-      })
+      }
+      connection.subscribe(name, {}, { onStop, onReady })
     })
   }
 }

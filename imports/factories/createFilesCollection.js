@@ -1,4 +1,6 @@
-import { getCreateFilesCollection } from 'meteor/leaonline:factories/collection/createFilesCollection'
+import { createFilesCollectionFactory } from 'meteor/leaonline:files-collection-factory'
 import { i18n } from '../api/i18n/I18n'
 
-export const createFilesCollection = getCreateFilesCollection({ i18n })
+const i18nFactory = i18n.get
+
+export const createFilesCollection = createFilesCollectionFactory({ i18nFactory })

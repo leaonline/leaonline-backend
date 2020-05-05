@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
 import { Tracker } from 'meteor/tracker'
 import { createCollection } from '../../../factories/createCollection'
-import { getCollection } from '../../../utils/collection'
 import { createFilesCollection } from '../../../factories/createFilesCollection'
+import { getCollection } from '../../../utils/collection'
 import { dataTarget } from '../../../utils/event'
 import { LeaCoreLib } from '../../../api/core/LeaCoreLib'
 import '../../components/upload/upload'
@@ -43,8 +43,9 @@ Template.genericGallery.onCreated(function () {
         // create filesCollection if flag is truthy
         instance.collections[collectionName] = createCollection({
           name: collectionName,
-          schema: {}
-        }, { connection })
+          schema: {},
+          connection
+        })
         if (config.isFilesCollection) {
           createFilesCollection({
             collectionName: collectionName,

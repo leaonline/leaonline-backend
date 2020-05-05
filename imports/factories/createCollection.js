@@ -1,4 +1,6 @@
-import { getCreateCollection } from 'meteor/leaonline:factories/collection/createCollection'
+import { createCollectionFactory } from 'meteor/leaonline:collection-factory'
 import { Schema } from '../api/schema/Schema'
 
-export const createCollection = getCreateCollection(Schema.create)
+export const createCollection = createCollectionFactory({
+  schemaFactory: Schema.create
+})

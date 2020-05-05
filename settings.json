@@ -1,7 +1,7 @@
 {
   "oauth": {
-    "clientId": "0123456890",
-    "secret": "01234568900123456890",
+    "clientId": "porhLyvwTdhJgdda8",
+    "secret": "CegPW7FWebir7iYuPdubAR3wwzavRptB",
     "dialogUrl": "http://localhost:9090/oauth/authorize",
     "accessTokenUrl": "http://localhost:9090/oauth/token",
     "authorizeUrl": "http://localhost:9090/oauth/authorize",
@@ -10,14 +10,6 @@
   },
   "public": {
     "hosts": {
-      "ocpu": {
-        "label": "lea.statistics",
-        "name": "stat",
-        "url": "http://localhost:6060",
-        "icon": "calculator",
-        "ddpConnect": false,
-        "ddpLogin": false
-      },
       "otulea": {
         "label": "otu.lea",
         "name": "otulea",
@@ -33,15 +25,6 @@
         "icon": "file",
         "ddpConnect": true,
         "ddpLogin": true
-      },
-      "items": {
-        "name": "items",
-        "label": "lea.items",
-        "url": "http://localhost:8080",
-        "icon": "check",
-        "ddpConnect": false,
-        "ddpLogin": false,
-        "renderUrl": "http://localhost:8080/play?contentId="
       }
     },
     "tts": {

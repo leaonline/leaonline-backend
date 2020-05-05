@@ -20,7 +20,6 @@ shell-server@0.5.0            # Server-side component of the `meteor shell` comm
 # Basic tools
 leaonline:errors
 leaonline:utils
-leaonline:factories
 leaonline:interfaces
 leaonline:corelib
 
@@ -41,6 +40,12 @@ accounts-base@1.6.0
 leaonline:accounts-lea
 leaonline:ddp-login
 ongoworks:ddp-login
+
+# factories
+leaonline:collection-factory
+leaonline:method-factory
+leaonline:ratelimit-factory
+leaonline:files-collection-factory
 
 
 # files
