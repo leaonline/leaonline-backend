@@ -51,7 +51,7 @@ Template.genericList.events({
     if (!global.confirm(i18n.get('actions.confirmRemove'))) return
 
     const removeContext = templateInstance.state.get('actionRemove')
-    const { method } = removeContext
+    const method  = removeContext.name
     const _id = dataTarget(event, templateInstance)
     const app = templateInstance.data.app()
     const { connection } = app
@@ -101,14 +101,18 @@ Template.genericList.events({
   'submit #insertForm' (event, templateInstance) {
     event.preventDefault()
 
-    const insertDoc = formIsValid('insertForm', templateInstance.actionInsertSchema)
+    const schema = templateInstance.actionInsertSchema
+    const insertDoc = formIsValid('insertForm', schema)
     if (!insertDoc) return
 
     templateInstance.state.set(StateVariables.submitting, true)
     const actionInsert = templateInstance.state.get('actionInsert')
     const app = templateInstance.data.app()
     const { connection } = app
-    connection.call(actionInsert.method, insertDoc, by300((err, res) => {
+
+    connection.call(actionInsert.name, insertDoc, by300((err, res) => {
+      console.log(err)
+      console.log(res)
       templateInstance.state.set(StateVariables.submitting, false)
       if (err) {
         // TODO handle form error
@@ -137,7 +141,7 @@ Template.genericList.events({
     const actonUpdate = templateInstance.state.get('actionUpdate')
     const app = templateInstance.data.app()
     const { connection } = app
-    connection.call(actonUpdate.method, updateDoc, by300((err, res) => {
+    connection.call(actonUpdate.name, updateDoc, by300((err, res) => {
       templateInstance.state.set(StateVariables.submitting, false)
       if (err) {
         // TODO handle form error

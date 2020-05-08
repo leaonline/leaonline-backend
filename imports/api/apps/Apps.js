@@ -127,6 +127,7 @@ const configure = function (name) {
     log(url, 'backend config received', config)
     if (err) return console.error(err)
     if (config) {
+      BackendConfig.parse(config)
       BackendConfig.parent(name, config)
       i18n.add(lang, config.lang)
       updateConfig(name, config)
