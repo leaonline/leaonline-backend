@@ -11,9 +11,11 @@ import { BackendConfig } from '../../api/config/BackendConfig'
 import { LeaCoreLib } from '../../api/core/LeaCoreLib'
 
 // form types
-import '../forms/taskContent/taskContent'
-import '../forms/imageSelect/imageSelect'
-import '../forms/h5p/h5p'
+//import '../forms/taskContent/taskContent'
+//import '../forms/imageSelect/imageSelect'
+//import '../forms/h5p/h5p'
+
+const dependencyCache = new Set()
 
 const getDebug = (instance, debug) => debug
   ? (...args) => {
@@ -45,61 +47,13 @@ export const StateActions = {
   upload: 'upload'
 }
 
-function reviver (key, value) {
-  if (key === 'label') {
-    return () => i18n.get(value)
-  }
-  if (key === 'firstOptions') {
-    return () => value
-  }
-  if (key === 'options' && !Array.isArray(value)) {
-    const optionsProjection = Object.assign({}, value.projection)
-    const optonsMapFct = (el) => {
-      return {
-        value: el[(value.map && value.map.valueSrc) || '_id'],
-        label: el[(value.map && value.map.labelSrc) || 'label']
-      }
-    }
-
-    return function options () {
-      const OptionsCollection = getCollection(value.collectionName)
-      if (!OptionsCollection) return []
-      const optionsQuery = {}
-      if (value.query) {
-        Object.keys(value.query).forEach(key => {
-          const fieldValue = global.AutoForm.getFieldValue(key)
-          if (fieldValue) {
-            optionsQuery[key] = fieldValue
-          }
-        })
-      }
-      return OptionsCollection.find(optionsQuery, optionsProjection).fetch().map(optonsMapFct)
-    }
-  }
-
-  switch (value) {
-    case 'String':
-      return String
-    case 'Number':
-      return Number
-    case 'Array':
-      return Array
-    case 'Date':
-      return Date
-    case 'Object':
-      return Object
-    default:
-      return value
-  }
-}
-
 const fieldsFromCollection = function ({ value, fieldConfig, isArray }) {
-  const collection = getCollection(fieldConfig.collection)
+  const collection = getCollection(fieldConfig.dependency.collection)
   if (!collection) return value
 
   const toDocumentField = entry => {
     const currentDoc = collection.findOne(entry)
-    return currentDoc && currentDoc[fieldConfig.field]
+    return currentDoc && currentDoc[fieldConfig.dependency.field]
   }
 
   if (isArray) {
@@ -124,21 +78,39 @@ const fieldsFromKeyMap = function ({ fieldConfig, value }) {
   return label && i18n.get(label)
 }
 
-export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
-  const logDebug = getDebug(instance, debug)
-  const app = data.app()
-  const { connection } = app
-  console.log(connection, connection.status())
-  instance.state.set(StateVariables.remoteUrl, app.url)
+function toFormSchema (srcSchema) {
+  const schema = Object.assign({}, srcSchema)
+  Object.entries(schema).forEach(([key, value]) => {
+    const autoform = {}
 
-  const config = data.config()
-  logDebug(config)
-  instance.state.set(StateVariables.config, config)
+    if (value.dependency) {
+      const { dependency } = value
+      const transform = { sort: { [dependency.field]: 1 } }
+      const query = dependency.query || {}
+      const toOptions = doc => ({ value: doc._id, label: doc[dependency.field] })
+      autoform.firstOption = () => i18n.get('form.selectOne')
+      autoform.options = () => {
+        const collection = getCollection(dependency.collection)
+        return collection
+          ? collection.find(query, transform).fetch().map(toOptions)
+          : []
+      }
+      dependencyCache.add(dependency.collection)
+    }
 
-  const actions = config.actions || {}
-  instance.state.set(StateVariables.actionRemove, actions.remove)
+    value.autoform = autoform
+  })
+  return schema
+}
 
-  // actions - preview
+function parseActions ({ instance, config, logDebug }) {
+  const actions = config.methods || {}
+  const schema = config.schema || {}
+
+  if (actions.remove) {
+    instance.state.set(StateVariables.actionRemove, actions.remove)
+  }
+
   if (actions.preview) {
     logDebug('load preview', actions.preview.type, actions.preview.name)
     LeaCoreLib[actions.preview.type][actions.preview.name]
@@ -150,39 +122,55 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
       .catch(e => console.error(e))
   }
 
-  // actions - insert
-
   if (actions.insert) {
+    const insertFormSchema = toFormSchema(actions.insert.schema || schema)
+    console.log(insertFormSchema)
+    instance.actionInsertSchema = Schema.create(insertFormSchema)
     instance.state.set(StateVariables.actionInsert, actions.insert)
-    const parsedInsertSchema = typeof actions.insert.schema === 'string'
-      ? JSON.parse(actions.insert.schema, reviver)
-      : actions.insert.schema
-    instance.actionInsertSchema = Schema.create(parsedInsertSchema)
   }
-
-  // actions - update
 
   if (actions.update) {
+    const updateFormSchema = toFormSchema(actions.update.schema || schema)
+    instance.actionUpdateSchema = Schema.create(updateFormSchema)
     instance.state.set(StateVariables.actionUpdate, actions.update)
-    const parsedSchema = typeof actions.update.schema === 'string'
-      ? JSON.parse(actions.update.schema, reviver)
-      : actions.update.schema
-    instance.actionUpdateSchema = Schema.create(parsedSchema)
   }
 
-  instance.state.set(StateVariables.actionUpload, actions.upload)
+  if (actions.upload) {
+    instance.state.set(StateVariables.actionUpload, actions.upload)
+  }
+}
 
-  // fields
+function getFieldConfig (config, key, field) {
+  const fieldConfig = Object.assign({
+    label: `${config.name}.${key}`
+  }, field)
 
+  if (field.dependency) {
+    fieldConfig.type = BackendConfig.fieldTypes.collection
+  }
+  if (field.context) {
+    fieldConfig.type = BackendConfig.fieldTypes.context
+  }
+
+  return fieldConfig
+}
+
+function parseFields ({ instance, config, logDebug }) {
   const fieldLabels = {}
   const fieldResolvers = {}
-  const fields = config.fields || { _id: 1 }
-  Object.keys(fields).forEach(fieldKey => {
-    const fieldConfig = fields[fieldKey]
-    fieldLabels[fieldKey] = (fieldConfig && fieldConfig.label) || fieldKey
-    if (typeof fieldConfig !== 'object') return
+  const fields = {}
 
-    fieldResolvers[fieldKey] = (value) => {
+  // create fields from schema
+  Object.entries(config.schema).forEach(([key, value]) => {
+    // skip all non-public fields
+    if (value.list === false) return
+
+    const fieldConfig = getFieldConfig(config, key, value)
+
+    fields[key] = 1
+    fieldLabels[key] = fieldConfig.label
+
+    fieldResolvers[key] = (value) => {
       const isArray = Array.isArray(value)
       switch (fieldConfig.type) {
         case BackendConfig.fieldTypes.collection:
@@ -196,79 +184,115 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
       }
     }
   })
+
   instance.fieldLabels = Object.values(fieldLabels)
   instance.fieldResolvers = fieldResolvers
   instance.state.set(StateVariables.documentFields, Object.keys(fields))
+}
 
-  if (config.collections) {
-    instance.collections = instance.collections || {}
+function parseCollections ({ instance, config, connection, logDebug }) {
+  instance.collections = instance.collections || new Map()
 
-    config.collections.forEach(collectionConfig => {
-      const collectionName = typeof collectionConfig === 'string'
-        ? collectionConfig
-        : collectionConfig.name
-      const { isFilesCollection } = collectionConfig
-      const collection = getCollection(collectionName)
+  // merge all contexts into a single list
+  // so we can easily create everything in a row
+  const allCollections = config.dependencies && config.dependencies.length > 0
+    ? [config].concat(config.dependencies)
+    : [config]
 
-      if (collection) {
-        instance.collections[collectionName] = collection
-      } else {
-        // create filesCollection if flag is truthy
-        instance.collections[collectionName] = createCollection({
-          name: collectionName,
-          schema: {},
-          connection: connection
+  allCollections.forEach(collectionConfig => {
+    const collectionName = typeof collectionConfig === 'string'
+      ? collectionConfig
+      : collectionConfig.name
+    const { isFilesCollection } = collectionConfig
+    const collection = getCollection(collectionName)
+
+    if (collection) {
+      instance.collections.set(collectionName, collection)
+    } else {
+      // create filesCollection if flag is truthy
+      const filesCollectionSource = createCollection({
+        name: collectionName,
+        schema: {},
+        connection: connection
+      })
+
+      instance.collections.set(collectionName, filesCollectionSource)
+
+      // additionally create files collection
+      if (isFilesCollection) {
+        createFilesCollection({
+          collectionName: collectionName,
+          collection: filesCollectionSource,
+          ddp: connection
         })
+      }
+    }
 
-        // additionally create files collection
-        if (isFilesCollection) {
-          createFilesCollection({
-            collectionName: collectionName,
-            collection: instance.collections[collectionName],
-            ddp: connection
-          })
-        }
-      }
+    // sanity check
+    if (!getCollection(collectionName)) {
+      throw new Error(`Expected collection to be created by name <${collectionName}>`)
+    }
+  })
+  const mainCollectionName = config.mainCollection || config.name
+  instance.mainCollection = instance.collections.get(mainCollectionName)
+  logDebug('collections created')
+}
 
-      // sanity check
-      if (!getCollection(collectionName)) {
-        throw new Error(`Expected collection to be created by name <${collectionName}>`)
-      }
-    })
-    instance.mainCollection = instance.collections[config.mainCollection]
-    logDebug('collections created', instance.collections)
-  }
-
-  if (config.publications) {
-    const allSubs = {}
-    config.publications.forEach(publication => {
-      const { name } = publication
-      allSubs[name] = false
-      const onStop = function (err) {
-        if (err) {
-          console.error(name, err)
-          if (err.message) {
-            alert(err.message)
-          }
-        }
-      }
-      const onReady = function () {
-        logDebug(name, `complete`)
-        allSubs[name] = true
-        if (Object.values(allSubs).every(entry => entry === true)) {
-          logDebug('all subs complete')
-          if (onSubscribed) {
-            onSubscribed()
-          }
-          const count = instance.mainCollection.find().count()
-          logDebug(instance.mainCollection, instance.mainCollection.find().fetch())
-          instance.state.set(StateVariables.documentsCount, count)
-          instance.state.set(StateVariables.allSubsComplete, true)
-        }
-      }
-      connection.subscribe(name, {}, { onStop, onReady })
+function parsePublications ({ instance, config, logDebug, onSubscribed, connection }) {
+  const allSubs = {}
+  const allPublications = Object.values(config.publications)
+  if (config.dependencies) {
+    config.dependencies.forEach(dep => {
+      Object.values(dep.publications).forEach(depPub => allPublications.push(depPub))
     })
   }
+
+  allPublications.forEach(publication => {
+    const { name } = publication
+    allSubs[name] = false
+    const onStop = function (err) {
+      if (err) {
+        console.error(name, err)
+        if (err.message) {
+          alert(err.message)
+        }
+      }
+    }
+    const onReady = function () {
+      logDebug(name, `complete`)
+      allSubs[name] = true
+      if (Object.values(allSubs).every(entry => entry === true)) {
+        logDebug('all subs complete')
+        if (onSubscribed) {
+          onSubscribed()
+        }
+        const count = instance.mainCollection.find().count()
+        logDebug(instance.mainCollection, instance.mainCollection.find().fetch())
+        instance.state.set(StateVariables.documentsCount, count)
+        instance.state.set(StateVariables.allSubsComplete, true)
+      }
+    }
+    connection.subscribe(name, {}, { onStop, onReady })
+  })
+}
+
+const toName = context => context.name
+
+export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
+  const logDebug = getDebug(instance, debug)
+  const app = data.app()
+  const { connection } = app
+  instance.state.set(StateVariables.remoteUrl, app.url)
+
+  const config = data.config()
+  logDebug(config)
+
+  instance.state.set(StateVariables.config, config)
+
+  parseCollections({ instance, config, connection, logDebug })
+  parseActions({ instance, config, logDebug })
+  parsePublications({ instance, config, logDebug, onSubscribed, connection })
+  parseFields({ instance, config, logDebug })
 }
 
 export const wrapHelpers = function (obj) {
@@ -281,16 +305,16 @@ export const wrapHelpers = function (obj) {
     },
     documents () {
       const instance = Template.instance()
-      return instance.mainCollection.find()
+      return instance.mainCollection && instance.mainCollection.find()
     },
     files () {
       const instance = Template.instance()
-      return instance.mainCollection.find()
+      return instance.mainCollection && instance.mainCollection.find()
     },
     link (file) {
       const instance = Template.instance()
       const remoteUrl = instance.state.get(StateVariables.remoteUrl)
-      return instance.mainCollection.filesCollection.link(file, 'original', remoteUrl)
+      return instance.mainCollection && instance.mainCollection.filesCollection.link(file, 'original', remoteUrl)
     },
     submitting () {
       return Template.instance().state.get(StateVariables.submitting)
@@ -329,7 +353,8 @@ export const wrapHelpers = function (obj) {
       return Template.instance().state.get(StateVariables.actionUpload)
     },
     uploadFilesCollection () {
-      return Template.instance().mainCollection.filesCollection
+      const instance = Template.instance()
+      return instance.mainCollection && instance.mainCollection.filesCollection
     },
     // /////////////////////////////////////////////////
     //  insert
