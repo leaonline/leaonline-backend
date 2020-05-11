@@ -5,6 +5,7 @@ import { Routes } from '../routes/Routes'
 import { Router } from '../routes/Router'
 import { Apps } from '../apps/Apps'
 import { JSONReviver } from './JSONReviver'
+import { ContextRegistry } from '../ContextRegistry'
 
 const loginTrigger = createLoginTrigger(Routes.login)
 
@@ -24,6 +25,10 @@ const documentTemplate = async function () {
   return import('../../ui/generic/document/document')
 }
 
+const typeViewTemplate = async function () {
+  return import('../../ui/generic/typeView/typeView')
+}
+
 const getTemplate = type => {
   switch (type) {
     case BackendConfig.types.list:
@@ -40,6 +45,11 @@ const getTemplate = type => {
       return {
         templateName: 'genericDocument',
         loadFunction: documentTemplate
+      }
+    case BackendConfig.types.typeView:
+      return {
+        templateName: 'typeView',
+        loadFunction: typeViewTemplate
       }
     default:
       return {
@@ -80,6 +90,19 @@ const createRoute = (appName, config, parentRoute) => {
 }
 
 
+function getConfigType (context) {
+  if (context.isFilesCollection) {
+    return BackendConfig.types.gallery
+  }
+  if (context.isConfigDoc) {
+    return BackendConfig.types.document
+  }
+  if (context.isType) {
+    return BackendConfig.types.typeView
+  }
+  return BackendConfig.types.list
+}
+
 /**
  * This transforms the config from the app to a more usable structure.
  * At first it revives the stringified schema, because JSON does not support the schema constructors
@@ -93,11 +116,13 @@ BackendConfig.parse = (config) => {
   config.content = config.content.map(JSONReviver.revive)
   const toContext = name => config.content.find(context => context.name === name)
   config.content.forEach(context => {
-    if (!context.dependencies || context.dependencies.length === 0) {
-      return
+    context.type = context.type || getConfigType(context)
+
+    if (context.dependencies && context.dependencies.length > 0) {
+      context.dependencies = context.dependencies.map(toContext)
     }
 
-    context.dependencies = context.dependencies.map(toContext)
+    ContextRegistry.add(context.name, context)
   })
 }
 
