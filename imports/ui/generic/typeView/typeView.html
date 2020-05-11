@@ -1,0 +1,22 @@
+<template name="typeView">
+    <h1>{{config.label}}</h1>
+    <p>({{i18n "context.type"}})</p>
+
+    {{#unless loadComplete}}
+        {{>loading}}
+    {{else}}
+    {{#each entry in types}}
+        <div class="card mb-4">
+            <div class="card-header bg-{{entry.type}} d-flex justify-content-between text-white">
+                <span>{{entry.index}} {{label entry.name}}</span>
+                <span>
+                    <i class="fa fas fa-fw fa-{{entry.icon}}"></i>
+                </span>
+            </div>
+            <div class="card-body">
+                {{>stringified doc=entry}}
+            </div>
+        </div>
+    {{/each}}
+    {{/unless}}
+</template>
