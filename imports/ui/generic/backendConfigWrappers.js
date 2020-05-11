@@ -137,7 +137,6 @@ function parseActions ({ instance, config, logDebug }) {
 
   if (actions.insert) {
     const insertFormSchema = toFormSchema(actions.insert.schema || schema)
-    console.log(insertFormSchema)
     instance.actionInsertSchema = Schema.create(insertFormSchema)
     instance.state.set(StateVariables.actionInsert, actions.insert)
   }

@@ -19,7 +19,7 @@ Template.genericList.onCreated(function () {
     if (lastPath !== pathname) {
       instance.state.clear()
     }
-    wrapOnCreated(instance, { data, debug: true })
+    wrapOnCreated(instance, { data, debug: false })
     instance.state.set('lastPath', pathname)
   })
 })
