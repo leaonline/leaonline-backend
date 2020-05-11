@@ -14,7 +14,6 @@ import '../imports/startup/client/corelib'
 
 // contexts
 import '../imports/startup/client/contexts/users'
-import '../imports/startup/client/contexts/session'
 
 // layout
 import '../imports/ui/layout/nav/top/navTop'
