@@ -23,6 +23,9 @@
     "image": "Bild",
     "h5p": "H5P Format"
   },
+  "form": {
+    "selectOne": "(Bitte wählen)"
+  },
   "common": {
     "ok": "OK",
     "title": "Titel",

@@ -85,17 +85,30 @@ function toFormSchema (srcSchema) {
 
     if (value.dependency) {
       const { dependency } = value
-      const transform = { sort: { [dependency.field]: 1 } }
-      const query = dependency.query || {}
-      const toOptions = doc => ({ value: doc._id, label: doc[dependency.field] })
-      autoform.firstOption = () => i18n.get('form.selectOne')
-      autoform.options = () => {
-        const collection = getCollection(dependency.collection)
-        return collection
-          ? collection.find(query, transform).fetch().map(toOptions)
-          : []
+
+      if (dependency.collection) {
+        const transform = { sort: { [dependency.field]: 1 } }
+        const query = dependency.query || {}
+        const toOptions = doc => ({ value: doc._id, label: doc[dependency.field] })
+
+        autoform.options = () => {
+          const collection = getCollection(dependency.collection)
+          return collection
+            ? collection.find(query, transform).fetch().map(toOptions)
+            : []
+        }
+        dependencyCache.add(dependency.collection)
       }
-      dependencyCache.add(dependency.collection)
+
+      if (dependency.context) {
+        const toTypeOptions = type => ({ value: type.name, label: type.label })
+        const context = ContextRegistry.get(dependency.context)
+        const typeOptions = Object.values(context.types).map(toTypeOptions)
+        autoform.options = () => typeOptions
+      }
+
+      // then apply first option for all dep-types
+      autoform.firstOption = () => i18n.get('form.selectOne')
     }
 
     value.autoform = autoform
@@ -141,15 +154,17 @@ function parseActions ({ instance, config, logDebug }) {
 }
 
 function getFieldConfig (config, key, field) {
-  const fieldConfig = Object.assign({
-    label: `${config.name}.${key}`
-  }, field)
+  const fieldConfig = Object.assign({ label: `${config.name}.${key}` }, field)
 
   if (field.dependency) {
-    fieldConfig.type = BackendConfig.fieldTypes.collection
-  }
-  if (field.context) {
-    fieldConfig.type = BackendConfig.fieldTypes.context
+    const { dependency } = field
+
+    if (dependency.collection) {
+      fieldConfig.type = BackendConfig.fieldTypes.collection
+    }
+    if (dependency.context) {
+      fieldConfig.type = BackendConfig.fieldTypes.context
+    }
   }
 
   return fieldConfig
@@ -195,15 +210,14 @@ function parseCollections ({ instance, config, connection, logDebug }) {
 
   // merge all contexts into a single list
   // so we can easily create everything in a row
-  const allCollections = config.dependencies && config.dependencies.length > 0
+  const allCollections = (config.dependencies && config.dependencies.length > 0
     ? [config].concat(config.dependencies)
-    : [config]
+    : [config]).filter(context => context.isType === false)
 
   allCollections.forEach(collectionConfig => {
-    const collectionName = typeof collectionConfig === 'string'
-      ? collectionConfig
-      : collectionConfig.name
-    const { isFilesCollection } = collectionConfig
+
+    const isFilesCollection = collectionConfig.isFilesCollection
+    const collectionName = collectionConfig.name
     const collection = getCollection(collectionName)
 
     if (collection) {
@@ -243,7 +257,9 @@ function parsePublications ({ instance, config, logDebug, onSubscribed, connecti
   const allPublications = Object.values(config.publications)
   if (config.dependencies) {
     config.dependencies.forEach(dep => {
-      Object.values(dep.publications).forEach(depPub => allPublications.push(depPub))
+      if (!dep.isType) {
+        Object.values(dep.publications).forEach(depPub => allPublications.push(depPub))
+      }
     })
   }
 
