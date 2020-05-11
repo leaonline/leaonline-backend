@@ -87,6 +87,19 @@ Routes.root = {
   data: null
 }
 
+Routes.loading = {
+  path: () => `/${settings.loading}`,
+  label: 'pages.redirecting.title',
+  triggersEnter: () => [],
+  async load () {
+    return true
+  },
+  target: null,
+  template: 'loading',
+  roles: null,
+  data: null
+}
+
 /**
  * Displays status overview for all apps.
  */

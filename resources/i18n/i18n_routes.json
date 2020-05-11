@@ -7,5 +7,6 @@
   "competencies": "kompetenzen",
   "mediaLib": "medien-bibliothek",
   "task": "aufgaben",
-  "taskSet": "aufgaben-sammlungen"
+  "taskSet": "aufgaben-sammlungen",
+  "loading": "lade"
 }

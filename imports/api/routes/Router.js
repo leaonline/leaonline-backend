@@ -1,5 +1,6 @@
 /* global Roles */
 import { FlowRouter, RouterHelpers } from 'meteor/ostrio:flow-router-extra'
+import { check } from 'meteor/check'
 import { Meteor } from 'meteor/meteor'
 import { Tracker } from 'meteor/tracker'
 import { Template } from 'meteor/templating'
@@ -23,6 +24,13 @@ Router.go = function (value, ...optionalArgs) {
   } else {
     throw new Error(`Unexpected format: [${typeof type}], expected string or object`)
   }
+}
+
+let loadDep
+
+Router.addLoadDependency = function (dep) {
+  check(dep, Promise)
+  loadDep = dep
 }
 
 Router.has = function (path) {
@@ -108,7 +116,9 @@ function createRoute (routeDef, onError) {
       }
     },
     waitOn () {
+      const ld = loadDep || true
       return Promise.all([
+        ld,
         Promise.resolve(routeDef.load()),
         new Promise((resolve) => {
           Tracker.autorun((computation) => {

@@ -132,8 +132,30 @@ const configure = function (name) {
       i18n.add(lang, config.lang)
       updateConfig(name, config)
       BackendConfig.children(name, config)
+      hostLoaded(name, null, true)
     }
   })
+}
+
+const callbacks = new Map()
+
+Apps.onHostLoaded = function (name, cb) {
+  const hostCbs = callbacks.get(name) || []
+  hostCbs.push(cb)
+  callbacks.set(name, hostCbs)
+}
+
+function hostLoaded (name, err, res) {
+  const loadedCbs = callbacks.get(name)
+  if (!loadedCbs || loadedCbs.length === 0) {
+    return
+  }
+
+  loadedCbs.forEach(cb => {
+    setTimeout(() => cb(err, res), 0)
+  })
+
+  loadedCbs.length = 0
 }
 
 Apps.register = function ({ name, label, url, icon, ddpConnect, ddpLogin }) {

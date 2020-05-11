@@ -1,3 +1,4 @@
+import { ReactiveVar } from 'meteor/reactive-var'
 import { BackendConfig } from 'meteor/leaonline:interfaces/BackendConfig'
 import { createLoginTrigger } from '../routes/triggers'
 import { RoutesTree } from '../routes/topLevelRoutes'
@@ -89,7 +90,6 @@ const createRoute = (appName, config, parentRoute) => {
   }
 }
 
-
 function getConfigType (context) {
   if (context.isFilesCollection) {
     return BackendConfig.types.gallery
@@ -137,7 +137,6 @@ BackendConfig.children = function (name, config) {
   if (!parentRoute) {
     throw new Error(`Could not find any parent for name ${name}`)
   }
-
 
   const { content } = config
   const childRoutes = content.map(entry => {
