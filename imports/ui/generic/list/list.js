@@ -1,5 +1,7 @@
 import { Template } from 'meteor/templating'
-import { StateVariables, StateActions, wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
+import { wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
+import { StateVariables } from '../config/StateVariables'
+import { StateActions } from '../config/StateActions'
 import { dataTarget } from '../../../utils/event'
 import { Router } from '../../../api/routes/Router'
 import { formIsValid } from '../../../utils/form'
@@ -51,7 +53,7 @@ Template.genericList.events({
     if (!global.confirm(i18n.get('actions.confirmRemove'))) return
 
     const removeContext = templateInstance.state.get('actionRemove')
-    const method  = removeContext.name
+    const method = removeContext.name
     const _id = dataTarget(event, templateInstance)
     const app = templateInstance.data.app()
     const { connection } = app

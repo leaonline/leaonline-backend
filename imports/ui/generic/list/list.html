@@ -14,7 +14,15 @@
 		</div>
 
 		<div class="card-body {{#if submitting}}d-unavailable{{/if}}">
-			{{>quickForm id="insertForm" type="normal" schema=insertSchema}}
+			{{#autoForm id="insertForm" type="normal" schema=insertSchema}}
+                {{#each afFieldNames}}
+                    {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
+                {{/each}}
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-success" type="submit">{{i18n "actions.create"}}</button>
+                    <button class="btn btn-outline-secondary cancel-form-button">{{i18n "actions.cancel"}}</button>
+                </div>
+             {{/autoForm}}
 			{{#if submitting}}
 				<span><i class="fa fas fa-fw fa-spinner fa-pulse"></i></span>
 				<span>{{i18n "actions.submitting"}}</span>

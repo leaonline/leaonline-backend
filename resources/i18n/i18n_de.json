@@ -1,6 +1,7 @@
 {
   "actions": {
     "create": "Erstellen",
+    "cancel": "Abbrechen",
     "back": "Zurück",
     "submit": "Absenden",
     "close": "Schließen",
