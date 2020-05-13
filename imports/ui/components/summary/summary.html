@@ -1,0 +1,30 @@
+<template name="summary">
+    <h1 class="text-center">{{i18n context.label}}: {{titleField}}</h1>
+
+    {{#each entry in (fields doc)}}
+        <div class="card-body">
+            <h6>{{i18n entry.label}}</h6>
+            <div class="py-2">
+                {{#let field=entry.value}}
+                    {{#if field.isCollection}}
+                        <div>
+                            <a href class="document-preview-button" data-target="{{field.doc.value}}"
+                               data-context="{{field.context}}">
+                                {{field.doc.label}}
+                            </a>
+                        </div>
+                    {{else if field.isType}}
+                        <div>
+                <span class="p-1 btn-{{field.type}} rounded">
+                  <i class="fa fas fa-fw fa-{{field.icon}}"></i>
+                  <span>{{i18n field.label}}</span>
+                </span>
+                        </div>
+                    {{else}}
+                        <div>{{field.value}}</div>
+                    {{/if}}
+                {{/let}}
+            </div>
+        </div>
+    {{/each}}
+</template>

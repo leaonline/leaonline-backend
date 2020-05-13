@@ -5,17 +5,10 @@ import { LeaCoreLib } from '../../api/core/LeaCoreLib'
 import { parseActions } from './config/parseActions'
 import { StateVariables } from './config/StateVariables'
 import { parseCollections } from './config/parseCollections'
-import { parseFields } from './config/parseFields'
+import { fieldHelpers, parseFields } from './config/parseFields'
 import { parsePublications } from './config/parsePublications'
 import { MutationChecker } from './config/MutationChecker'
-
-const getDebug = (instance, debug) => debug
-  ? (...args) => {
-    if (Meteor.isDevelopment) {
-      console.info(`[${instance.view.name}]`, ...args)
-    }
-  }
-  : () => {}
+import { getDebug } from '../../utils/getDebug'
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
   const logDebug = getDebug(instance, debug)
@@ -23,13 +16,14 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   const { connection } = app
   instance.state.set(StateVariables.remoteUrl, app.url)
 
+  const appName = app.name
   const config = data.config()
   const mutationChecker = new MutationChecker(config, config.name)
 
   instance.state.set(StateVariables.config, config)
   parseCollections({ instance, config, connection, logDebug })
   mutationChecker.compare(config)
-  parseFields({ instance, config, logDebug })
+  parseFields({ instance, config, logDebug, appName })
   mutationChecker.compare(config)
   parseActions({ instance, config, logDebug })
   mutationChecker.compare(config)
@@ -39,6 +33,7 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
 
 export const wrapHelpers = function (obj) {
   return Object.assign({}, {
+    ...fieldHelpers(),
     config () {
       return Template.instance().state.get(StateVariables.config) || {}
     },
@@ -61,27 +56,7 @@ export const wrapHelpers = function (obj) {
     submitting () {
       return Template.instance().state.get(StateVariables.submitting)
     },
-    // /////////////////////////////////////////////////
-    //  FIELDS
-    // /////////////////////////////////////////////////
 
-    fields (document) {
-      const instance = Template.instance()
-      const fields = instance.state.get(StateVariables.documentFields)
-      return fields && fields.map(name => {
-        const value = document[name]
-        const resolver = instance.fieldResolvers[name]
-
-        if (!resolver) {
-          return value
-        } else {
-          return resolver(value)
-        }
-      })
-    },
-    fieldLabels () {
-      return Template.instance().fieldLabels
-    },
     // /////////////////////////////////////////////////
     //  Preview
     // /////////////////////////////////////////////////

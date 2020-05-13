@@ -9,6 +9,9 @@
     "redirectUrl": "http://localhost:5050/_oauth/lea"
   },
   "public": {
+    "editor": {
+      "textAreaThreshold": 500
+    },
     "hosts": {
       "otulea": {
         "label": "otu.lea",

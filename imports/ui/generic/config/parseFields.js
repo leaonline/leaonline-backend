@@ -3,28 +3,34 @@ import { BackendConfig } from '../../../api/config/BackendConfig'
 import { ContextRegistry } from '../../../api/ContextRegistry'
 import { getCollection } from '../../../utils/collection'
 import { i18n } from '../../../api/i18n/I18n'
+import { Template } from 'meteor/templating'
 
-const fieldsFromCollection = function ({ value, fieldConfig, isArray }) {
-  const collection = getCollection(fieldConfig.dependency.collection)
-  if (!collection) return value
-
+const fieldsFromCollection = function ({ value, collection, context, fieldConfig, path, isArray }) {
   const toDocumentField = entry => {
     const currentDoc = collection.findOne(entry)
-    return currentDoc && currentDoc[fieldConfig.dependency.field]
+    if (!currentDoc) return value
+    return {
+      value: currentDoc._id,
+      label: currentDoc[fieldConfig.dependency.field]
+    }
   }
 
   if (isArray) {
-    return value.map(toDocumentField)
+    return { docs: value.map(toDocumentField), isCollection: true, isArray: true, context: context.name }
   } else {
-    return toDocumentField(value)
+    return { doc: toDocumentField(value), isCollection: true, context: context.name, path }
   }
 }
 
-const fieldsFromContext = function ({ fieldConfig, value }) {
-  const context = ContextRegistry.get(fieldConfig.context)
-  if (!context) return value
-  const label = context.helpers.resolveField(value)
-  return label && i18n.get(label)
+const fieldsFromContext = function ({ context, value }) {
+  if (context.isType) {
+    const { representative } = context
+    const type = Object.values(context.types).find(type => {
+      return type[representative] === value
+    })
+    return Object.assign({}, type, { isType: true })
+  }
+  return { value }
 }
 
 const fieldsFromKeyMap = function ({ fieldConfig, value }) {
@@ -52,11 +58,29 @@ function getFieldConfig (config, key, field) {
   return fieldConfig
 }
 
-export const parseFields = function parseFields ({ instance, config, logDebug }) {
+function getFieldResolvers (fieldConfig ) {
+  return (value) => {
+    const isArray = Array.isArray(value)
+    switch (fieldConfig.type) {
+      case BackendConfig.fieldTypes.collection:
+        const collection = getCollection(fieldConfig.dependency.collection)
+        const collectionContext = ContextRegistry.get(fieldConfig.dependency.collection)
+        return fieldsFromCollection({ value, fieldConfig, collection, context: collectionContext, isArray })
+      case BackendConfig.fieldTypes.context:
+        const context = ContextRegistry.get(fieldConfig.dependency.context)
+        return fieldsFromContext({ fieldConfig, context, value })
+      default:
+        return { value }
+    }
+  }
+}
+
+export const parseFields = function parseFields ({ instance, config }) {
   const fieldLabels = {}
   const fieldResolvers = {}
   const fields = {}
   const schema = Object.assign({}, config.schema)
+
   // create fields from schema
   Object.entries(schema).forEach(([key, value]) => {
     // skip all non-public fields
@@ -66,23 +90,30 @@ export const parseFields = function parseFields ({ instance, config, logDebug })
 
     fields[key] = 1
     fieldLabels[key] = fieldConfig.label
-
-    fieldResolvers[key] = (value) => {
-      const isArray = Array.isArray(value)
-      switch (fieldConfig.type) {
-        case BackendConfig.fieldTypes.collection:
-          return fieldsFromCollection({ value, fieldConfig, isArray })
-        case BackendConfig.fieldTypes.context:
-          return fieldsFromContext({ fieldConfig, value })
-        case BackendConfig.fieldTypes.keyMap:
-          return fieldsFromKeyMap({ fieldConfig, value })
-        default:
-          return value
-      }
-    }
+    fieldResolvers[key] = getFieldResolvers(fieldConfig)
   })
 
   instance.fieldLabels = Object.values(fieldLabels)
   instance.fieldResolvers = fieldResolvers
   instance.state.set(StateVariables.documentFields, Object.keys(fields))
 }
+
+export const fieldHelpers = () => ({
+  fields (document) {
+    const instance = Template.instance()
+    const fields = instance.state.get(StateVariables.documentFields)
+    return fields && fields.map(key => {
+      const value = document[key]
+      const resolver = instance.fieldResolvers[key]
+
+      if (!resolver) {
+        return value
+      } else {
+        return resolver(value)
+      }
+    })
+  },
+  fieldLabels () {
+    return Template.instance().fieldLabels
+  }
+})

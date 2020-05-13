@@ -5,10 +5,12 @@ import { StateActions } from '../config/StateActions'
 import { dataTarget } from '../../../utils/event'
 import { Router } from '../../../api/routes/Router'
 import { formIsValid } from '../../../utils/form'
+import { getPreviewData } from '../config/getPreviewData'
 import { by300 } from '../../../utils/dely'
 import { i18n } from '../../../api/i18n/I18n'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
+import '../../components/summary/summary'
 import './list.html'
 
 Template.genericList.onCreated(function () {
@@ -38,11 +40,10 @@ Template.genericList.helpers(wrapHelpers({
   },
   previewTarget () {
     const instance = Template.instance()
-    return instance.state.get('previewTarget')
-  },
-  onClosed () {
-    const instance = Template.instance()
-    return onClosed.bind(instance)
+    const target = instance.state.get('previewTarget')
+    if (!target) return
+
+    return Object.assign({}, target, { onClosed: onClosed.bind(instance)})
   }
 }))
 
@@ -146,14 +147,18 @@ Template.genericList.events({
     connection.call(actonUpdate.name, updateDoc, by300((err, res) => {
       templateInstance.state.set(StateVariables.submitting, false)
       if (err) {
-        // TODO handle form error
         return console.error(err)
       } else {
         console.log(res)
       }
-
-      // TODO notify success
     }))
+  },
+  'click .document-preview-button' (event, templateInstance) {
+    event.preventDefault()
+    const docId = dataTarget(event, templateInstance)
+    const contextName = dataTarget(event, templateInstance, 'context')
+    const previewTarget = getPreviewData({ docId, contextName })
+    templateInstance.state.set({ previewTarget })
   }
 })
 
