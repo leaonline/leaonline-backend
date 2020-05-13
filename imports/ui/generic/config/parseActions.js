@@ -1,9 +1,13 @@
+import { Meteor } from 'meteor/meteor'
 import { Schema } from '../../../api/schema/Schema'
 import { LeaCoreLib } from '../../../api/core/LeaCoreLib'
 import { ContextRegistry } from '../../../api/ContextRegistry'
 import { getCollection } from '../../../utils/collection'
 import { i18n } from '../../../api/i18n/I18n'
 import { StateVariables } from './StateVariables'
+
+const settings = Meteor.settings.public.editor
+const { textAreaThreshold } = settings
 
 function toFormSchema (srcSchema, name) {
   const configBefore = JSON.stringify(srcSchema)
@@ -26,6 +30,10 @@ function toFormSchema (srcSchema, name) {
 
     if (key === '_id' || value.hidden) {
       autoform.type = 'hidden'
+    }
+
+    if (value.type === String && typeof value.max === 'number' && value.max >= textAreaThreshold) {
+      autoform.type = 'textarea'
     }
 
     if (value.dependency) {
