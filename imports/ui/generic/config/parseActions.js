@@ -24,7 +24,6 @@ function toFormSchema (srcSchema, name) {
     })
   })
 
-
   Object.entries(copy).forEach(([key, value]) => {
     const autoform = {}
 
@@ -38,30 +37,69 @@ function toFormSchema (srcSchema, name) {
 
     if (value.dependency) {
       const { dependency } = value
+      const { requires, collection, context, field, isArray } = dependency
 
-      if (dependency.collection) {
-        const transform = { sort: { [dependency.field]: 1 } }
-        const query = dependency.query || {}
-        const toOptions = doc => ({ value: doc._id, label: doc[dependency.field] })
+      // if this field requires another field to be set
+      // we disable it until the required field is set
 
-        autoform.options = () => {
-          const collection = getCollection(dependency.collection)
-          return collection
-            ? collection.find(query, transform).fetch().map(toOptions)
-            : []
+      if (requires) {
+        autoform.disabled = () => {
+          const requiredField = AutoForm.getFieldValue(requires)
+          return !requiredField
         }
       }
 
-      if (dependency.context) {
-        const context = ContextRegistry.get(dependency.context)
-        const { representative } = context
-        const toTypeOptions = type => ({ value: type[representative], label: () => i18n.get(type.label) })
-        const typeOptions = Object.values(context.types).map(toTypeOptions)
-        autoform.options = () => typeOptions
+      let hasOptions = false
+
+      if (collection) {
+        const transform = { sort: { [field]: 1 } }
+        const query = dependency.query || {}
+        const DependantCollection = getCollection(collection)
+        const toOptions = doc => ({ value: doc._id, label: doc[field] })
+        const toIndexOptions = (entry, index) => ({ value: index, label: entry })
+
+        autoform.options = () => {
+          if (requires) {
+            const fieldValue = AutoForm.getFieldValue(requires)
+            if (!fieldValue) return []
+
+            // relations between docs are always linked via _id
+            // so this should be working for long term, too
+            // if we ever need a relation apart from _id in a collection-dep
+            // we need to make this configurable
+
+            const queryFieldValue = Array.isArray(fieldValue) ? fieldValue : [fieldValue]
+            query._id = { $in: queryFieldValue }
+
+            const docs = DependantCollection.find(query, transform).fetch().map(entry => entry[field])
+            return isArray
+              ? docs.flat().map(toIndexOptions)
+              : docs.map(toIndexOptions)
+          }
+
+          const cursor = DependantCollection.find(query, transform)
+          if (cursor.count() === 0) return []
+          return cursor.fetch().map(toOptions)
+        }
+
+        hasOptions = true
       }
 
-      // then apply first option for all dep-types
-      autoform.firstOption = () => i18n.get('form.selectOne')
+      if (context) {
+        const DepenantContext = ContextRegistry.get(context)
+        const { representative } = DepenantContext
+        const toTypeOptions = type => ({ value: type[representative], label: () => i18n.get(type.label) })
+        const typeOptions = Object.values(DepenantContext.types).map(toTypeOptions)
+        autoform.options = () => typeOptions
+        hasOptions = true
+      }
+
+      // then apply first option for all dep-types that require
+      // a select component, like collection and context
+
+      if (hasOptions) {
+        autoform.firstOption = () => i18n.get('form.selectOne')
+      }
     }
 
     const labelType = typeof value.label
@@ -100,7 +138,6 @@ export const parseActions = function parseActions ({ instance, config, logDebug 
     instance.actionInsertSchema = Schema.create(insertFormSchema)
     instance.state.set(StateVariables.actionInsert, actions.insert)
   }
-
 
   if (actions.update) {
     const updateFormSchema = toFormSchema(actions.update.schema || schema, config.name)
