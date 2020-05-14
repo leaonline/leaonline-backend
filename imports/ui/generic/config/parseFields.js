@@ -80,11 +80,22 @@ export const parseFields = function parseFields ({ instance, config }) {
   const fieldResolvers = {}
   const fields = {}
   const schema = Object.assign({}, config.schema)
+  const excludeFromList = new Set()
+  const parentKeyInSet = key => {
+    const split = key.split('.')
+    if (!split || split.length < 2) {
+      return false
+    }
+    return excludeFromList.has(split[0])
+  }
 
   // create fields from schema
   Object.entries(schema).forEach(([key, value]) => {
-    // skip all non-public fields
-    if (value.list === false) return
+    // skip all non-public fields and add them to the set
+    if (value.list === false) return excludeFromList.add(key)
+
+    // skip if a key is a child-key of a key in the exclude-from-list-set
+    if (parentKeyInSet(key)) return
 
     const fieldConfig = getFieldConfig(config, key, value)
 
