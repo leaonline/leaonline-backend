@@ -4,7 +4,7 @@ import { Tracker } from 'meteor/tracker'
 import { DDP } from 'meteor/ddp-client'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import { i18n } from '../i18n/I18n'
-import { BackendConfig } from '../config/BackendConfig'
+import { ServiceRegistry } from '../config/ServiceRegistry'
 import { onServer } from '../../utils/arch'
 
 export const Apps = {
@@ -123,15 +123,15 @@ const configure = function (name) {
   const { connection } = app
   const lang = i18n.getLocale()
 
-  connection.call(BackendConfig.methods.get.name, { lang }, (err, config) => {
+  connection.call(ServiceRegistry.methods.get.name, { lang }, (err, config) => {
     log(url, 'backend config received', config)
     if (err) return console.error(err)
     if (config) {
-      BackendConfig.parse(config)
-      BackendConfig.parent(name, config)
+      ServiceRegistry.parse(config)
+      ServiceRegistry.parent(name, config)
       i18n.add(lang, config.lang)
       updateConfig(name, config)
-      BackendConfig.children(name, config)
+      ServiceRegistry.children(name, config)
       hostLoaded(name, null, true)
     }
   })

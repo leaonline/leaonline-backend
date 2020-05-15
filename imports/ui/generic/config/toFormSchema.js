@@ -4,6 +4,7 @@ import { ContextRegistry } from '../../../api/ContextRegistry'
 import { getCollection } from '../../../utils/collection'
 import { cloneObject } from '../../../utils/cloneObject'
 import { getValueFunction } from './getValueFunction'
+import { getLabel } from './getLabel'
 
 const settings = Meteor.settings.public.editor
 const { textAreaThreshold } = settings
@@ -17,13 +18,14 @@ const toTypeName = entry => entry.source
 // se we define a common helper here
 const areAllFieldsSet = fields => fields.every(name => !!AutoForm.getFieldValue(name))
 
-
 export const toFormSchema = (srcSchema, name) => {
   // first we define all the properties on the copy
   // in order to not change the original schema
   const copy = cloneObject(srcSchema)
 
   Object.entries(copy).forEach(([key, definitions]) => {
+    definitions.label = getLabel({ key, context: { name }, field: definitions, type: 'form' })
+
     const autoform = {}
 
     // if there are computed values we need to

@@ -1,9 +1,11 @@
 import { StateVariables } from './StateVariables'
-import { BackendConfig } from '../../../api/config/BackendConfig'
+import { ServiceRegistry } from '../../../api/config/ServiceRegistry'
 import { ContextRegistry } from '../../../api/ContextRegistry'
 import { getCollection } from '../../../utils/collection'
 import { i18n } from '../../../api/i18n/I18n'
 import { Template } from 'meteor/templating'
+import { cloneObject } from '../../../utils/cloneObject'
+import { getLabel } from './getLabel'
 
 const fieldsFromCollection = function ({ value, collection, context, fieldConfig, path, isArray }) {
   const toDocumentField = entry => {
@@ -33,40 +35,33 @@ const fieldsFromContext = function ({ context, value }) {
   return { value }
 }
 
-const fieldsFromKeyMap = function ({ fieldConfig, value }) {
-  const context = ContextRegistry.get(fieldConfig.context)
-  const contextValue = context[value]
-  if (!contextValue) return value
-  const label = contextValue[fieldConfig.srcField]
-  return label && i18n.get(label)
-}
-
 function getFieldConfig (config, key, field) {
-  const fieldConfig = Object.assign({ label: `${config.name}.${key}` }, field)
+  const fieldConfig = Object.assign({}, field)
+  fieldConfig.label = getLabel({ key, context: config, field: fieldConfig, type: 'list' })
 
   if (field.dependency) {
     const { dependency } = field
 
     if (dependency.collection) {
-      fieldConfig.type = BackendConfig.fieldTypes.collection
+      fieldConfig.type = ServiceRegistry.fieldTypes.collection
     }
     if (dependency.context) {
-      fieldConfig.type = BackendConfig.fieldTypes.context
+      fieldConfig.type = ServiceRegistry.fieldTypes.context
     }
   }
 
   return fieldConfig
 }
 
-function getFieldResolvers (fieldConfig ) {
+function getFieldResolvers (fieldConfig) {
   return (value) => {
     const isArray = Array.isArray(value)
     switch (fieldConfig.type) {
-      case BackendConfig.fieldTypes.collection:
+      case ServiceRegistry.fieldTypes.collection:
         const collection = getCollection(fieldConfig.dependency.collection)
         const collectionContext = ContextRegistry.get(fieldConfig.dependency.collection)
         return fieldsFromCollection({ value, fieldConfig, collection, context: collectionContext, isArray })
-      case BackendConfig.fieldTypes.context:
+      case ServiceRegistry.fieldTypes.context:
         const context = ContextRegistry.get(fieldConfig.dependency.context)
         return fieldsFromContext({ fieldConfig, context, value })
       default:

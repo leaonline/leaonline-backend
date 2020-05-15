@@ -20,8 +20,8 @@ shell-server@0.5.0            # Server-side component of the `meteor shell` comm
 # Basic tools
 leaonline:errors
 leaonline:utils
-leaonline:interfaces
 leaonline:corelib
+leaonline:service-registry
 
 # collections
 aldeed:collection2

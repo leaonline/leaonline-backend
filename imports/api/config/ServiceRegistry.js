@@ -1,5 +1,4 @@
-import { ReactiveVar } from 'meteor/reactive-var'
-import { BackendConfig } from 'meteor/leaonline:interfaces/BackendConfig'
+import { ServiceRegistry } from 'meteor/leaonline:service-registry'
 import { createLoginTrigger } from '../routes/triggers'
 import { RoutesTree } from '../routes/topLevelRoutes'
 import { Routes } from '../routes/Routes'
@@ -32,22 +31,22 @@ const typeViewTemplate = async function () {
 
 const getTemplate = type => {
   switch (type) {
-    case BackendConfig.types.list:
+    case ServiceRegistry.types.list:
       return {
         templateName: 'genericList',
         loadFunction: listTemplate
       }
-    case BackendConfig.types.gallery:
+    case ServiceRegistry.types.gallery:
       return {
         templateName: 'genericGallery',
         loadFunction: galleryTemplate
       }
-    case BackendConfig.types.document:
+    case ServiceRegistry.types.document:
       return {
         templateName: 'genericDocument',
         loadFunction: documentTemplate
       }
-    case BackendConfig.types.typeView:
+    case ServiceRegistry.types.typeView:
       return {
         templateName: 'typeView',
         loadFunction: typeViewTemplate
@@ -92,15 +91,15 @@ const createRoute = (appName, config, parentRoute) => {
 
 function getConfigType (context) {
   if (context.isFilesCollection) {
-    return BackendConfig.types.gallery
+    return ServiceRegistry.types.gallery
   }
   if (context.isConfigDoc) {
-    return BackendConfig.types.document
+    return ServiceRegistry.types.document
   }
   if (context.isType) {
-    return BackendConfig.types.typeView
+    return ServiceRegistry.types.typeView
   }
-  return BackendConfig.types.list
+  return ServiceRegistry.types.list
 }
 
 /**
@@ -112,7 +111,7 @@ function getConfigType (context) {
  * it usually not can easily retrieve.
  */
 
-BackendConfig.parse = (config) => {
+ServiceRegistry.parse = (config) => {
   config.content = config.content.map(JSONReviver.revive)
   const toContext = name => config.content.find(context => context.name === name)
   config.content.forEach(context => {
@@ -126,13 +125,13 @@ BackendConfig.parse = (config) => {
   })
 }
 
-BackendConfig.parent = function (name, config) {
+ServiceRegistry.parent = function (name, config) {
   Routes[name] = createRoute(name, config, null)
   RoutesTree.topLevel(name, Routes[name])
   Router.register(Routes[name])
 }
 
-BackendConfig.children = function (name, config) {
+ServiceRegistry.children = function (name, config) {
   const parentRoute = Routes[name]
   if (!parentRoute) {
     throw new Error(`Could not find any parent for name ${name}`)
@@ -149,4 +148,4 @@ BackendConfig.children = function (name, config) {
   RoutesTree.children(name, parentRoute, childRoutes)
 }
 
-export { BackendConfig }
+export { ServiceRegistry }
