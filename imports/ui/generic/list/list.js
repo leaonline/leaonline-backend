@@ -103,7 +103,7 @@ Template.genericList.events({
   // //////////////////////////////////////////////////////
   'submit #insertForm' (event, templateInstance) {
     event.preventDefault()
-
+debugger
     const schema = templateInstance.actionInsertSchema
     const insertDoc = formIsValid('insertForm', schema)
     if (!insertDoc) return
