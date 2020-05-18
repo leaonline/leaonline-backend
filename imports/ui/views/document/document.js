@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating'
-import { StateVariables, wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
+import { StateVariables, wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
 import { formIsValid } from '../../../utils/form'
 import './document.html'
 
