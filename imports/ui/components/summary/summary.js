@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating'
-import { parseFields } from '../../generic/config/parseFields'
+import { parseFields } from '../../config/parseFields'
 import { getDebug } from '../../../utils/getDebug'
-import { StateVariables } from '../../generic/config/StateVariables'
+import { StateVariables } from '../../config/StateVariables'
 import './summary.html'
 
 Template.summary.onCreated(function () {

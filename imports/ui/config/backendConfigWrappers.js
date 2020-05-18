@@ -12,6 +12,7 @@ import { getDebug } from '../../utils/getDebug'
 import { Apps } from '../../api/apps/client/Apps'
 import { Schema } from '../../api/schema/Schema'
 import { formIsValid } from '../../utils/form'
+import { parseSettings } from './parseSettings'
 
 const settingsSchema = Schema.create(Apps.schema)
 
@@ -24,13 +25,10 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   const appName = app.name
   const config = data.config()
   const mutationChecker = new MutationChecker(config, config.name)
-  let settingsDoc = Apps.collection().findOne({ name: appName, context: config.name })
-  if (!settingsDoc) {
-    settingsDoc = { name: appName, context: config.name }
-  }
-  instance.state.set({ settingsDoc })
 
   instance.state.set(StateVariables.config, config)
+
+  parseSettings({ instance, appName, config })
   parseCollections({ instance, config, connection, logDebug })
   mutationChecker.compare(config)
   parseFields({ instance, config, logDebug, appName })
