@@ -1,4 +1,6 @@
 import { onServer } from '../../utils/arch'
+import { getConfigTypeOptions } from '../config/getConfigTypeOptions'
+import { getFormTypeOptions } from '../../ui/forms/getFormTypeOptions'
 
 export const Apps = {
   name: 'apps',
@@ -12,38 +14,75 @@ export const Apps = {
 
 Apps.schema = {
   // name of the app that registered to the backend
-  name: String,
+  name: {
+    type: String,
+    autoform: {
+      disabled: true
+    }
+  },
 
   // name of the context that has been registered
-  context: String,
+  context: {
+    type: String,
+    autoform: {
+      disabled: true
+    }
+  },
 
   // edit log / history flag
-  useHistory: Boolean,
+  useHistory: {
+    type: Boolean,
+    defaultValue: true
+  },
 
   // comments flag
-  useComments: Boolean,
+  useComments: {
+    type: Boolean,
+    defaultValue: true
+  },
 
   // flag if we want to track links to this context
-  useDependencyTracking: Boolean,
+  useDependencyTracking: {
+    type: Boolean,
+    defaultValue: true
+  },
 
   // which template to use as main template for overview
-  template: String,
+  template: {
+    type: String,
+    autoform: {
+      options: getConfigTypeOptions
+    }
+  },
 
   // define fields-specific settings
   fields: Array,
   'fields.$': Object,
 
   // field name / key (not label)
-  'fields.$.name': String,
+  'fields.$.name': {
+    type: String,
+    autoform: {
+      disabled: true
+    }
+  },
 
   // may it appear in lists
-  'fields.$.list': Boolean,
+  'fields.$.inList': Boolean,
 
   // may it appear in summaries and previews
-  'fields.$.summary': Boolean,
+  'fields.$.inSummary': Boolean,
+
+  'fields.$.inForm': Boolean,
 
   // is there a specific autoform formType to use
-  'fields.$.formType': Boolean,
+  'fields.$.form': {
+    type: String,
+    optional: true,
+    autoform: {
+      options: getFormTypeOptions
+    }
+  },
 }
 
 Apps.methods = {}

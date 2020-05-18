@@ -1,12 +1,12 @@
-import { getTemplate } from '../config/getTemplate'
 import { Apps } from '../apps/Apps'
 import { Routes } from './Routes'
 import { createLoginTrigger } from './triggers'
+import { getTemplate } from '../config/getTemplate'
 
 const loginTrigger = createLoginTrigger(Routes.login)
 
 export const createRoute = (appName, config, parentRoute) => {
-  const template = getTemplate(config.type)
+  const view = getTemplate(config.type)
   return {
     path: () => `/${config.path}`,
     icon: config.icon,
@@ -14,11 +14,9 @@ export const createRoute = (appName, config, parentRoute) => {
     triggersEnter: () => [
       loginTrigger
     ],
-    async load () {
-      return template.loadFunction()
-    },
+    load: view.load,
     target: null,
-    template: template.templateName,
+    template: view.template,
     roles: null,
     args: [],
     data: {
@@ -34,3 +32,4 @@ export const createRoute = (appName, config, parentRoute) => {
     }
   }
 }
+

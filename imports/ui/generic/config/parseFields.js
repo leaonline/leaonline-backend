@@ -1,6 +1,6 @@
 import { StateVariables } from './StateVariables'
 import { ServiceRegistry } from '../../../api/config/ServiceRegistry'
-import { ContextRegistry } from '../../../api/ContextRegistry'
+import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { getCollection } from '../../../utils/collection'
 import { i18n } from '../../../api/i18n/I18n'
 import { Template } from 'meteor/templating'

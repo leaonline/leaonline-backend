@@ -175,4 +175,8 @@ Apps.all = function () {
   return all && Object.values(all)
 }
 
+const templates = new Map()
+Apps.registerTemplate = (name, options) => templates.set(name, options)
+Apps.getRegisteredTemplates = () => Array.from(templates)
+
 export { Apps }

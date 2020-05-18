@@ -1,6 +1,6 @@
 import { i18n } from '../../../api/i18n/I18n'
 import { Meteor } from 'meteor/meteor'
-import { ContextRegistry } from '../../../api/ContextRegistry'
+import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { getCollection } from '../../../utils/collection'
 import { cloneObject } from '../../../utils/cloneObject'
 import { getValueFunction } from './getValueFunction'

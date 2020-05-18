@@ -5,6 +5,7 @@ import '../imports/startup/client/language'
 
 // startup routines
 import '../imports/startup/client/routes'
+import '../imports/startup/client/reloadRoute'
 import '../imports/startup/client/apps'
 import '../imports/startup/client/fontawesome'
 import '../imports/startup/client/bootstrap'

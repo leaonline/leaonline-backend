@@ -1,6 +1,6 @@
 import { ContextRegistry } from './ContextRegistry'
 import { JSONReviver } from './JSONReviver'
-import { getConfigType } from './getConfigType'
+import { getViewType } from './getViewType'
 
 /**
  * This transforms the config from the app to a more usable structure.
@@ -16,7 +16,10 @@ export const parseContext = (context) => {
   context.content = context.content.map(JSONReviver.revive)
   const toContext = name => context.content.find(context => context.name === name)
   context.content.forEach(context => {
-    context.type = context.type || getConfigType(context)
+    if (!context.type) {
+      const viewType = getViewType(context)
+      context.type = viewType.name
+    }
 
     if (context.dependencies && context.dependencies.length > 0) {
       context.dependencies = context.dependencies.map(toContext)

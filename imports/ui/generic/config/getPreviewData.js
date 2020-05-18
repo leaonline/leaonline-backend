@@ -1,4 +1,4 @@
-import { ContextRegistry } from '../../../api/ContextRegistry'
+import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { getCollection } from '../../../utils/collection'
 
 export const getPreviewData = function ({ docId, contextName }) {
