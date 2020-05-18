@@ -47,7 +47,7 @@ const toExecutableEntry = entry => {
 
 const getDocumentFieldValueResolver = ({ source, collection, field }) => {
   const Collection = getCollection(collection)
-  if (!Collection) throw new Error()
+  if (!Collection) throw new Error(`Collection does not exist: ${collection}`)
   return function resolveDocumentFieldValue () {
     const sourceId = AutoForm.getFieldValue(source)
     const doc = Collection.findOne(sourceId)
@@ -64,7 +64,7 @@ const getDocumentFieldValueResolver = ({ source, collection, field }) => {
 
 const getIncrementValueResolver = ({ decimals, collection }) => {
   const Collection = getCollection(collection)
-  if (!Collection) throw new Error()
+  if (!Collection) throw new Error(`Collection does not exist: ${collection}`)
   return function resolveIcrementValue () {
     const count = Collection.find().count() + 1
     return count.toString().padStart(decimals, '0')
