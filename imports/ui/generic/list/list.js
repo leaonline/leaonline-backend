@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating'
-import { wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
+import { wrapEvents, wrapHelpers, wrapOnCreated } from '../backendConfigWrappers'
 import { StateVariables } from '../config/StateVariables'
 import { StateActions } from '../config/StateActions'
 import { dataTarget } from '../../../utils/event'
@@ -38,6 +38,9 @@ Template.genericList.helpers(wrapHelpers({
   updateForm () {
     return Template.getState('updateForm')
   },
+  settingsForm() {
+    return Template.getState('settingsForm')
+  },
   previewTarget () {
     const instance = Template.instance()
     const target = instance.state.get('previewTarget')
@@ -47,7 +50,7 @@ Template.genericList.helpers(wrapHelpers({
   }
 }))
 
-Template.genericList.events({
+Template.genericList.events(wrapEvents({
   'click .remove-button' (event, templateInstance) {
     event.preventDefault()
 
@@ -67,6 +70,11 @@ Template.genericList.events({
     event.preventDefault()
     Router.queryParam({ action: StateActions.insert })
     templateInstance.state.set('insertForm', true)
+  },
+  'click .settings-button' (event, templateInstance) {
+    event.preventDefault()
+    Router.queryParam({ action: StateActions.settings })
+    templateInstance.state.set('settingsForm', true)
   },
   'click .edit-button' (event, templateInstance) {
     event.preventDefault()
@@ -88,6 +96,7 @@ Template.genericList.events({
     Router.queryParam({ action: null })
     templateInstance.state.set('insertForm', false)
     templateInstance.state.set('updateForm', false)
+    templateInstance.state.set('settingsForm', false)
   },
   'click .preview-button' (event, templateInstance) {
     event.preventDefault()
@@ -160,7 +169,7 @@ Template.genericList.events({
     const previewTarget = getPreviewData({ docId, contextName })
     templateInstance.state.set({ previewTarget })
   }
-})
+}))
 
 function onClosed () {
   this.state.set('previewTarget', null)

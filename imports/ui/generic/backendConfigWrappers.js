@@ -9,6 +9,11 @@ import { fieldHelpers, parseFields } from './config/parseFields'
 import { parsePublications } from './config/parsePublications'
 import { MutationChecker } from './config/MutationChecker'
 import { getDebug } from '../../utils/getDebug'
+import { Apps } from '../../api/apps/client/Apps'
+import { Schema } from '../../api/schema/Schema'
+import { formIsValid } from '../../utils/form'
+
+const settingsSchema = Schema.create(Apps.schema)
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
   const logDebug = getDebug(instance, debug)
@@ -101,6 +106,20 @@ export const wrapHelpers = function (obj) {
     // /////////////////////////////////////////////////
     actionRemove () {
       return Template.instance().state.get(StateVariables.actionRemove)
+    },
+    // /////////////////////////////////////////////////
+    //  Settings
+    // /////////////////////////////////////////////////
+    settingsSchema () {
+      return settingsSchema
     }
   }, obj)
 }
+
+export const wrapEvents = (obj) => Object.assign({}, {
+  'submit #settingsForm' (event, templateInstance) {
+    event.preventDefault()
+    const settingsDoc = formIsValid('settingsForm', settingsSchema)
+    if (!settingsDoc) return
+  }
+}, obj)
