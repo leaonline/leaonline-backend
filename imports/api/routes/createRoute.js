@@ -1,14 +1,15 @@
 import { Apps } from '../apps/Apps'
 import { Routes } from './Routes'
 import { createLoginTrigger } from './triggers'
-import { getTemplate } from '../config/getTemplate'
+import { notFoundTemplate } from '../config/notFoundTemplate'
 
 const loginTrigger = createLoginTrigger(Routes.login)
 
 export const createRoute = (appName, config, parentRoute) => {
-  const view = getTemplate(config.type)
+  const view = config.viewType || notFoundTemplate()
+  const path = config.path || appName
   return {
-    path: () => `/${config.path}`,
+    path: () => `/${path}`,
     icon: config.icon,
     label: config.label,
     triggersEnter: () => [

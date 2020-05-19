@@ -48,7 +48,7 @@ Apps.schema = {
   },
 
   // which template to use as main template for overview
-  template: {
+  viewType: {
     type: String,
     autoform: {
       options: getConfigTypeOptions

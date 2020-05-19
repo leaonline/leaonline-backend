@@ -25,7 +25,7 @@ Apps.loadConfig(function (name, done) {
     if (!config) return done(new Error(`Expected config for app ${name}`))
 
     i18n.add(lang, config.lang)
-    parseContext(config)
+    parseContext(name, config)
     createParentRoute(name, config)
     createChildRoute(name, config)
     subscribeSettings(name, config)
