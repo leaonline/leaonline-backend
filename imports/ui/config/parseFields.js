@@ -35,10 +35,10 @@ const fieldsFromContext = function ({ context, value }) {
   return { value }
 }
 
-function getFieldConfig (config, key, field) {
-  const fieldConfig = Object.assign({}, field)
-  fieldConfig.label = getLabel({ key, context: config, field: fieldConfig, type: 'list' })
+function getFieldConfig (config, key, field, fieldSettings) {
+  const fieldConfig = Object.assign({}, field, fieldSettings)
 
+  fieldConfig.label = getLabel({ key, context: config, field: fieldConfig })
   if (field.dependency) {
     const { dependency } = field
 
@@ -70,10 +70,11 @@ function getFieldResolvers (fieldConfig) {
   }
 }
 
-export const parseFields = function parseFields ({ instance, config }) {
+export const parseFields = function parseFields ({ instance, config, settingsDoc }) {
   const fieldLabels = {}
   const fieldResolvers = {}
   const fields = {}
+
   const schema = Object.assign({}, config.schema)
   const excludeFromList = new Set()
   const parentKeyInSet = key => {
@@ -86,13 +87,12 @@ export const parseFields = function parseFields ({ instance, config }) {
 
   // create fields from schema
   Object.entries(schema).forEach(([key, value]) => {
-    // skip all non-public fields and add them to the set
-    if (value.list === false) return excludeFromList.add(key)
-
     // skip if a key is a child-key of a key in the exclude-from-list-set
     if (parentKeyInSet(key)) return
 
-    const fieldConfig = getFieldConfig(config, key, value)
+    const fieldSettings = settingsDoc.fields && settingsDoc.fields.find(entry => entry.name === key)
+    const fieldConfig = getFieldConfig(config, key, value, fieldSettings)
+    if (fieldConfig.exclude) return
 
     fields[key] = 1
     fieldLabels[key] = fieldConfig.label

@@ -1,7 +1,14 @@
+import { Apps } from '../../api/apps/Apps'
+
 const getFallbackLabel = (config, key) => `${config.name}.${key}`
 
-export const getLabel = ({ key, context, field, type }) => {
+export const getLabel = ({ key, context, field }) => {
+  const type = context.type
   const labelType = typeof field.label
+
+  if (!Apps.settings.fieldIncluded(field) || !Apps.settings.labelIncluded(field)) {
+      return false
+  }
 
   // default for undefined labels
   if (labelType === 'undefined') {

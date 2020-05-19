@@ -76,54 +76,38 @@ Apps.schema = {
     type: Object,
     label: 'apps.field',
   },
-
-  // field name / key (not label)
   'fields.$.name': {
     type: String,
     label: 'common.name',
   },
-
-  // may it appear in lists
-  'fields.$.inList': {
+  'fields.$.exclude': {
     type: Boolean,
-    label: 'apps.fields.inList',
-    optional: true,
-    defaultValue: true
+    label: 'apps.fields.exclude',
+    optional: true
   },
-  'fields.$.listLabel': {
+  'fields.$.hideLabel': {
     type: Boolean,
-    label: 'apps.fields.listLabel',
-    optional: true,
-    defaultValue: true
+    label: 'apps.fields.hideLabel',
+    optional: true
   },
-  'fields.$.listPos': {
+  'fields.$.alignment': {
     type: String,
-    label: 'apps.fields.listPos',
+    label: 'apps.fields.alignment',
     optional: true,
     autoform: {
       firstOption: firstOption,
       options: getAlignmentOptions
     }
-  },
+  }
+}
 
-  // may it appear in summaries and previews
-  'fields.$.inSummary': {
-    type: Boolean,
-    label: 'apps.fields.inSummary',
-    optional: true,
-    defaultValue: true
+Apps.settings = {
+  fieldIncluded(field) {
+    return field && field.excluded !== true
   },
-
-  // is there a specific autoform formType to use
-  'fields.$.form': {
-    type: String,
-    label: 'apps.fields.inForm',
-    optional: true,
-    autoform: {
-      firstOption: firstOption,
-      options: getFormTypeOptions
-    }
-  },
+  labelIncluded (field) {
+    return field && field.hideLabel !== true
+  }
 }
 
 Apps.getSchemaForContext = (context) => {
