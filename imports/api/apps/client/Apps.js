@@ -179,4 +179,14 @@ const templates = new Map()
 Apps.registerTemplate = (name, options) => templates.set(name, options)
 Apps.getRegisteredTemplates = () => Array.from(templates)
 
+let _handle = Meteor.subscribe(Apps.publications.getByNames.name, { names: [] })
+
+Apps.subscribe = ({ names }) => {
+  _handle = Meteor.subscribe(Apps.publications.getByNames.name, { names }, { onStop: function (err) {
+    console.log(err)
+  }})
+  return _handle
+}
+Apps.subscriptions = () => _handle
+
 export { Apps }

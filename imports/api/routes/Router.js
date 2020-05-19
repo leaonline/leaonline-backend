@@ -26,6 +26,8 @@ Router.go = function (value, ...optionalArgs) {
   }
 }
 
+const log = (...args) => Meteor.isDevelopment && console.info('[Router]:', ...args)
+
 let loadDep
 
 Router.addLoadDependency = function (dep) {
@@ -105,6 +107,7 @@ const paths = {}
     .triggersExit() hooks
  */
 function createRoute (routeDef, onError) {
+  if (routeDef.debug) log('register route', routeDef)
   return {
     name: routeDef.key,
     whileWaiting () {
@@ -116,6 +119,7 @@ function createRoute (routeDef, onError) {
       }
     },
     waitOn () {
+      if (routeDef.debug) log('waitOn', routeDef)
       const ld = loadDep || true
       return Promise.all([
         ld,
@@ -133,6 +137,8 @@ function createRoute (routeDef, onError) {
     },
     triggersEnter: routeDef.triggersEnter && routeDef.triggersEnter(),
     action (params, queryParams) {
+      if (routeDef.debug) log('route action', routeDef)
+
       // if we have loaded the template but it is not available
       // on the rendering pipeline through Template.<name> we
       // just skip the action and wait for the next rendering cycle

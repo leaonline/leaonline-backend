@@ -26,7 +26,8 @@ Object
  * Build to RoutesTree to represent a structured sidebar nav data model
  */
 ;[
-  Routes.statusOverview
+  Routes.statusOverview,
+  Routes.settings
 ].forEach(route => RoutesTree.topLevel(route.path(), route))
 
 Template.registerHelper('next', function (...args) {

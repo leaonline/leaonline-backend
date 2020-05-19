@@ -43,10 +43,10 @@ ongoworks:ddp-login
 
 # factories
 leaonline:collection-factory
-leaonline:method-factory
-leaonline:ratelimit-factory
 leaonline:files-collection-factory
-
+leaonline:method-factory
+leaonline:publication-factory
+leaonline:ratelimit-factory
 
 # files
 ostrio:files

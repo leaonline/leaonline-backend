@@ -38,9 +38,6 @@ Template.genericList.helpers(wrapHelpers({
   updateForm () {
     return Template.getState('updateForm')
   },
-  settingsForm() {
-    return Template.getState('settingsForm')
-  },
   previewTarget () {
     const instance = Template.instance()
     const target = instance.state.get('previewTarget')
@@ -71,11 +68,6 @@ Template.genericList.events(wrapEvents({
     Router.queryParam({ action: StateActions.insert })
     templateInstance.state.set('insertForm', true)
   },
-  'click .settings-button' (event, templateInstance) {
-    event.preventDefault()
-    Router.queryParam({ action: StateActions.settings })
-    templateInstance.state.set('settingsForm', true)
-  },
   'click .edit-button' (event, templateInstance) {
     event.preventDefault()
     const target = dataTarget(event, templateInstance)
@@ -96,7 +88,6 @@ Template.genericList.events(wrapEvents({
     Router.queryParam({ action: null })
     templateInstance.state.set('insertForm', false)
     templateInstance.state.set('updateForm', false)
-    templateInstance.state.set('settingsForm', false)
   },
   'click .preview-button' (event, templateInstance) {
     event.preventDefault()

@@ -124,6 +124,26 @@ Routes.statusOverview = {
   icon: 'heartbeat'
 }
 
+/**
+ * Generic settings page for any app -> context definition.
+ */
+
+Routes.settings = {
+  path: (appName = ':appName', contextName = ':contextName') => `/settings/${appName}/${contextName}`,
+  label: 'pages.settings.title',
+  triggersEnter: () => [
+    createLoginTrigger(Routes.login)
+  ],
+  async load () {
+    return import('../../ui/pages/settings/contextSettings')
+  },
+  target: null,
+  template: 'contextSettings',
+  roles: null,
+  data: {},
+  icon: 'cog'
+}
+
 Routes.fallback = {
   path: () => '*',
   label: 'pages.redirecting.title',

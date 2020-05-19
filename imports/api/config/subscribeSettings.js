@@ -7,7 +7,7 @@ const names = new Set()
 
 Tracker.autorun(() => {
   const allNames = subscriptions.get()
-  Meteor.subscribe(Apps.publications.getByNames.name, { names: allNames })
+  Apps.subscribe({ names: allNames })
 })
 
 export const subscribeSettings = (name) => {

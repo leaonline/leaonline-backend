@@ -3,19 +3,7 @@
         {{> loading}}
     {{/unless}}
 
-    {{#if settingsForm}}
-        <div class="card-body d-flex justify-content-between">
-            <h4>{{i18n config.label}} - {{i18n "actions.settings"}}</h4>
-            <span>
-				<button class="btn btn-sm btn-outline-secondary cancel-form-button">
-					<i class="fa fa-fw fas fa-times"></i>
-				</button>
-			</span>
-        </div>
-
-        {{>quickForm id="settingsForm" type="normal" schema=settingsSchema doc=settingsDoc}}
-
-    {{else if insertForm}}
+    {{#if insertForm}}
         <div class="card-body d-flex justify-content-between">
             <h4>{{i18n config.label}} - {{i18n "actions.insertDoc"}}</h4>
             <span>
@@ -70,9 +58,9 @@
                 </small>
             </span>
             <span class="no-wrap">
-                <button class="btn btn-outline-secondary settings-button" title="{{i18n "actions.settings"}}">
+                <a href="{{route "settings" app config.name}}" class="btn btn-outline-secondary" title="{{i18n "actions.settings"}}">
                     <i class="fas fa fa-fw fa-cog"></i>
-                </button>
+                </a>
                 {{#with actionUpload}}
                     {{> upload filesCollection=uploadFilesCollection accept=this.accept class="ml-auto"}}
                 {{/with}}

@@ -1,6 +1,8 @@
 import { onServer } from '../../utils/arch'
 import { getConfigTypeOptions } from '../config/getConfigTypeOptions'
 import { getFormTypeOptions } from '../../ui/forms/getFormTypeOptions'
+import { getAlignmentOptions } from '../../ui/layout/definitions/getAlignmentOptions'
+import { firstOption } from '../../utils/firstOption'
 
 export const Apps = {
   name: 'apps',
@@ -16,73 +18,121 @@ Apps.schema = {
   // name of the app that registered to the backend
   name: {
     type: String,
+    label: 'apps.name',
     autoform: {
-      disabled: true
+      type: 'hidden'
     }
   },
 
   // name of the context that has been registered
   context: {
     type: String,
+    label: 'apps.context',
     autoform: {
-      disabled: true
+      type: 'hidden'
     }
   },
 
   // edit log / history flag
   useHistory: {
     type: Boolean,
+    label: 'apps.useHistory',
+    optional: true,
     defaultValue: true
   },
 
   // comments flag
   useComments: {
     type: Boolean,
+    label: 'apps.useComments',
+    optional: true,
     defaultValue: true
   },
 
   // flag if we want to track links to this context
   useDependencyTracking: {
     type: Boolean,
+    label: 'apps.useDependencyTracking',
+    optional: true,
     defaultValue: true
   },
 
   // which template to use as main template for overview
   viewType: {
     type: String,
+    label: 'apps.viewType',
     autoform: {
       options: getConfigTypeOptions
     }
   },
 
   // define fields-specific settings
-  fields: Array,
-  'fields.$': Object,
+  fields: {
+    type: Array,
+    label: 'apps.fields.title',
+    optional: true
+  },
+  'fields.$': {
+    type: Object,
+    label: 'apps.field',
+  },
 
   // field name / key (not label)
   'fields.$.name': {
     type: String,
-    autoform: {
-      disabled: true
-    }
+    label: 'common.name',
   },
 
   // may it appear in lists
-  'fields.$.inList': Boolean,
+  'fields.$.inList': {
+    type: Boolean,
+    label: 'apps.fields.inList',
+    optional: true,
+    defaultValue: true
+  },
+  'fields.$.listLabel': {
+    type: Boolean,
+    label: 'apps.fields.listLabel',
+    optional: true,
+    defaultValue: true
+  },
+  'fields.$.listPos': {
+    type: String,
+    label: 'apps.fields.listPos',
+    optional: true,
+    autoform: {
+      firstOption: firstOption,
+      options: getAlignmentOptions
+    }
+  },
 
   // may it appear in summaries and previews
-  'fields.$.inSummary': Boolean,
-
-  'fields.$.inForm': Boolean,
+  'fields.$.inSummary': {
+    type: Boolean,
+    label: 'apps.fields.inSummary',
+    optional: true,
+    defaultValue: true
+  },
 
   // is there a specific autoform formType to use
   'fields.$.form': {
     type: String,
+    label: 'apps.fields.inForm',
     optional: true,
     autoform: {
+      firstOption: firstOption,
       options: getFormTypeOptions
     }
   },
+}
+
+Apps.getSchemaForContext = (context) => {
+  const fields = Object.keys(context.schema)
+  const schema = Object.assign({}, Apps.schema)
+  Object.assign(schema['fields.$.name'], {
+    allowedValues: fields
+  })
+  return schema
 }
 
 Apps.methods = {}

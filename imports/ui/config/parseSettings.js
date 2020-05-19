@@ -7,7 +7,10 @@ export const parseSettings = ({ instance, config, appName }) => {
     const viewType = getViewType(appName, config)
     settingsDoc = { name: appName, context: config.name }
     settingsDoc.viewType = viewType.name
-    settingsDoc.fields = Object.keys(config.schema).map(key => ({ name: key }))
+    settingsDoc.useHistory = true
+    settingsDoc.useComments = true
+    settingsDoc.useDependencyTracking = true
+    settingsDoc.fields = []
   }
   instance.state.set({ settingsDoc })
 }

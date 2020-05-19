@@ -12,9 +12,7 @@ import { getDebug } from '../../utils/getDebug'
 import { Apps } from '../../api/apps/client/Apps'
 import { Schema } from '../../api/schema/Schema'
 import { formIsValid } from '../../utils/form'
-import { parseSettings } from './parseSettings'
 
-const settingsSchema = Schema.create(Apps.schema)
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
   const logDebug = getDebug(instance, debug)
@@ -26,9 +24,8 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   const config = data.config()
   const mutationChecker = new MutationChecker(config, config.name)
 
+  instance.state.set(StateVariables.app, appName)
   instance.state.set(StateVariables.config, config)
-
-  parseSettings({ instance, appName, config })
   parseCollections({ instance, config, connection, logDebug })
   parseFields({ instance, config, logDebug, appName })
   parseActions({ instance, config, logDebug })
@@ -39,6 +36,9 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
 export const wrapHelpers = function (obj) {
   return Object.assign({}, {
     ...fieldHelpers(),
+    app () {
+      return Template.instance().state.get(StateVariables.app) || {}
+    },
     config () {
       return Template.instance().state.get(StateVariables.config) || {}
     },
@@ -106,27 +106,8 @@ export const wrapHelpers = function (obj) {
     // /////////////////////////////////////////////////
     actionRemove () {
       return Template.instance().state.get(StateVariables.actionRemove)
-    },
-    // /////////////////////////////////////////////////
-    //  Settings
-    // /////////////////////////////////////////////////
-    settingsSchema () {
-      return settingsSchema
-    },
-    settingsDoc () {
-      return Template.instance().state.get('settingsDoc')
     }
   }, obj)
 }
 
-export const wrapEvents = (obj) => Object.assign({}, {
-  'submit #settingsForm' (event, templateInstance) {
-    event.preventDefault()
-    const settingsDoc = formIsValid('settingsForm', settingsSchema)
-    if (!settingsDoc) return
-
-    Meteor.call(Apps.methods.updateSettings.name, settingsDoc, (err, res) => {
-      console.log(err, res)
-    })
-  }
-}, obj)
+export const wrapEvents = (obj) => Object.assign({}, {}, obj)

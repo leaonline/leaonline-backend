@@ -1,4 +1,5 @@
 export const StateVariables = {
+  app: 'app',
   config: 'config',
   remoteUrl: 'remoteUrl',
   actionRemove: 'actionRemove',
