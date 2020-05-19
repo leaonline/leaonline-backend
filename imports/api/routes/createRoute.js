@@ -27,6 +27,9 @@ export const createRoute = (appName, config, parentRoute) => {
       config () {
         return config
       },
+      settings () {
+        return Apps.collection().findOne({ name: appName, context: config.name })
+      },
       top () {
         return parentRoute || Routes.dashboard
       }

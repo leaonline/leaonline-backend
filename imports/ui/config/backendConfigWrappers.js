@@ -23,6 +23,7 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   const appName = app.name
   const config = data.config()
   const mutationChecker = new MutationChecker(config, config.name)
+  const settingsDoc = data.settings()
 
   instance.state.set(StateVariables.app, appName)
   instance.state.set(StateVariables.config, config)
