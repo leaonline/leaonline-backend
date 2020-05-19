@@ -98,6 +98,15 @@ Apps.schema = {
       firstOption: firstOption,
       options: getAlignmentOptions
     }
+  },
+  'fields.$.form': {
+    type: String,
+    label: 'apps.fields.form',
+    optional: true,
+    autoform: {
+      firstOption: firstOption,
+      options: getFormTypeOptions
+    }
   }
 }
 

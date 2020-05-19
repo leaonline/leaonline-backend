@@ -92,7 +92,10 @@ export const parseFields = function parseFields ({ instance, config, settingsDoc
 
     const fieldSettings = settingsDoc.fields && settingsDoc.fields.find(entry => entry.name === key)
     const fieldConfig = getFieldConfig(config, key, value, fieldSettings)
-    if (fieldConfig.exclude) return
+    if (fieldConfig.exclude) {
+      excludeFromList.add(key)
+      return
+    }
 
     fields[key] = 1
     fieldLabels[key] = fieldConfig.label
