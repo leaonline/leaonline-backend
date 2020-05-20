@@ -17,27 +17,46 @@
 
 	{{#with files}}
 		<hr>
-		<div class="row mt-5">
+		<div class="row mt-5 p-2 w-100">
 			{{#each file in this}}
-				<div class="col col-md-6 col-lg-3">
-					<figure class="w-100 figure border border-secondary p-1 bg-white">
-                    <div class="p-1 d-flex justify-content-between">
-                        {{file.name}}
-                        {{#if actionRemove}}
-                            <a class="text-danger remove-button" href data-target="{{file._id}}">
-                                <i class="fa fas fa-fw fa-times"></i>
-                            </a>
-                        {{/if}}
-                    </div>
+				<div class="col col-md-6 col-lg-3 col-xl-2">
+					<figure class="w-100 figure p-1">
                         {{#with link file}}
-							{{> image src=this alt=../file.name class="figure-img img-fluid rounded"}}
-						<figcaption class="figure-caption p-1" style="word-break: break-all">
-                            {{this}}
+							{{> image src=this alt=../file.name class="figure-img img-fluid rounded bg-light" shadow=(current file._id) data-target=file._id}}
+						<figcaption class="figure-caption p-1 overflow-hidden">
+                                <div class="font-weight-bold">{{file.name}}</div>
+                                <small class="font-weight-light">{{file.name}}</small>
 						</figcaption>
                         {{/with}}
 					</figure>
 				</div>
+                {{#if selected file._id}}
+                    <div class="row p-1 bg-dark mb-4">
+                        <div class="col-12 d-flex">
+                            <button class="btn btn-outline-light border-0 close-preview-button ml-auto">
+                                <i class="fa fas fa-fw fa-times"></i>
+                            </button>
+                        </div>
+                        {{#with link file}}
+                            <div class="col-12 col-md-8 p-lg-3 p-1">
+                                {{> image src=this alt=../file.name class="figure-img img-fluid rounded bg-light" shadow=(current file._id) data-target=file._id}}
+                            </div>
+                            <div class="col-12 col-md-4 p-lg-3 p-1 img-description text-light d-block">
+                                <h4>{{file.name}}</h4>
+                                <p class="font-weight-light">{{file.name}}</p>
+                            </div>
+                        {{/with}}
+                    </div>
+                {{/if}}
 			{{/each}}
 		</div>
 	{{/with}}
+
+    {{!--
+    {{#if actionRemove}}
+        <a class="text-danger remove-button" href data-target="{{file._id}}">
+            <i class="fa fas fa-fw fa-times"></i>
+        </a>
+    {{/if}}
+    --}}
 </template>

@@ -48,9 +48,11 @@ Template.genericGallery.helpers(wrapHelpers({
     return coreComponentsLoaded.get() && instance.mainCollection.find()
   },
   link (file) {
+    console.log(file)
     const instance = Template.instance()
     const remoteUrl = instance.state.get('remoteUrl')
-    return instance.mainCollection.filesCollection.link(file, 'original', remoteUrl)
+    const config = Template.instance().data.config()
+    return instance.mainCollection.filesCollection.link(file, config.preview, remoteUrl)
   },
   // /////////////////////////////////////////////////
   //  Upload
@@ -66,7 +68,37 @@ Template.genericGallery.helpers(wrapHelpers({
   // /////////////////////////////////////////////////
   actionRemove () {
     return Template.instance().state.get('actionRemove')
+  },
+  // /////////////////////////////////////////////////
+  //  ENTRY SPECIFIC
+  // /////////////////////////////////////////////////
+  current (_id) {
+    return Template.instance().state.get('currentFile') === _id
+  },
+  selected (_id) {
+    return Template.instance().state.get('selectedFile') === _id
   }
 }))
 
-Template.genericGallery.events(wrapEvents({}))
+Template.genericGallery.events(wrapEvents({
+  'mouseenter .figure-img' (event, templateInstance) {
+    const currentFile = dataTarget(event, templateInstance)
+    templateInstance.state.set({ currentFile })
+  },
+  'mouseleave .figure-img' (event, templateInstance) {
+    const currentFile = dataTarget(event, templateInstance)
+    const selectedFile = templateInstance.state.get('selectedFile')
+    if (!selectedFile || currentFile !== selectedFile) {
+      templateInstance.state.set({ currentFile: null })
+    }
+  },
+  'click .figure-img' (event, templateInstance) {
+    event.preventDefault()
+    const currentFile = dataTarget(event, templateInstance)
+    templateInstance.state.set({ currentFile, selectedFile: currentFile })
+  },
+  'click .close-preview-button' (event, templateInstance) {
+    event.preventDefault()
+    templateInstance.state.set({ currentFile: null, selectedFile: null })
+  }
+}))
