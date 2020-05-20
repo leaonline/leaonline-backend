@@ -48,21 +48,6 @@ Template.genericList.helpers(wrapHelpers({
 }))
 
 Template.genericList.events(wrapEvents({
-  'click .remove-button' (event, templateInstance) {
-    event.preventDefault()
-
-    if (!global.confirm(i18n.get('actions.confirmRemove'))) return
-
-    const removeContext = templateInstance.state.get('actionRemove')
-    const method = removeContext.name
-    const _id = dataTarget(event, templateInstance)
-    const app = templateInstance.data.app()
-    const { connection } = app
-
-    connection.call(method, { _id }, (err, res) => {
-      console.log(err, res)
-    })
-  },
   'click .insert-button' (event, templateInstance) {
     event.preventDefault()
     Router.queryParam({ action: StateActions.insert })
