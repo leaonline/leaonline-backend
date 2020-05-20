@@ -3,7 +3,7 @@ import { Template } from 'meteor/templating'
 import { getCollection } from '../../../utils/collection'
 import { dataTarget } from '../../../utils/event'
 import { LeaCoreLib } from '../../../api/core/LeaCoreLib'
-import { wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
+import { wrapEvents, wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
 import '../../components/upload/upload'
 import './gallery.html'
 
@@ -69,23 +69,4 @@ Template.genericGallery.helpers(wrapHelpers({
   }
 }))
 
-Template.genericGallery.events({
-  'click .remove-button' (event, templateInstance) {
-    event.preventDefault()
-    const _id = dataTarget(event, templateInstance)
-    const file = templateInstance.mainCollection.findOne(_id)
-
-    if (!file || !global.confirm(`Really delete ${file.name}?`)) {
-      return
-    }
-
-    const removeContext = templateInstance.state.get('actionRemove')
-    const { method } = removeContext
-    const app = templateInstance.data.app()
-    const { connection } = app
-
-    connection.call(method, { _id }, (err, res) => {
-      console.log(err, res)
-    })
-  }
-})
+Template.genericGallery.events(wrapEvents({}))

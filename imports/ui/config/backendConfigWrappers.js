@@ -10,6 +10,8 @@ import { parsePublications } from './parsePublications'
 import { MutationChecker } from './MutationChecker'
 import { getDebug } from '../../utils/getDebug'
 import { formIsValid } from '../../utils/form'
+import { dataTarget } from '../../utils/event'
+import { i18n } from '../../api/i18n/I18n'
 
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
@@ -109,4 +111,27 @@ export const wrapHelpers = function (obj) {
   }, obj)
 }
 
-export const wrapEvents = (obj) => Object.assign({}, {}, obj)
+export const wrapEvents = (obj) => {
+  const confirmRemove = (title) => i18n.get('actions.confirmRemove', {title})
+  return Object.assign({}, {
+    'click .remove-button' (event, templateInstance) {
+      event.preventDefault()
+      const _id = dataTarget(event, templateInstance)
+      const context = templateInstance.data.config()
+      const target = templateInstance.mainCollection.findOne(_id)
+      const title = context.isFilesCollection ? target.name : target[context.representative]
+      if (!target || !global.confirm(confirmRemove(title))) {
+        return
+      }
+
+      const removeMethodDef = templateInstance.state.get(StateVariables.actionRemove)
+      const method = removeMethodDef.name
+      const app = templateInstance.data.app()
+      const { connection } = app
+
+      connection.call(method, { _id }, (err, res) => {
+        console.log(err, res)
+      })
+    }
+  }, obj)
+}
