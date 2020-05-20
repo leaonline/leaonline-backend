@@ -58,8 +58,9 @@ export const toFormSchema = (srcSchema, name, settingsDoc) => {
     }
 
     if (fieldSettings.form && FormTypes[fieldSettings.form]) {
-      FormTypes[fieldSettings.form].load()
-      autoform.type = fieldSettings.form
+      const targetForm = FormTypes[fieldSettings.form]
+      targetForm.load()
+      autoform.type = targetForm.template
       Object.assign(autoform, definitions.dependency)
     }
 

@@ -10,21 +10,25 @@ import './taskContent.css'
 import './taskContent.html'
 import './autoform'
 
-
 const types = Object.values(TaskRenderers).filter(el => !el.exclude)
 const rendererGroups = Object.values(RendererGroups)
 const typeSchemas = {}
 
+const createTypeSchemaDef = ({ name, imagesCollection, version, uriBase, h5p }) => {
+  return TaskRenderers[name].schema({
+    i18n: i18n.get,
+    name,
+    imagesCollection,
+    version,
+    uriBase,
+    h5p
+  })
+}
+
 const currentTypeSchema = ({ name, imagesCollection, version, uriBase, h5p }) => {
   if (!typeSchemas[name]) {
-    typeSchemas[name] = Schema.create(TaskRenderers[name].schema({
-      i18n: i18n.get,
-      name,
-      imagesCollection,
-      version,
-      uriBase,
-      h5p
-    }))
+    const typeSchemaDef = createTypeSchemaDef({ name, imagesCollection, version, uriBase, h5p })
+    typeSchemas[name] = Schema.create(typeSchemaDef)
   }
   return typeSchemas[name]
 }
@@ -45,12 +49,13 @@ Template.afLeaTaskContent.onCreated(function () {
 })
 
 Template.afLeaTaskContent.onRendered(function () {
+
   const instance = this
   const { data } = instance
 
   // update initial value to underlying hidden input
   if (data.value && data.value.length > 0) {
-    updateElements( data.value || [], instance)
+    updateElements(data.value || [], instance)
   }
 })
 
@@ -80,7 +85,7 @@ Template.afLeaTaskContent.helpers({
     const version = instance.data.atts.version
     const uriBase = instance.data.atts.uriBase || Meteor.absoluteUrl()
     // const h5p = instance.data.atts.h5p
-    return currentTypeSchema({ name, imagesCollection, version, uriBase})
+    return currentTypeSchema({ name, imagesCollection, version, uriBase })
   },
   overElement (index) {
     return Template.instance().stateVars.get('overElement') === index

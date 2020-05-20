@@ -14,6 +14,7 @@ export const FormTypes = {
   },
   taskContent: {
     name: 'taskContent',
+    template: 'leaTaskContent',
     schema: {
       filesCollection: {
         type: String
