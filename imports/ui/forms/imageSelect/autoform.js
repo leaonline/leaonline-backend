@@ -1,7 +1,6 @@
-
 /* global AutoForm */
 
-AutoForm.addInputType('imageSelect', {
+AutoForm.addInputType('leaImageSelect', {
   template: 'afImageSelect',
   valueOut () {
     return this.val()

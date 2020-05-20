@@ -20,13 +20,15 @@ const toTypeName = entry => entry.source
 // se we define a common helper here
 const areAllFieldsSet = fields => fields.every(name => !!AutoForm.getFieldValue(name))
 
-export const toFormSchema = (srcSchema, name, settingsDoc) => {
+export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
+  const { name } = config
+
   // first we define all the properties on the copy
   // in order to not change the original schema
-  const copy = cloneObject(srcSchema)
+  const copy = cloneObject(schema)
 
   Object.entries(copy).forEach(([key, definitions]) => {
-    definitions.label = getLabel({ key, context: { name }, field: definitions, type: 'form' })
+    definitions.label = getLabel({ key, context: config, field: definitions, type: 'form' })
 
     const fieldSettings = getFieldSettings(settingsDoc, key) || {}
     const autoform = {}
@@ -61,6 +63,7 @@ export const toFormSchema = (srcSchema, name, settingsDoc) => {
       const targetForm = FormTypes[fieldSettings.form]
       targetForm.load()
       autoform.type = targetForm.template
+      autoform.connection = app.connection
       Object.assign(autoform, definitions.dependency)
     }
 

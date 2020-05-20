@@ -1,3 +1,4 @@
+import { check } from 'meteor/check'
 import { Template } from 'meteor/templating'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import { TaskRenderers, RendererGroups } from '../../../api/task/TaskRenderers'
@@ -5,7 +6,7 @@ import { dataTarget } from '../../../utils/event'
 import { Schema } from '../../../api/schema/Schema'
 import { formIsValid } from '../../../utils/form'
 import { i18n } from '../../../api/i18n/I18n'
-
+import '../imageSelect/imageSelect'
 import './taskContent.css'
 import './taskContent.html'
 import './autoform'
@@ -14,20 +15,31 @@ const types = Object.values(TaskRenderers).filter(el => !el.exclude)
 const rendererGroups = Object.values(RendererGroups)
 const typeSchemas = {}
 
-const createTypeSchemaDef = ({ name, imagesCollection, version, uriBase, h5p }) => {
+const createTypeSchemaDef = ({ name, formType, imagesCollection, version, uriBase, h5p }) => {
   return TaskRenderers[name].schema({
     i18n: i18n.get,
     name,
     imagesCollection,
+    formType,
     version,
     uriBase,
     h5p
   })
 }
 
+const getFormType = name => {
+  switch(name) {
+    case TaskRenderers.image.name:
+      return 'leaImageSelect'
+    default:
+      return 'text'
+  }
+}
+
 const currentTypeSchema = ({ name, imagesCollection, version, uriBase, h5p }) => {
+  const formType = getFormType(name)
   if (!typeSchemas[name]) {
-    const typeSchemaDef = createTypeSchemaDef({ name, imagesCollection, version, uriBase, h5p })
+    const typeSchemaDef = createTypeSchemaDef({ name, formType, imagesCollection, version, uriBase, h5p })
     typeSchemas[name] = Schema.create(typeSchemaDef)
   }
   return typeSchemas[name]
@@ -83,7 +95,8 @@ Template.afLeaTaskContent.helpers({
     const name = instance.stateVars.get('currentTypeToAdd')
     const imagesCollection = instance.data.atts.filesCollection
     const version = instance.data.atts.version
-    const uriBase = instance.data.atts.uriBase || Meteor.absoluteUrl()
+    const { connection } = instance.data.atts
+    const uriBase = connection._stream.rawUrl
     // const h5p = instance.data.atts.h5p
     return currentTypeSchema({ name, imagesCollection, version, uriBase })
   },

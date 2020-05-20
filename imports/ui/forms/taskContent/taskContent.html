@@ -55,14 +55,17 @@
 								schema=currentTypeSchema doc=currentElement}}
 					{{else}}
 						{{#each group in contentGroups}}
-							<h4>{{i18n group.label}}</h4>
-							{{#each type in (contentTypes group.name)}}
-								<button class="btn btn-outline-primary btn-lg select-content-type-button" data-name="{{type.name}}">
-									<span><i class="fa fas fa-fw fa-{{type.icon}}"></i></span>
-									<span>{{i18n type.label}}</span>
-								</button>
-							{{/each}}
-
+							<h4 class="my-4">{{i18n group.label}}</h4>
+                        <div class="row my-4">
+                            {{#each type in (contentTypes group.name)}}
+                                <div class="col-md-4 col-lg-3 col-xl-2">
+                                    <button class="btn btn-outline-primary btn-lg select-content-type-button w-100 h-100" data-name="{{type.name}}">
+                                        <span><i class="fa fas fa-fw fa-{{type.icon}}"></i></span>
+                                        <span>{{i18n type.label}}</span>
+                                    </button>
+                                </div>
+                            {{/each}}
+                        </div>
 						{{/each}}
 					{{/with}}
 				</div>

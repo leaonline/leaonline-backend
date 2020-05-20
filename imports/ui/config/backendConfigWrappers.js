@@ -29,7 +29,7 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   instance.state.set(StateVariables.config, config)
   parseCollections({ instance, config, connection, logDebug })
   parseFields({ instance, config, logDebug, appName, settingsDoc })
-  parseActions({ instance, config, logDebug, settingsDoc })
+  parseActions({ instance, config, logDebug, settingsDoc, app })
   parsePublications({ instance, config, logDebug, onSubscribed, connection })
   mutationChecker.compare(config)
 }

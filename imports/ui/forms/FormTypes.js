@@ -1,6 +1,7 @@
 export const FormTypes = {
   imageSelect: {
     name: 'imageSelect',
+    template: 'leaImageSelect',
     schema: {
       imagesCollection: String,
       save: {

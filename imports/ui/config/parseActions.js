@@ -4,7 +4,7 @@ import { LeaCoreLib } from '../../api/core/LeaCoreLib'
 import { getCollection } from '../../utils/collection'
 import { toFormSchema } from './toFormSchema'
 
-export const parseActions = function parseActions ({ instance, config, logDebug, settingsDoc }) {
+export const parseActions = function parseActions ({ instance, config, app, logDebug, settingsDoc }) {
   const actions = config.methods || {}
   const schema = Object.assign({}, config.schema || {})
 
@@ -24,13 +24,15 @@ export const parseActions = function parseActions ({ instance, config, logDebug,
   }
 
   if (actions.insert) {
-    const insertFormSchema = toFormSchema(actions.insert.schema || schema, config.name, settingsDoc)
+    const insertFormSchemaDef = actions.insert.schema || schema
+    const insertFormSchema = toFormSchema({ schema: insertFormSchemaDef, config, settingsDoc, app})
     instance.actionInsertSchema = Schema.create(insertFormSchema)
     instance.state.set(StateVariables.actionInsert, actions.insert)
   }
 
   if (actions.update) {
-    const updateFormSchema = toFormSchema(actions.update.schema || schema, config.name, settingsDoc)
+    const updateFormSchemaDef = actions.update.schema || schema
+    const updateFormSchema = toFormSchema({ schema: updateFormSchemaDef, config, settingsDoc, app})
     instance.actionUpdateSchema = Schema.create(updateFormSchema)
     instance.state.set(StateVariables.actionUpdate, actions.update)
   }

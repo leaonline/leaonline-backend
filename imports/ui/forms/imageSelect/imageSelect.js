@@ -22,10 +22,11 @@ Template.afImageSelect.onCreated(function () {
   const { data } = instance
   const { atts } = data
 
-  instance.imagesCollection = Mongo.Collection.get(atts.imagesCollection)
-  if (!instance.imagesCollection) {
+  const imagesCollection = Mongo.Collection.get(atts.imagesCollection)
+  if (!imagesCollection) {
     throw new Error(`Could not find imagesCollection by name <${atts.imagesCollection}>`)
   }
+  instance.imagesCollection = imagesCollection
 
   const saveType = (atts.save === SaveType.url)
     ? SaveType.url
