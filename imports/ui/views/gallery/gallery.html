@@ -42,8 +42,15 @@
                                 {{> image src=this alt=../file.name class="figure-img img-fluid rounded bg-light" shadow=(current file._id) data-target=file._id}}
                             </div>
                             <div class="col-12 col-md-4 p-lg-3 p-1 img-description text-light d-block">
-                                <h4>{{file.name}}</h4>
-                                <p class="font-weight-light">{{file.name}}</p>
+                                <h4 class="text-break">{{file.name}}</h4>
+                                <p class="font-weight-light text-break">{{file.name}}</p>
+                                <div class="actions text-right">
+                                    {{#if actionRemove}}
+                                        <button class="btn btn-danger remove-button" data-target="{{file._id}}">
+                                            <i class="fa fas fa-fw fa-trash"></i> {{i18n "actions.delete"}}
+                                        </button>
+                                    {{/if}}
+                                </div>
                             </div>
                         {{/with}}
                     </div>
@@ -51,12 +58,4 @@
 			{{/each}}
 		</div>
 	{{/with}}
-
-    {{!--
-    {{#if actionRemove}}
-        <a class="text-danger remove-button" href data-target="{{file._id}}">
-            <i class="fa fas fa-fw fa-times"></i>
-        </a>
-    {{/if}}
-    --}}
 </template>
