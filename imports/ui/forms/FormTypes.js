@@ -15,7 +15,16 @@ export const FormTypes = {
   taskContent: {
     name: 'taskContent',
     schema: {
-
+      filesCollection: {
+        type: String
+      },
+      version: {
+        type: String,
+        allowedValues: ['original', 'thumbnail']
+      },
+      uriBase: {
+        type: String
+      }
     },
     load: async function () {
       return import('./taskContent/taskContent')

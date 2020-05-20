@@ -5,6 +5,8 @@ import { getCollection } from '../../utils/collection'
 import { cloneObject } from '../../utils/cloneObject'
 import { getValueFunction } from './getValueFunction'
 import { getLabel } from './getLabel'
+import { getFieldSettings } from '../../api/apps/getFieldSettings'
+import { FormTypes } from '../forms/FormTypes'
 
 const settings = Meteor.settings.public.editor
 const { textAreaThreshold } = settings
@@ -18,7 +20,7 @@ const toTypeName = entry => entry.source
 // se we define a common helper here
 const areAllFieldsSet = fields => fields.every(name => !!AutoForm.getFieldValue(name))
 
-export const toFormSchema = (srcSchema, name) => {
+export const toFormSchema = (srcSchema, name, settingsDoc) => {
   // first we define all the properties on the copy
   // in order to not change the original schema
   const copy = cloneObject(srcSchema)
@@ -26,6 +28,7 @@ export const toFormSchema = (srcSchema, name) => {
   Object.entries(copy).forEach(([key, definitions]) => {
     definitions.label = getLabel({ key, context: { name }, field: definitions, type: 'form' })
 
+    const fieldSettings = getFieldSettings(settingsDoc, key) || {}
     const autoform = {}
 
     // if there are computed values we need to
@@ -52,6 +55,12 @@ export const toFormSchema = (srcSchema, name) => {
 
     if (isTextArea(definitions)) {
       autoform.type = 'textarea'
+    }
+
+    if (fieldSettings.form && FormTypes[fieldSettings.form]) {
+      FormTypes[fieldSettings.form].load()
+      autoform.type = fieldSettings.form
+      Object.assign(autoform, definitions.dependency)
     }
 
     if (definitions.dependency) {

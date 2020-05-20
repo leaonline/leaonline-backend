@@ -4,7 +4,7 @@ import { LeaCoreLib } from '../../api/core/LeaCoreLib'
 import { getCollection } from '../../utils/collection'
 import { toFormSchema } from './toFormSchema'
 
-export const parseActions = function parseActions ({ instance, config, logDebug }) {
+export const parseActions = function parseActions ({ instance, config, logDebug, settingsDoc }) {
   const actions = config.methods || {}
   const schema = Object.assign({}, config.schema || {})
 
@@ -24,18 +24,32 @@ export const parseActions = function parseActions ({ instance, config, logDebug 
   }
 
   if (actions.insert) {
-    const insertFormSchema = toFormSchema(actions.insert.schema || schema, config.name)
+    const insertFormSchema = toFormSchema(actions.insert.schema || schema, config.name, settingsDoc)
     instance.actionInsertSchema = Schema.create(insertFormSchema)
     instance.state.set(StateVariables.actionInsert, actions.insert)
   }
 
   if (actions.update) {
-    const updateFormSchema = toFormSchema(actions.update.schema || schema, config.name)
+    const updateFormSchema = toFormSchema(actions.update.schema || schema, config.name, settingsDoc)
     instance.actionUpdateSchema = Schema.create(updateFormSchema)
     instance.state.set(StateVariables.actionUpdate, actions.update)
   }
 
-  if (actions.upload) {
-    instance.state.set(StateVariables.actionUpload, actions.upload)
+  if (config.isFilesCollection) {
+    const uploadAction = getUploadAction(config)
+    instance.state.set(StateVariables.actionUpload, uploadAction)
+  }
+}
+
+function getUploadAction (context) {
+  return {
+    fileId: {
+      type: 'String',
+      autoform: {
+        type: 'fileUpload',
+        collection: context.name,
+        accept: context.accept
+      }
+    }
   }
 }

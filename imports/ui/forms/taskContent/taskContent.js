@@ -76,11 +76,11 @@ Template.afLeaTaskContent.helpers({
   currentTypeSchema () {
     const instance = Template.instance()
     const name = instance.stateVars.get('currentTypeToAdd')
-    const imagesCollection = instance.data.atts.imagesCollection
-    const version = instance.data.atts.imagesVersion
-    const uriBase = instance.data.atts.imagesUriBase
-    const h5p = instance.data.atts.h5p
-    return currentTypeSchema({ name, imagesCollection, version, uriBase, h5p })
+    const imagesCollection = instance.data.atts.filesCollection
+    const version = instance.data.atts.version
+    const uriBase = instance.data.atts.uriBase || Meteor.absoluteUrl()
+    // const h5p = instance.data.atts.h5p
+    return currentTypeSchema({ name, imagesCollection, version, uriBase})
   },
   overElement (index) {
     return Template.instance().stateVars.get('overElement') === index

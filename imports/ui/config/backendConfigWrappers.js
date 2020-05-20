@@ -9,8 +9,6 @@ import { fieldHelpers, parseFields } from './parseFields'
 import { parsePublications } from './parsePublications'
 import { MutationChecker } from './MutationChecker'
 import { getDebug } from '../../utils/getDebug'
-import { Apps } from '../../api/apps/client/Apps'
-import { Schema } from '../../api/schema/Schema'
 import { formIsValid } from '../../utils/form'
 
 
@@ -29,7 +27,7 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   instance.state.set(StateVariables.config, config)
   parseCollections({ instance, config, connection, logDebug })
   parseFields({ instance, config, logDebug, appName, settingsDoc })
-  parseActions({ instance, config, logDebug })
+  parseActions({ instance, config, logDebug, settingsDoc })
   parsePublications({ instance, config, logDebug, onSubscribed, connection })
   mutationChecker.compare(config)
 }

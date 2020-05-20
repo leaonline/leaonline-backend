@@ -2,6 +2,8 @@ import { getCollection } from '../../utils/collection'
 import { createFilesCollection } from '../../factories/createFilesCollection'
 import { createCollection } from '../../factories/createCollection'
 
+const validateUser = () => !!Meteor.userId()
+
 export const parseCollections = function parseCollections ({ instance, config, connection, logDebug }) {
   instance.collections = instance.collections || new Map()
 
@@ -34,7 +36,10 @@ export const parseCollections = function parseCollections ({ instance, config, c
         createFilesCollection({
           collectionName: collectionName,
           collection: filesCollectionSource,
-          ddp: connection
+          ddp: connection,
+          maxSize: config.maxSize,
+          extension: config.extensions,
+          validateUser: validateUser
         })
       }
     }

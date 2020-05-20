@@ -1,11 +1,9 @@
 import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
-import { Tracker } from 'meteor/tracker'
-import { createCollection } from '../../../factories/createCollection'
-import { createFilesCollection } from '../../../factories/createFilesCollection'
 import { getCollection } from '../../../utils/collection'
 import { dataTarget } from '../../../utils/event'
 import { LeaCoreLib } from '../../../api/core/LeaCoreLib'
+import { wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
 import '../../components/upload/upload'
 import './gallery.html'
 
@@ -21,68 +19,19 @@ const coreComponentsLoaded = components.load([components.template.image])
 Template.genericGallery.onCreated(function () {
   const instance = this
 
-  const app = instance.data.app()
-  const { connection } = app
-  instance.state.set('remoteUrl', app.url)
-
-  const config = instance.data.config()
-  debug(config)
-
-  const actions = config.actions || {}
-  instance.state.set('actionRemove', actions.remove)
-  instance.state.set('actionUpload', actions.upload)
-  instance.state.set('documentFields', Object.keys(config.fields || {}))
-
-  if (config.collections) {
-    instance.collections = instance.collections || {}
-    config.collections.forEach(collectionName => {
-      const collection = getCollection(collectionName)
-      if (collection) {
-        instance.collections[collectionName] = collection
-      } else {
-        // create filesCollection if flag is truthy
-        instance.collections[collectionName] = createCollection({
-          name: collectionName,
-          schema: {},
-          connection
-        })
-        if (config.isFilesCollection) {
-          createFilesCollection({
-            collectionName: collectionName,
-            collection: instance.collections[collectionName],
-            ddp: connection
-          })
-        }
-      }
-    })
-    instance.mainCollection = instance.collections[config.mainCollection]
-    debug('collections created', instance.collections)
-  }
-
-  if (config.publications) {
-    const allSubs = {}
-    config.publications.forEach(publication => {
-      const { name } = publication
-      allSubs[name] = false
-      Tracker.autorun(() => {
-        debug('subscribe to', name)
-        const sub = connection.subscribe(name)
-        if (sub.ready()) {
-          allSubs[name] = true
-          debug(name, 'complete')
-        }
-        if (Object.values(allSubs).every(entry => entry === true)) {
-          debug('all subs complete')
-          const count = instance.mainCollection.find().count()
-          instance.state.set('documentsCount', count)
-          instance.state.set('allSubsComplete', true)
-        }
-      })
-    })
-  }
+  instance.autorun(() => {
+    const data = Template.currentData()
+    const { pathname } = window.location
+    const lastPath = instance.state.get('lastPath')
+    if (lastPath !== pathname) {
+      instance.state.clear()
+    }
+    wrapOnCreated(instance, { data, debug: true })
+    instance.state.set('lastPath', pathname)
+  })
 })
 
-Template.genericGallery.helpers({
+Template.genericGallery.helpers(wrapHelpers({
   loadComplete () {
     const instance = Template.instance()
     return coreComponentsLoaded.get() && instance.state.get('allSubsComplete')
@@ -118,7 +67,7 @@ Template.genericGallery.helpers({
   actionRemove () {
     return Template.instance().state.get('actionRemove')
   }
-})
+}))
 
 Template.genericGallery.events({
   'click .remove-button' (event, templateInstance) {

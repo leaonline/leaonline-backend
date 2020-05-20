@@ -12,7 +12,7 @@ export const ViewTypes = {
     template: 'genericGallery',
     label: 'viewTypes.gallery',
     load: async function () {
-      return import('../../ui/views/gallery/gallery.html')
+      return import('../../ui/views/gallery/gallery')
     }
   },
   document: {
