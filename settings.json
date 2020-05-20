@@ -9,6 +9,9 @@
     "redirectUrl": "http://localhost:5050/_oauth/lea"
   },
   "public": {
+    "app": {
+      "title": "lea.online Backend"
+    },
     "editor": {
       "textAreaThreshold": 500
     },
