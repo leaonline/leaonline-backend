@@ -15,31 +15,23 @@ const types = Object.values(TaskRenderers).filter(el => !el.exclude)
 const rendererGroups = Object.values(RendererGroups)
 const typeSchemas = {}
 
-const createTypeSchemaDef = ({ name, formType, imagesCollection, version, uriBase, h5p }) => {
-  return TaskRenderers[name].schema({
-    i18n: i18n.get,
-    name,
-    imagesCollection,
-    formType,
-    version,
-    uriBase,
-    h5p
-  })
+const createTypeSchemaDef = ({ name, imageForm }) => {
+  if (!TaskRenderers[name]) throw new Error(`Expected renderer for name ${name}`)
+  return TaskRenderers[name].schema({ i18n: i18n.get, name, imageForm })
 }
 
-const getFormType = name => {
-  switch(name) {
-    case TaskRenderers.image.name:
-      return 'leaImageSelect'
-    default:
-      return 'text'
-  }
-}
+const getImageForm = ({ imagesCollection, save = 'url', uriBase, version }) => ({
+  type: 'leaImageSelect',
+  imagesCollection: imagesCollection,
+  save: save,
+  uriBase: uriBase,
+  version: version
+})
 
-const currentTypeSchema = ({ name, imagesCollection, version, uriBase, h5p }) => {
-  const formType = getFormType(name)
+const currentTypeSchema = ({ name, imagesCollection, version, uriBase }) => {
+  const imageForm = getImageForm({ imagesCollection, version, uriBase })
   if (!typeSchemas[name]) {
-    const typeSchemaDef = createTypeSchemaDef({ name, formType, imagesCollection, version, uriBase, h5p })
+    const typeSchemaDef = createTypeSchemaDef({ name, imageForm })
     typeSchemas[name] = Schema.create(typeSchemaDef)
   }
   return typeSchemas[name]
