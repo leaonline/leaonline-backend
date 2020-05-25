@@ -26,14 +26,14 @@ export const parseActions = function parseActions ({ instance, config, app, logD
   if (actions.insert) {
     const insertFormSchemaDef = actions.insert.schema || schema
     const insertFormSchema = toFormSchema({ schema: insertFormSchemaDef, config, settingsDoc, app})
-    instance.actionInsertSchema = Schema.create(insertFormSchema)
+    instance.actionInsertSchema = Schema.create(insertFormSchema, { clean: false, filter:false })
     instance.state.set(StateVariables.actionInsert, actions.insert)
   }
 
   if (actions.update) {
     const updateFormSchemaDef = actions.update.schema || schema
     const updateFormSchema = toFormSchema({ schema: updateFormSchemaDef, config, settingsDoc, app})
-    instance.actionUpdateSchema = Schema.create(updateFormSchema)
+    instance.actionUpdateSchema = Schema.create(updateFormSchema, { clean: false, filter:false })
     instance.state.set(StateVariables.actionUpdate, actions.update)
   }
 
