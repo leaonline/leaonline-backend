@@ -18,7 +18,8 @@ const i18nProvider = new I18N({ i18n: config })
 i18n.load({
   get: i18nProvider.get,
   set: (locale, definitions) => i18nProvider.addl10n({ [locale]: definitions }),
-  getLocale: () => i18nProvider.currentLocale.get()
+  getLocale: () => i18nProvider.currentLocale.get(),
+  thisContext: i18nProvider
 })
 
 // provide a language tag on the html root element
