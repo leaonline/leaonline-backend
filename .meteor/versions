@@ -49,14 +49,13 @@ id-map@1.1.0
 imajus:autoform-bootstrap4@0.0.5
 inter-process-messaging@0.1.1
 jkuester:template-states@0.3.1
-jquery@1.11.11
+jquery@3.0.0
 lai:collection-extensions@0.2.1_1
 launch-screen@1.2.0
 leaonline:accounts-lea@1.0.1
 leaonline:collection-factory@1.0.1
 leaonline:corelib@1.0.0
 leaonline:ddp-login@1.0.4
-leaonline:errors@1.0.0
 leaonline:files-collection-factory@1.0.0
 leaonline:method-factory@1.0.0
 leaonline:oauth-lea@1.0.2
@@ -64,7 +63,6 @@ leaonline:publication-factory@1.0.0
 leaonline:ratelimit-factory@1.0.0
 leaonline:service-registry@1.0.0
 leaonline:theme@1.0.0
-leaonline:utils@1.0.0
 livedata@1.0.18
 localstorage@1.2.0
 logging@1.1.20

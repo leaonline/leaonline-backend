@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
 import { getCollection } from '../../utils/collection'
-import { LeaCoreLib } from '../../api/core/LeaCoreLib'
 import { parseActions } from './parseActions'
 import { StateVariables } from './StateVariables'
 import { parseCollections } from './parseCollections'
@@ -11,7 +10,7 @@ import { MutationChecker } from './MutationChecker'
 import { getDebug } from '../../utils/getDebug'
 import { formIsValid } from '../../utils/form'
 import { dataTarget } from '../../utils/event'
-import { i18n } from '../../api/i18n/I18n'
+import { i18n } from '../../api/i18n/i18n'
 
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {

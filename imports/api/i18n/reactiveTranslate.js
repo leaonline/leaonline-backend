@@ -1,3 +1,3 @@
-import { i18n } from './I18n'
+import { i18n } from './i18n'
 
-export const translate = (...params) => i18n.get(...params)
+export const translate = i18n.reactive

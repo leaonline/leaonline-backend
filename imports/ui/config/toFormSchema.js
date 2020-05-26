@@ -1,4 +1,4 @@
-import { i18n } from '../../api/i18n/I18n'
+import { i18n } from '../../api/i18n/i18n'
 import { Meteor } from 'meteor/meteor'
 import { ContextRegistry } from '../../api/config/ContextRegistry'
 import { getCollection } from '../../utils/collection'

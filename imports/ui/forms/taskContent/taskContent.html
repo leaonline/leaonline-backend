@@ -81,6 +81,11 @@
 		</div>
 	</div>
 
+    {{!-- ERRORS, VALIDATION ETC, --}}
+    <div class="{{#unless invalid}}d-block{{else}}d-block{{/unless}} help-block text-danger">
+        <small>{{afFieldMessage name=name}}</small>
+    </div>
+
 	<!-- autoform related -->
 	<input type="hidden" class="afLeaTaskContentHiddenInput" data-schema-key="{{dataSchemaKey}}"/>
 </template>

@@ -1,4 +1,1 @@
-import { LeaCoreLib } from 'meteor/leaonline:corelib'
-
-export { RendererGroups } from 'meteor/leaonline:corelib/renderers/Renderers'
-export const TaskRenderers = LeaCoreLib.renderers
+export { RendererGroups, TaskRenderers } from 'meteor/leaonline:corelib/renderers/Renderers'

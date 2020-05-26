@@ -1,11 +1,11 @@
 import { Template } from 'meteor/templating'
 import { Apps } from '../../../api/apps/Apps'
-import { LeaCoreLib } from '../../../api/core/LeaCoreLib'
+import { Components } from '../../../api/core/Components'
 import './overview.html'
 
-const components = LeaCoreLib.components
-const componentsLoaded = components.load([
-  components.template.icon
+Components.debug = true
+const componentsLoaded = Components.load([
+  Components.template.icon
 ])
 
 Template.statusOverview.onCreated(function () {

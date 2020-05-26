@@ -5,7 +5,7 @@ import { TaskRenderers, RendererGroups } from '../../../api/task/TaskRenderers'
 import { dataTarget } from '../../../utils/event'
 import { Schema } from '../../../api/schema/Schema'
 import { formIsValid } from '../../../utils/form'
-import { i18n } from '../../../api/i18n/I18n'
+import { i18n } from '../../../api/i18n/i18n'
 import '../imageSelect/imageSelect'
 import './taskContent.css'
 import './taskContent.html'
@@ -45,7 +45,7 @@ Template.afLeaTaskContent.onCreated(function () {
 
   const { data } = instance
   const { atts } = data
-
+  console.log('tc oncreated')
   instance.stateVars.set('elements', data.value || [])
   instance.stateVars.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
   instance.stateVars.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
@@ -53,7 +53,7 @@ Template.afLeaTaskContent.onCreated(function () {
 })
 
 Template.afLeaTaskContent.onRendered(function () {
-
+console.log('tc onrenderer')
   const instance = this
   const { data } = instance
 
@@ -197,6 +197,7 @@ function move (arr, oldIndex, newIndex) {
 }
 
 function updateElements (elements, templateInstance) {
+  console.log('update elements', elements)
   templateInstance.stateVars.set('elements', elements)
   const val = JSON.stringify(elements)
   templateInstance.$('.afLeaTaskContentHiddenInput').val(val)

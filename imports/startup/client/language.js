@@ -1,16 +1,28 @@
 import { Meteor } from 'meteor/meteor'
-import { i18n } from '../../api/i18n/I18n'
-import { LeaCoreLib } from '../../api/core/LeaCoreLib'
+import { i18n } from '../../api/i18n/i18n'
+import I18N from 'meteor/ostrio:i18n'
 import i18nConfig from '../../../resources/i18n/i18n_config'
-import i18nDE from '../../../resources/i18n/i18n_de' // TODO load from backend
+import i18nDE from '../../../resources/i18n/i18n_de'
 
 const config = {
   settings: i18nConfig,
   de: i18nDE
 }
 
-i18n.load(config)
-LeaCoreLib.i18n.load(i18n)
+// We first need to create our provider,
+// according to it's implementation specifics.
+// Then we inject the provider using the
+// given interface from our corelib/i18n library.
+
+const i18nProvider = new I18N({ i18n: config })
+i18n.load({
+  get: i18nProvider.get,
+  set: (locale, definitions) => i18nProvider.addl10n({ [locale]: definitions }),
+  getLocale: () => i18nProvider.currentLocale.get()
+})
+
+// provide a language tag on the html root element
+// to comply with standards and pwa guidelines
 
 Meteor.startup(() => {
   document.documentElement.setAttribute('lang', 'de')

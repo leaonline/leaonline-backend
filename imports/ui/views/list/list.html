@@ -42,7 +42,15 @@
         </div>
 
         <div class="card-body {{#if submitting}}d-unavailable{{/if}}">
-            {{>quickForm id="updateForm" type="normal" schema=updateSchema doc=updateDoc}}
+            {{#autoForm id="updateForm" type="normal" schema=insertSchema  doc=updateDoc validate="none"}}
+                {{#each afFieldNames}}
+                    {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
+                {{/each}}
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-secondary" type="submit">{{i18n "actions.update"}}</button>
+                    <button class="btn btn-outline-secondary cancel-form-button">{{i18n "actions.cancel"}}</button>
+                </div>
+            {{/autoForm}}
             {{#if submitting}}
                 <span><i class="fa fas fa-fw fa-spinner fa-pulse"></i></span>
                 <span>{{i18n "actions.submitting"}}</span>

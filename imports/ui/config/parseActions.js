@@ -1,8 +1,17 @@
+import { Tracker } from 'meteor/tracker'
 import { Schema } from '../../api/schema/Schema'
 import { StateVariables } from './StateVariables'
-import { LeaCoreLib } from '../../api/core/LeaCoreLib'
 import { getCollection } from '../../utils/collection'
 import { toFormSchema } from './toFormSchema'
+
+const cleanOptions = {
+  filter: false,
+  autoConvert: false,
+  removeEmptyStrings: false,
+  trimStrings: false,
+  getAutoValues: true,
+  removeNullsFromArrays: true,
+}
 
 export const parseActions = function parseActions ({ instance, config, app, logDebug, settingsDoc }) {
   const actions = config.methods || {}
@@ -13,27 +22,29 @@ export const parseActions = function parseActions ({ instance, config, app, logD
   }
 
   if (actions.preview) {
-    logDebug('load preview', actions.preview.type, actions.preview.name)
-    LeaCoreLib[actions.preview.type][actions.preview.name]
-      .load()
-      .then(() => {
-        logDebug('loaded', actions.preview.name)
-        instance.state.set(StateVariables.actionPreview, actions.preview)
-      })
-      .catch(e => console.error(e))
+    debugger
+    console.log(actions.preview.type, actions.preview.name)
+    // logDebug('load preview', actions.preview.type, actions.preview.name)
+    // LeaCoreLib[actions.preview.type][actions.preview.name]
+    //   .load()
+    //   .then(() => {
+    //     logDebug('loaded', actions.preview.name)
+    //     instance.state.set(StateVariables.actionPreview, actions.preview)
+    //   })
+    //   .catch(e => console.error(e))
   }
 
   if (actions.insert) {
     const insertFormSchemaDef = actions.insert.schema || schema
-    const insertFormSchema = toFormSchema({ schema: insertFormSchemaDef, config, settingsDoc, app})
-    instance.actionInsertSchema = Schema.create(insertFormSchema, { clean: false, filter:false })
+    const insertFormSchema = toFormSchema({ schema: insertFormSchemaDef, config, settingsDoc, app })
+    instance.actionInsertSchema = Schema.create(insertFormSchema, { clean: cleanOptions })
     instance.state.set(StateVariables.actionInsert, actions.insert)
   }
 
   if (actions.update) {
     const updateFormSchemaDef = actions.update.schema || schema
-    const updateFormSchema = toFormSchema({ schema: updateFormSchemaDef, config, settingsDoc, app})
-    instance.actionUpdateSchema = Schema.create(updateFormSchema, { clean: false, filter:false })
+    const updateFormSchema = toFormSchema({ schema: updateFormSchemaDef, config, settingsDoc, app })
+    instance.actionUpdateSchema = Schema.create(updateFormSchema, { clean: cleanOptions })
     instance.state.set(StateVariables.actionUpdate, actions.update)
   }
 

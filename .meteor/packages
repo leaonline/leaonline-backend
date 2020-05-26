@@ -17,9 +17,13 @@ es5-shim@4.8.0                # ECMAScript 5 compatibility for older browsers
 ecmascript@0.14.2              # Enable ECMAScript2015+ syntax in app code
 shell-server@0.5.0            # Server-side component of the `meteor shell` command
 
-# Basic tools
-leaonline:errors
-leaonline:utils
+# required by corelib
+reactive-dict
+http
+templating
+dynamic-import
+
+# lea backend toolset
 leaonline:corelib
 leaonline:service-registry
 
@@ -57,7 +61,8 @@ ostrio:i18n
 
 # UI misc
 jkuester:template-states
-reactive-dict@1.3.0
+jquery@3.0.0!
+
 
 # SCSS
 fourseven:scss
@@ -74,4 +79,3 @@ d3k4y:autoform-markdown
 #========================================
 audit-argument-checks@1.0.7
 force-ssl@1.1.0
-jquery

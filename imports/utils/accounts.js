@@ -1,1 +1,1 @@
-export { loggedIn, loggedOut } from 'meteor/leaonline:utils/lib/accounts'
+export { loggedIn, loggedOut } from 'meteor/leaonline:corelib/utils/accounts'

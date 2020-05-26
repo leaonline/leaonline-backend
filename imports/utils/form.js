@@ -1,1 +1,1 @@
-export { formIsValid, formReset } from 'meteor/leaonline:utils/lib/form'
+export { formIsValid, formReset } from 'meteor/leaonline:corelib/utils/form'

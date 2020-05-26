@@ -1,1 +1,1 @@
-export { dataTarget } from 'meteor/leaonline:utils/lib/event'
+export { dataTarget } from 'meteor/leaonline:corelib/utils/event'

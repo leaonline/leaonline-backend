@@ -1,6 +1,6 @@
 import { Apps } from '../../api/apps/client/Apps' // note to use client/Apps here
 import { ServiceRegistry } from '../../api/config/ServiceRegistry'
-import { i18n } from '../../api/i18n/I18n'
+import { i18n } from '../../api/i18n/i18n'
 import { createCollection } from '../../factories/createCollection'
 import { parseContext } from '../../api/config/parseContext'
 import { createParentRoute } from '../../api/routes/createParentRoute'
@@ -24,7 +24,7 @@ Apps.loadConfig(function (name, done) {
     if (err) return done(err)
     if (!config) return done(new Error(`Expected config for app ${name}`))
 
-    i18n.add(lang, config.lang)
+    i18n.set(lang, config.lang)
     parseContext(name, config)
     createParentRoute(name, config)
     createChildRoute(name, config)
