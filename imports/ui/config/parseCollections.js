@@ -3,8 +3,9 @@ import { createFilesCollection } from '../../factories/createFilesCollection'
 import { createCollection } from '../../factories/createCollection'
 
 const validateUser = () => !!Meteor.userId()
+const defaultLog = () => {}
 
-export const parseCollections = function parseCollections ({ instance, config, connection, logDebug }) {
+export const parseCollections = function parseCollections ({ instance, config, connection, logDebug = defaultLog }) {
   instance.collections = instance.collections || new Map()
 
   // merge all contexts into a single list

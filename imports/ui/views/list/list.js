@@ -7,7 +7,6 @@ import { Router } from '../../../api/routes/Router'
 import { formIsValid } from '../../../utils/form'
 import { getPreviewData } from '../../config/getPreviewData'
 import { by300 } from '../../../utils/dely'
-import { i18n } from '../../../api/i18n/i18n'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import '../../components/summary/summary'
@@ -25,7 +24,6 @@ Template.genericList.onCreated(function () {
     }
     wrapOnCreated(instance, { data, debug: false })
     instance.state.set('lastPath', pathname)
-    console.log('list autorun')
   })
 })
 

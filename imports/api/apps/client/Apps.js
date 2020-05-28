@@ -1,6 +1,7 @@
 /* global localStorage */
 import { Apps } from '../Apps'
 import { Meteor } from 'meteor/meteor'
+import { check, Match } from 'meteor/check'
 import { Tracker } from 'meteor/tracker'
 import { DDP } from 'meteor/ddp-client'
 import { ReactiveDict } from 'meteor/reactive-dict'
@@ -188,5 +189,12 @@ Apps.subscribe = ({ names }) => {
   return _handle
 }
 Apps.subscriptions = () => _handle
+
+Apps.getUriBase = function (name) {
+  check(name, String)
+  const connection = _connections[name]
+  check(connection, Match.Where(x => typeof x === 'object'))
+  return connection._stream.rawUrl
+}
 
 export { Apps }

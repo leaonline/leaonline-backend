@@ -1,40 +1,133 @@
-import { check } from 'meteor/check'
 import { Template } from 'meteor/templating'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import { TaskRenderers, RendererGroups } from '../../../api/task/TaskRenderers'
-import { dataTarget } from '../../../utils/event'
+import { Scoring } from '../../../api/task/Scoring'
+import { Apps } from '../../../api/apps/Apps'
+import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { Schema } from '../../../api/schema/Schema'
+import { FormTypes } from '../FormTypes'
 import { formIsValid } from '../../../utils/form'
+import { dataTarget } from '../../../utils/event'
+import { getCollection } from '../../../utils/collection'
 import { i18n } from '../../../api/i18n/i18n'
+import { toFormSchema } from '../../config/toFormSchema'
+import { parseCollections } from '../../config/parseCollections'
+import { parsePublications } from '../../config/parsePublications'
 import '../imageSelect/imageSelect'
+import '../itemForm/itemForm'
 import './taskContent.css'
 import './taskContent.html'
 import './autoform'
 
+
+/* global AutoForm */
+
+AutoForm.addInputType('leaTaskContent', {
+  template: 'afLeaTaskContent',
+  valueOut () {
+    const val = this.val()
+    return val && JSON.parse(val)
+  },
+  valueIn (initialValue) {
+    return initialValue
+  }
+})
+const itemCache = new Map()
 const types = Object.values(TaskRenderers).filter(el => !el.exclude)
 const rendererGroups = Object.values(RendererGroups)
 const typeSchemas = {}
+
+const getContent = (element) => {
+  if (element.type !== 'item') return element
+  const context = ContextRegistry.get(element.subtype)
+  if (!context) throw new Error(`Missing context for subtype ${element.subtype}`)
+  const collection = getCollection(context.name)
+  element.value = collection.findOne(element.value)
+  return element
+}
 
 const createTypeSchemaDef = ({ name, imageForm }) => {
   if (!TaskRenderers[name]) throw new Error(`Expected renderer for name ${name}`)
   return TaskRenderers[name].schema({ i18n: i18n.get, name, imageForm })
 }
 
+const isItem = name => {
+  const context = ContextRegistry.get(name)
+  return context && context.isItem
+}
+
+const contentFromItem = (name, value) => ({ type: 'item', subtype: name, value, width: '12' })
+
 const getImageForm = ({ imagesCollection, save = 'url', uriBase, version }) => ({
-  type: 'leaImageSelect',
+  type: FormTypes.imageSelect.template,
   imagesCollection: imagesCollection,
   save: save,
   uriBase: uriBase,
   version: version
 })
 
-const currentTypeSchema = ({ name, imagesCollection, version, uriBase }) => {
+const loadDependencies = (config, appName) => {
+  const dependencies = config.dependencies || []
+  const app = Apps.get(appName)
+  const { connection } = app
+
+  dependencies.forEach(dependency => {
+    const instance = {}
+    parseCollections({
+      config: dependency,
+      connection: connection,
+      instance: instance
+    })
+    parsePublications({
+      config: dependency,
+      connection: connection,
+      instance: null,
+      logDebug: (...args) => console.log(...args),
+      onSubscribed: () => console.log('subscribed', config.name)
+    })
+  })
+}
+
+const getItemSchema = ({ name, app, settingsDoc }) => {
+  const config = ContextRegistry.get(name)
+  loadDependencies(config, app)
+  const schema = config.schema
+  return toFormSchema({ schema, config, settingsDoc, app })
+}
+
+const createItemData = ({ unitId, page, subtype, onInput }) => {
+  const data = {}
+  data.userId = Meteor.userId()
+  data.sessionId = 'testSession'
+  data.unitId = unitId
+  data.page = page
+  data.subtype = subtype
+  data.onInput = onInput
+  return data
+}
+
+const currentTypeSchema = ({ name, imagesCollection, version, uriBase, app, settingsDoc }) => {
   const imageForm = getImageForm({ imagesCollection, version, uriBase })
   if (!typeSchemas[name]) {
-    const typeSchemaDef = createTypeSchemaDef({ name, imageForm })
+    const isItemContent = isItem(name)
+    const typeSchemaDef = isItemContent
+      ? getItemSchema({ name, app, settingsDoc })
+      : createTypeSchemaDef({ name, imageForm })
     typeSchemas[name] = Schema.create(typeSchemaDef)
   }
   return typeSchemas[name]
+}
+
+let _currentTypeSchema
+
+const createTypeSchema = (name, templateInstance) => {
+  const imagesCollection = templateInstance.data.atts.filesCollection
+  const version = templateInstance.data.atts.version
+  const { connection } = templateInstance.data.atts
+  const { app } = templateInstance.data.atts
+  const { settingsDoc } = templateInstance.data.atts
+  const uriBase = connection._stream.rawUrl
+  _currentTypeSchema = currentTypeSchema({ name, imagesCollection, version, uriBase, app, settingsDoc })
 }
 
 TaskRenderers.factory.load()
@@ -45,7 +138,7 @@ Template.afLeaTaskContent.onCreated(function () {
 
   const { data } = instance
   const { atts } = data
-  console.log('tc oncreated')
+
   instance.stateVars.set('elements', data.value || [])
   instance.stateVars.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
   instance.stateVars.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
@@ -53,7 +146,6 @@ Template.afLeaTaskContent.onCreated(function () {
 })
 
 Template.afLeaTaskContent.onRendered(function () {
-console.log('tc onrenderer')
   const instance = this
   const { data } = instance
 
@@ -83,14 +175,8 @@ Template.afLeaTaskContent.helpers({
     return Template.instance().stateVars.get('currentTypeToAdd')
   },
   currentTypeSchema () {
-    const instance = Template.instance()
-    const name = instance.stateVars.get('currentTypeToAdd')
-    const imagesCollection = instance.data.atts.filesCollection
-    const version = instance.data.atts.version
-    const { connection } = instance.data.atts
-    const uriBase = connection._stream.rawUrl
-    // const h5p = instance.data.atts.h5p
-    return currentTypeSchema({ name, imagesCollection, version, uriBase })
+    console.log(_currentTypeSchema)
+    return _currentTypeSchema
   },
   overElement (index) {
     return Template.instance().stateVars.get('overElement') === index
@@ -104,6 +190,21 @@ Template.afLeaTaskContent.helpers({
   lastElement (index) {
     const elements = Template.instance().stateVars.get('elements')
     return index > (elements.length - 2)
+  },
+  getContent (element) {
+    return getContent(element)
+  },
+  previewContent () {
+    const instance = Template.instance()
+    const previewContent = instance.stateVars.get('previewContent')
+    if (!previewContent) return
+
+    const previewData = instance.stateVars.get('previewData')
+    const onInput = onItemInput.bind(Template.instance())
+    return Object.assign({}, previewContent, previewData, { onInput })
+  },
+  scoreContent ( ){
+    return Template.instance().stateVars.get('scoreContent')
   }
 })
 
@@ -115,6 +216,7 @@ Template.afLeaTaskContent.events({
   'click .select-content-type-button' (event, templateInstance) {
     event.preventDefault()
     const name = dataTarget(event, templateInstance, 'name')
+    createTypeSchema(name, templateInstance)
     templateInstance.stateVars.set('currentTypeToAdd', name)
   },
   'click .modal-back-button' (event, templateInstance) {
@@ -124,28 +226,47 @@ Template.afLeaTaskContent.events({
   'submit #afLeaTaskAddContenTypeForm' (event, templateInstance) {
     event.preventDefault()
     const name = templateInstance.stateVars.get('currentTypeToAdd')
-    const schema = currentTypeSchema({ name })
-    const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', schema)
-
+    const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
     if (!insertDoc) return
+
+    const contentElementDoc = (isItem(name))
+      ? contentFromItem(name, insertDoc)
+      : insertDoc
 
     const elements = templateInstance.stateVars.get('elements')
     const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
 
     if (typeof currentElementIndex === 'number') {
-      elements.splice(currentElementIndex, 1, insertDoc)
+      elements.splice(currentElementIndex, 1, contentElementDoc)
     } else {
-      elements.push(insertDoc)
+      elements.push(contentElementDoc)
     }
 
     updateElements(elements, templateInstance)
     templateInstance.$('#taskContentModel').modal('hide')
   },
+  'click .preview-content-button' (event, templateInstance) {
+    event.preventDefault()
+    const name = templateInstance.stateVars.get('currentTypeToAdd')
+    const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
+
+    if (!insertDoc) return
+    templateInstance.stateVars.set({ previewContent: null })
+
+    const previewContent = (isItem(name))
+      ? contentFromItem(name, insertDoc)
+      : insertDoc
+
+    templateInstance.stateVars.set({ previewContent })
+  },
   'hidden.bs.modal' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.stateVars.set('currentTypeToAdd', null)
-    templateInstance.stateVars.set('currentElement', null)
-    templateInstance.stateVars.set('currentElementIndex', null)
+    templateInstance.stateVars.set({
+      currentTypeToAdd: null,
+      previewContent: null,
+      currentElement: null,
+      currentElementIndex: null
+    })
   },
   'mouseover .element-container' (event, templateInstance) {
     event.preventDefault()
@@ -162,9 +283,24 @@ Template.afLeaTaskContent.events({
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.stateVars.get('elements')
-    const currentElement = elements[index]
-    templateInstance.stateVars.set('currentTypeToAdd', currentElement.subtype)
+    const elementDoc = elements[index]
+    const name = elementDoc.subtype
+    const elementIsItem = isItem(name)
+    const currentElement = (elementIsItem)
+      ? elementDoc.value
+      : elementDoc
+
+    if (elementIsItem) {
+      const unitId = templateInstance.data.unitId || 'undefined'
+      const onInput = onItemInput.bind(templateInstance)
+      const previewData = createItemData({ unitId, subtype: name, page: index })
+      templateInstance.stateVars.set({ previewData })
+    }
+
+    createTypeSchema(name, templateInstance)
+    templateInstance.stateVars.set('currentTypeToAdd', name)
     templateInstance.stateVars.set('currentElement', currentElement)
+    templateInstance.stateVars.set('previewContent', elementDoc)
     templateInstance.stateVars.set('currentElementIndex', index)
     templateInstance.$('#taskContentModel').modal('show')
   },
@@ -197,9 +333,21 @@ function move (arr, oldIndex, newIndex) {
 }
 
 function updateElements (elements, templateInstance) {
-  console.log('update elements', elements)
   templateInstance.stateVars.set('elements', elements)
   const val = JSON.stringify(elements)
   templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
+}
 
+function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
+  const instance = this
+  const previewContent = instance.stateVars.get('previewContent')
+  const itemDoc = previewContent.value // item docs are stored in value
+  const scoreContext = Scoring.get(type)
+  const scoreResults = scoreContext.score(itemDoc, { responses })
+  const scoreContent = {
+    type: 'preview',
+    subtype: Scoring.name,
+    scores: scoreResults
+  }
+  instance.stateVars.set({ scoreContent })
 }

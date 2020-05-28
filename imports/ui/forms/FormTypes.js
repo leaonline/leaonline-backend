@@ -31,5 +31,12 @@ export const FormTypes = {
     load: async function () {
       return import('./taskContent/taskContent')
     }
+  },
+  item: {
+    name: 'itemForm',
+    template: 'leaItemForm',
+    load: async function () {
+      return import('./itemForm/itemForm')
+    }
   }
 }

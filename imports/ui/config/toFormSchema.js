@@ -7,6 +7,7 @@ import { getValueFunction } from './getValueFunction'
 import { getLabel } from './getLabel'
 import { getFieldSettings } from '../../api/apps/getFieldSettings'
 import { FormTypes } from '../forms/FormTypes'
+import { Apps } from '../../api/apps/Apps'
 
 const settings = Meteor.settings.public.editor
 const { textAreaThreshold } = settings
@@ -59,38 +60,49 @@ export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
       autoform.type = 'textarea'
     }
 
+    if (definitions.type === Boolean) {
+      autoform.type = 'boolean-select'
+      autoform.falseLabel = () => i18n.get('common.no')
+      autoform.trueLabel = () => i18n.get('common.yes')
+      autoform.nullLabel = () => i18n.get('form.selectOne')
+    }
+
     if (fieldSettings.form && FormTypes[fieldSettings.form]) {
       const targetForm = FormTypes[fieldSettings.form]
       targetForm.load()
       autoform.type = targetForm.template
       autoform.connection = app.connection
+      autoform.app = app.name
+      autoform.settingsDoc = Object.assign({}, settingsDoc)
       Object.assign(autoform, definitions.dependency)
     }
 
     if (definitions.dependency) {
       const { dependency } = definitions
-      const { requires, collection, context, field, isArray } = dependency
-
-      // if this field requires other fields to be set
-      // we disable it until the required fields are set
-
-      if (requires) {
-        const allRequired = Array.isArray(requires) ? requires : [requires]
-        autoform.disabled = () => {
-          return areAllFieldsSet(allRequired) !== true
-        }
-      }
+      const { requires, collection, filesCollection, context, field, isArray } = dependency
 
       let hasOptions = false
 
       if (collection) {
         const transform = { sort: { [field]: 1 } }
         const query = dependency.query || {}
-        const DependantCollection = getCollection(collection)
+        let DependantCollection = getCollection(collection)
         const toOptions = doc => ({ value: doc._id, label: doc[field] })
         const toIndexOptions = (entry, index) => ({ value: index, label: entry })
 
         autoform.options = () => {
+          // if in any case the dependant collection has not been loaded initially
+          // we can try to load it here, again and re-check it and falling back if necessary
+          if (!DependantCollection) {
+            DependantCollection = getCollection(collection)
+            if (!DependantCollection) {
+              console.warn(`Undefined collection: ${collection}`)
+              const formId = AutoForm.getFormId()
+              AutoForm.addStickyValidationError(formId, key, 'errors.collectionNotFound', collection)
+              return []
+            }
+          }
+
           if (requires) {
             const fieldValue = AutoForm.getFieldValue(requires)
             if (!fieldValue) return []
@@ -117,20 +129,68 @@ export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
         hasOptions = true
       }
 
-      if (context) {
-        const DepenantContext = ContextRegistry.get(context)
-        const { representative } = DepenantContext
-        const toTypeOptions = type => ({ value: type[representative], label: () => i18n.get(type.label) })
-        const typeOptions = Object.values(DepenantContext.types).map(toTypeOptions)
-        autoform.options = () => typeOptions
+      if (filesCollection) {
+        // if we have a pure image collection
+        // we can use the imageFiles template
+        if (definitions.dependency.isImage) {
+          autoform.type = FormTypes.imageSelect.template
+          autoform.imagesCollection = filesCollection
+          autoform.version = 'original' // TODO get from context definitions
+          autoform.save = definitions.dependency.save || 'url'
+          autoform.uriBase = Apps.getUriBase(app)
+        }
+      }
+
+      if (typeof context !== 'undefined') {
+        const DependantContext= context ? ContextRegistry.get(context) : config
+        const valueField = definitions.dependency.valueField || DependantContext.representative
+        const labelField = definitions.dependency.labelField || 'label'
+
+        if (DependantContext.isItem) {
+          autoform.options = () => {
+            const entries = AutoForm.getFieldValue(field)
+            if (!entries || entries.length === 0) return []
+            return entries.map((entry, index) => {
+              let value = entry[valueField]
+              let label = entry[labelField]
+              if (valueField === '@index') {
+                value = index
+              }
+              if (labelField === '@index') {
+                label = index
+              }
+              return { value, label }
+            })
+          }
+        }
+
+        if (DependantContext.isType) {
+          const typeOptions = Object.values(DependantContext.types).map(type => ({
+            value: type[valueField],
+            label: () => i18n.get(type[labelField])
+          }))
+          autoform.options = () => typeOptions
+        }
+
         hasOptions = true
       }
+
 
       // then apply first option for all dep-types that require
       // a select component, like collection and context
 
       if (hasOptions) {
         autoform.firstOption = () => i18n.get('form.selectOne')
+      }
+
+      // if this field requires other fields to be set
+      // we disable it until the required fields are set
+
+      if (requires) {
+        const allRequired = Array.isArray(requires) ? requires : [requires]
+        autoform.disabled = () => {
+          return areAllFieldsSet(allRequired) !== true
+        }
       }
     }
 

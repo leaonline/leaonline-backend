@@ -1,4 +1,3 @@
-import { Tracker } from 'meteor/tracker'
 import { Schema } from '../../api/schema/Schema'
 import { StateVariables } from './StateVariables'
 import { getCollection } from '../../utils/collection'
@@ -22,7 +21,6 @@ export const parseActions = function parseActions ({ instance, config, app, logD
   }
 
   if (actions.preview) {
-    debugger
     console.log(actions.preview.type, actions.preview.name)
     // logDebug('load preview', actions.preview.type, actions.preview.name)
     // LeaCoreLib[actions.preview.type][actions.preview.name]
