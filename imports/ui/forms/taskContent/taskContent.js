@@ -19,6 +19,7 @@ import './taskContent.css'
 import './taskContent.html'
 import './autoform'
 
+Scoring.init()
 
 /* global AutoForm */
 
@@ -342,8 +343,7 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
   const instance = this
   const previewContent = instance.stateVars.get('previewContent')
   const itemDoc = previewContent.value // item docs are stored in value
-  const scoreContext = Scoring.get(type)
-  const scoreResults = scoreContext.score(itemDoc, { responses })
+  const scoreResults = Scoring.run(type, itemDoc, { responses })
   const scoreContent = {
     type: 'preview',
     subtype: Scoring.name,
