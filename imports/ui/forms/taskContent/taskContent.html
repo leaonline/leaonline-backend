@@ -1,4 +1,9 @@
 <template name="afLeaTaskContent">
+    {{#unless loadComplete}}
+        <div class="w-100 p-1">
+            {{> loading }}
+        </div>
+    {{else}}
     <div class="card">
         <div class="card-body row">
             {{#each element in elements}}
@@ -105,6 +110,7 @@
             </div>
         </div>
     </div>
+    {{/unless}}
 
     {{!-- ERRORS, VALIDATION ETC, --}}
     <div class="{{#unless invalid}}d-block{{else}}d-block{{/unless}} help-block text-danger">

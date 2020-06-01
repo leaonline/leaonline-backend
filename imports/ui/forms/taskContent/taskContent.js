@@ -13,6 +13,7 @@ import { i18n } from '../../../api/i18n/i18n'
 import { toFormSchema } from '../../config/toFormSchema'
 import { parseCollections } from '../../config/parseCollections'
 import { parsePublications } from '../../config/parsePublications'
+import { reactiveAsyncLoader } from '../../../utils/reactiveAsyncLoader'
 import '../imageSelect/imageSelect'
 import '../itemForm/itemForm'
 import './taskContent.css'
@@ -20,6 +21,7 @@ import './taskContent.html'
 import './autoform'
 
 Scoring.init()
+const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init())
 
 /* global AutoForm */
 
@@ -34,7 +36,6 @@ AutoForm.addInputType('leaTaskContent', {
   }
 })
 const itemCache = new Map()
-const types = Object.values(TaskRenderers).filter(el => !el.exclude)
 const rendererGroups = Object.values(RendererGroups)
 const typeSchemas = {}
 
@@ -48,8 +49,9 @@ const getContent = (element) => {
 }
 
 const createTypeSchemaDef = ({ name, imageForm }) => {
-  if (!TaskRenderers[name]) throw new Error(`Expected renderer for name ${name}`)
-  return TaskRenderers[name].schema({ i18n: i18n.get, name, imageForm })
+  const renderer = TaskRenderers.get(name)
+  if (renderer) throw new Error(`Expected renderer for name ${name}`)
+  return renderer.schema({ i18n: i18n.get, name, imageForm })
 }
 
 const isItem = name => {
@@ -131,8 +133,6 @@ const createTypeSchema = (name, templateInstance) => {
   _currentTypeSchema = currentTypeSchema({ name, imagesCollection, version, uriBase, app, settingsDoc })
 }
 
-TaskRenderers.factory.load()
-
 Template.afLeaTaskContent.onCreated(function () {
   const instance = this
   instance.stateVars = new ReactiveDict()
@@ -157,6 +157,9 @@ Template.afLeaTaskContent.onRendered(function () {
 })
 
 Template.afLeaTaskContent.helpers({
+  loadComplete () {
+    return renderersLoaded.get()
+  },
   dataSchemaKey () {
     return Template.instance().data.atts['data-schema-key']
   },
@@ -170,13 +173,13 @@ Template.afLeaTaskContent.helpers({
     return rendererGroups
   },
   contentTypes (group) {
-    return types.filter(entry => entry.group.name === group)
+    return TaskRenderers.getGroup(group)
   },
   currentTypeToAdd () {
+    if (!renderersLoaded.get()) return
     return Template.instance().stateVars.get('currentTypeToAdd')
   },
   currentTypeSchema () {
-    console.log(_currentTypeSchema)
     return _currentTypeSchema
   },
   overElement (index) {
@@ -197,6 +200,7 @@ Template.afLeaTaskContent.helpers({
   },
   previewContent () {
     const instance = Template.instance()
+    if (!renderersLoaded.get()) return
     const previewContent = instance.stateVars.get('previewContent')
     if (!previewContent) return
 
