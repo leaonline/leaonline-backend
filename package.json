@@ -3,8 +3,15 @@
   "private": true,
   "scripts": {
     "start": "meteor run",
-    "test": "meteor test --once --driver-package meteortesting:mocha",
-    "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+    "test:once": "meteor test --once --driver-package meteortesting:mocha",
+    "test:app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+    "lint:code": "standard | snazzy",
+    "lint:code-fix": "standard --fix | snazzy",
+    "lint:style": "stylelint \"**/*.scss\"",
+    "lint:style-fix": "stylelint --fix \"**/*.scss\"",
+    "lint:markdown": "markdownlint \"**/*.md\" --config ./.markdownlint.json",
+    "lint:markdown-fix": "markdownlint --fix \"**/*.md\" --config ./.markdownlint.json",
+    "build:notes-tree": "markdown-notes-tree && npm run lint:markdown-fix",
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
