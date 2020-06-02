@@ -25,6 +25,7 @@ dynamic-import
 
 # lea backend toolset
 leaonline:corelib
+leaonline:ui
 leaonline:service-registry
 
 # collections

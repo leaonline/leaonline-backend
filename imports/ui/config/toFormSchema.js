@@ -194,6 +194,17 @@ export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
       }
     }
 
+
+    if (definitions.options) {
+      const mappedOptions = definitions.options.map(option => ({
+        value: option.value || option.name,
+        label: () => i18n.get(option.label)
+      }))
+      autoform.options = () => mappedOptions
+      autoform.firstOption = definitions.optional ? () => i18n.get('form.selectOne') : false
+      // autoform.allowedValues = definitions.allowedValues
+    }
+
     const labelType = typeof definitions.label
     if (labelType === 'undefined') {
       definitions.label = `${name}.${key}`

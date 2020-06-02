@@ -35,7 +35,7 @@ AutoForm.addInputType('leaTaskContent', {
     return initialValue
   }
 })
-const itemCache = new Map()
+
 const rendererGroups = Object.values(RendererGroups)
 const typeSchemas = {}
 
@@ -50,7 +50,7 @@ const getContent = (element) => {
 
 const createTypeSchemaDef = ({ name, imageForm }) => {
   const renderer = TaskRenderers.get(name)
-  if (renderer) throw new Error(`Expected renderer for name ${name}`)
+  if (!renderer) throw new Error(`Expected renderer for name ${name}`)
   return renderer.schema({ i18n: i18n.get, name, imageForm })
 }
 

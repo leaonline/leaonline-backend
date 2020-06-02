@@ -1,1 +1,1 @@
-export{ TaskRenderers } from 'meteor/leaonline:corelib/renderers/Renderers'
+export{ TaskRenderers } from 'meteor/leaonline:ui/renderers/Renderers'
