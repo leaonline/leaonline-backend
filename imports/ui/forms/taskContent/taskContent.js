@@ -3,6 +3,7 @@ import { ReactiveDict } from 'meteor/reactive-dict'
 import { TaskRenderers, RendererGroups } from '../../../api/task/TaskRenderers'
 import { Scoring } from '../../../api/task/Scoring'
 import { Apps } from '../../../api/apps/Apps'
+import { Components } from '../../../api/core/Components'
 import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { Schema } from '../../../api/schema/Schema'
 import { FormTypes } from '../FormTypes'
@@ -20,6 +21,9 @@ import './taskContent.css'
 import './taskContent.html'
 import './autoform'
 
+Components.load([
+  Components.template.icon
+])
 Scoring.init()
 const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init())
 
@@ -198,6 +202,12 @@ Template.afLeaTaskContent.helpers({
   getContent (element) {
     return getContent(element)
   },
+  isItemContent () {
+    const instance = Template.instance()
+    if (!renderersLoaded.get()) return
+    const previewContent = instance.stateVars.get('previewContent')
+    return previewContent && previewContent.type === 'item'
+  },
   previewContent () {
     const instance = Template.instance()
     if (!renderersLoaded.get()) return
@@ -206,10 +216,13 @@ Template.afLeaTaskContent.helpers({
 
     const previewData = instance.stateVars.get('previewData')
     const onInput = onItemInput.bind(Template.instance())
-    return Object.assign({}, previewContent, previewData, { onInput })
+    return Object.assign({}, previewData, previewContent, { onInput })
   },
-  scoreContent ( ){
+  scoreContent () {
     return Template.instance().stateVars.get('scoreContent')
+  },
+  updatePreview () {
+    return Template.instance().stateVars.get('updatePreview')
   }
 })
 
@@ -252,17 +265,21 @@ Template.afLeaTaskContent.events({
   },
   'click .preview-content-button' (event, templateInstance) {
     event.preventDefault()
+
     const name = templateInstance.stateVars.get('currentTypeToAdd')
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
 
     if (!insertDoc) return
-    templateInstance.stateVars.set({ previewContent: null })
+    templateInstance.stateVars.set({ previewContent: null, updatePreview: true })
 
-    const previewContent = (isItem(name))
-      ? contentFromItem(name, insertDoc)
-      : insertDoc
-
-    templateInstance.stateVars.set({ previewContent })
+    // we use a timeout here to allow some update
+    // indicator when clicking on the button
+    setTimeout(() => {
+      const previewContent = (isItem(name))
+        ? contentFromItem(name, insertDoc)
+        : insertDoc
+      templateInstance.stateVars.set({ previewContent, updatePreview: false })
+    }, 300)
   },
   'hidden.bs.modal' (event, templateInstance) {
     event.preventDefault()

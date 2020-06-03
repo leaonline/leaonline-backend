@@ -7,6 +7,7 @@
     "back": "Zurück",
     "submit": "Absenden",
     "update": "Aktualisieren",
+    "preview": "Vorschau zeigen",
     "close": "Schließen",
     "insertDoc": "Ein neues Dokument anlegen",
     "updateDoc": "Ein Dokument bearbeiten",
@@ -36,6 +37,7 @@
     "title": "Titel",
     "back": "Zurück",
     "documents": "Dokumente",
+    "document": "Dokument",
     "files": "Dateien",
     "continue": "Fortsetzen",
     "end": "Beenden",
@@ -51,7 +53,8 @@
     "yes": "Ja",
     "login": "Anmelden",
     "description": "Beschreibung",
-    "noDocuments": "Es sind (ggf. noch) keine Dokumente vorhanden"
+    "noDocuments": "Es sind (ggf. noch) keine Dokumente vorhanden",
+    "noPreview": "Noch keine Vorschau vorhanden"
   },
   "upload": {
     "successful": "Upload erfolgreich!"

@@ -64,14 +64,25 @@
                                 {{>quickForm id="afLeaTaskAddContenTypeForm" type="normal" buttonClasses="d-none" schema=currentTypeSchema doc=currentElement}}
                             </div>
                                 <div class="col">
+                                    {{!-- RENDERING THE PREVIEW CONTENT HERE --}}
                                     <h4 class="text-center mb-4">{{i18n "common.preview"}}</h4>
                                     {{#with previewContent}}
                                         {{>TaskRendererFactory content=this}}
-                                    {{/with}}
 
-                                    <h4 class="text-center my-4">{{i18n "item.scoring"}}</h4>
-                                    {{#with scoreContent}}
-                                        {{>TaskRendererFactory content=this}}
+                                        {{!-- additionally, if the preview content is an item
+                                              we also render the scoring results as preview --}}
+                                        {{#if isItemContent this}}
+                                            <h4 class="text-center my-4">{{i18n "scoring.title"}}</h4>
+                                            {{#with scoreContent}}
+                                                {{>TaskRendererFactory content=this}}
+                                            {{/with}}
+                                        {{/if}}
+                                        {{else}}
+                                        {{#if updatePreview}}
+                                            <div class="text-center">{{> loading }}</div>
+                                        {{else}}
+                                            <p>{{i18n "common.noPreview"}}</p>
+                                        {{/if}}
                                     {{/with}}
                                 </div>
                         </div>
@@ -98,9 +109,15 @@
                             <button class="btn btn-primary" type="submit" form="afLeaTaskAddContenTypeForm">
                                 {{i18n "actions.submit"}}
                             </button>
-                        <button class="btn btn-outline-secondary preview-content-button">
-                            {{i18n "actions.preview"}}
-                        </button>
+                            {{#unless updatePreview}}
+                                <button class="btn btn-outline-secondary preview-content-button">
+                                    {{>icon name="sync" }} {{i18n "actions.preview"}}
+                                </button>
+                            {{else}}
+                                <button class="btn btn-secondary preview-content-button disabled" disabled>
+                                    {{>icon name="sync" spin=true }} {{i18n "actions.preview"}}
+                                </button>
+                            {{/unless}}
                         </span>
                     {{/if}}
                     <button type="button" class="btn btn-secondary ml-auto" data-dismiss="modal">
