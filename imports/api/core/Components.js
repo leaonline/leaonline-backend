@@ -1,1 +1,1 @@
-export { Components } from 'meteor/leaonline:corelib/components/Components'
+export { Components } from 'meteor/leaonline:ui/components/Components'
