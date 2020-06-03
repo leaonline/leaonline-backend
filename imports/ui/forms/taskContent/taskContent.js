@@ -314,7 +314,6 @@ Template.afLeaTaskContent.events({
 
     if (elementIsItem) {
       const unitId = templateInstance.data.unitId || 'undefined'
-      const onInput = onItemInput.bind(templateInstance)
       const previewData = createItemData({ unitId, subtype: name, page: index })
       templateInstance.stateVars.set({ previewData })
     }
@@ -363,6 +362,11 @@ function updateElements (elements, templateInstance) {
 function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
   const instance = this
   const previewContent = instance.stateVars.get('previewContent')
+  if (!previewContent) {
+    console.info('[TaskContent]: no content to submit onItemInput')
+    return
+  }
+
   const itemDoc = previewContent.value // item docs are stored in value
   const scoreResults = Scoring.run(type, itemDoc, { responses })
   const scoreContent = {
