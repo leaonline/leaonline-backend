@@ -38,5 +38,12 @@ export const FormTypes = {
     load: async function () {
       return import('./itemForm/itemForm')
     }
+  },
+  regExp: {
+    name: 'regExp',
+    template: 'regexp',
+    load: async function () {
+      return import('meteor/jkuester:autoform-regexp')
+    }
   }
 }

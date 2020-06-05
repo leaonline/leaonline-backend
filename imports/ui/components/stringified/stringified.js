@@ -1,3 +1,4 @@
+import { EJSON } from 'meteor/ejson'
 import { Template } from 'meteor/templating'
 import highlight from 'highlight.js/lib/highlight';
 import jsonLang from 'highlight.js/lib/languages/json';
@@ -8,7 +9,7 @@ highlight.registerLanguage('json', jsonLang);
 
 Template.stringified.helpers({
   stringify (target) {
-    return target && JSON.stringify(target, null, 2)
+    return target && EJSON.stringify(target, { indent: 2 })
   }
 })
 

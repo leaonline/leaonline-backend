@@ -116,7 +116,6 @@ Template.genericList.events(wrapEvents({
   },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
-
     const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema)
     if (!updateDoc) return
 

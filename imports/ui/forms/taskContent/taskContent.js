@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating'
+import { EJSON } from 'meteor/ejson'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import { TaskRenderers, RendererGroups } from '../../../api/task/TaskRenderers'
 import { Scoring } from '../../../api/task/Scoring'
@@ -33,7 +34,7 @@ AutoForm.addInputType('leaTaskContent', {
   template: 'afLeaTaskContent',
   valueOut () {
     const val = this.val()
-    return val && JSON.parse(val)
+    return val && EJSON.parse(val)
   },
   valueIn (initialValue) {
     return initialValue
@@ -171,7 +172,7 @@ Template.afLeaTaskContent.helpers({
     return Template.instance().stateVars.get('elements')
   },
   stringify (src) {
-    return JSON.stringify(src)
+    return EJSON.stringify(src)
   },
   contentGroups () {
     return rendererGroups
@@ -181,7 +182,8 @@ Template.afLeaTaskContent.helpers({
   },
   currentTypeToAdd () {
     if (!renderersLoaded.get()) return
-    return Template.instance().stateVars.get('currentTypeToAdd')
+    const name = Template.instance().stateVars.get('currentTypeToAdd')
+    return TaskRenderers.get(name)
   },
   currentTypeSchema () {
     return _currentTypeSchema
@@ -223,6 +225,10 @@ Template.afLeaTaskContent.helpers({
   },
   updatePreview () {
     return Template.instance().stateVars.get('updatePreview')
+  },
+  isUpdateContentForm () {
+
+    return Template.instance().data.value
   }
 })
 
@@ -355,7 +361,7 @@ function move (arr, oldIndex, newIndex) {
 
 function updateElements (elements, templateInstance) {
   templateInstance.stateVars.set('elements', elements)
-  const val = JSON.stringify(elements)
+  const val = EJSON.stringify(elements)
   templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
 }
 
@@ -366,7 +372,6 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
     console.info('[TaskContent]: no content to submit onItemInput')
     return
   }
-
   const itemDoc = previewContent.value // item docs are stored in value
   const scoreResults = Scoring.run(type, itemDoc, { responses })
   const scoreContent = {

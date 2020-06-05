@@ -10,7 +10,6 @@ import { FormTypes } from '../forms/FormTypes'
 import { Apps } from '../../api/apps/Apps'
 
 const settings = Meteor.settings.public.editor
-const { textAreaThreshold } = settings
 
 // for computed values that depend on certain fields
 // we define our requiredFields based on the type value
@@ -21,7 +20,7 @@ const toTypeName = entry => entry.source
 // se we define a common helper here
 const areAllFieldsSet = fields => fields.every(name => !!AutoForm.getFieldValue(name))
 
-export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
+export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
   const { name } = config
 
   // first we define all the properties on the copy
@@ -60,14 +59,20 @@ export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
       autoform.type = 'textarea'
     }
 
-    if (definitions.type === Boolean) {
+    if (isRegExp(definitions)) {
+      autoform.type = 'regexp'
+      FormTypes.regExp.load()
+      // autoform.translate = (...) => i18n.get(..)
+    }
+
+    if (isBoolean(definitions)) {
       autoform.type = 'boolean-select'
       autoform.falseLabel = () => i18n.get('common.no')
       autoform.trueLabel = () => i18n.get('common.yes')
       autoform.nullLabel = () => i18n.get('form.selectOne')
     }
 
-    if (fieldSettings.form && FormTypes[fieldSettings.form]) {
+    if (isSettingsForm(fieldSettings)) {
       const targetForm = FormTypes[fieldSettings.form]
       targetForm.load()
       autoform.type = targetForm.template
@@ -142,7 +147,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
       }
 
       if (typeof context !== 'undefined') {
-        const DependantContext= context ? ContextRegistry.get(context) : config
+        const DependantContext = context ? ContextRegistry.get(context) : config
         const valueField = definitions.dependency.valueField || DependantContext.representative
         const labelField = definitions.dependency.labelField || 'label'
 
@@ -175,7 +180,6 @@ export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
         hasOptions = true
       }
 
-
       // then apply first option for all dep-types that require
       // a select component, like collection and context
 
@@ -193,7 +197,6 @@ export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
         }
       }
     }
-
 
     if (definitions.options) {
       const mappedOptions = definitions.options.map(option => ({
@@ -217,6 +220,8 @@ export const toFormSchema = ({ schema, config, settingsDoc, app}) => {
   return copy
 }
 
+const { textAreaThreshold } = settings
 const isTextArea = value => value.type === String && typeof value.max === 'number' && value.max >= textAreaThreshold
-
-
+const isRegExp = ({ type }) => type === RegExp
+const isBoolean = ({ type }) => type === Boolean
+const isSettingsForm = ({ form }) => form && FormTypes[form]

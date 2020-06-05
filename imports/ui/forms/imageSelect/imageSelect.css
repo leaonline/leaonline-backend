@@ -6,3 +6,7 @@
   right : 0;
   z-index: 2000;
 }
+
+.figure-img {
+  max-width: 5rem;
+}
