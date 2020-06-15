@@ -6,6 +6,7 @@ import { Schema } from '../../../api/schema/Schema'
 import { formIsValid } from '../../../utils/form'
 import { parseSettings } from '../../config/parseSettings'
 import './contextSettings.html'
+import { by300 } from '../../../utils/dely'
 
 Template.contextSettings.onCreated(function () {
   const instance = this
@@ -42,6 +43,9 @@ Template.contextSettings.helpers({
   },
   settingsDoc () {
     return Template.instance().state.get('settingsDoc')
+  },
+  submitting () {
+    return Template.instance().state.get('submitting')
   }
 })
 
@@ -51,11 +55,13 @@ Template.contextSettings.events({
     const settingsDoc = formIsValid('settingsForm', templateInstance.schema)
     if (!settingsDoc) return
 
-    templateInstance.state.set('updating', true)
-    Meteor.call(Apps.methods.updateSettings.name, settingsDoc, (err, res) => {
-      templateInstance.state.set('updating', false)
-      console.log(err, res)
-    })
+    templateInstance.state.set('submitting', true)
+    Meteor.call(Apps.methods.updateSettings.name, settingsDoc, by300((err, res) => {
+      templateInstance.state.set('submitting', false)
+      if (err) {
+        alert(err.reason || err.message)
+      }
+    }))
   },
   'click .cancel-form-button' (event, templateInstance) {
     event.preventDefault()
