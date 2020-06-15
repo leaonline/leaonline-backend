@@ -10,6 +10,7 @@ export const createRoute = (appName, config, parentRoute) => {
   const path = config.path || appName
   return {
     path: () => `/${path}`,
+    key: config.name,
     icon: config.icon,
     label: config.label,
     triggersEnter: () => [
