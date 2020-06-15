@@ -46,8 +46,7 @@ http@1.4.2
 id-map@1.1.0
 imajus:autoform-bootstrap4@0.0.5
 inter-process-messaging@0.1.1
-jkuester:autoform-regexp@0.0.1
-jkuester:ejson-regexp@1.0.0
+jkuester:autoform-regexp@1.0.0
 jkuester:template-states@0.3.1
 jquery@3.0.0
 lai:collection-extensions@0.2.1_1
@@ -56,6 +55,7 @@ leaonline:accounts-lea@1.0.1
 leaonline:collection-factory@1.0.2
 leaonline:corelib@1.0.0
 leaonline:ddp-login@1.0.4
+leaonline:ejson-regexp@1.0.0
 leaonline:files-collection-factory@1.0.0
 leaonline:method-factory@1.0.0
 leaonline:oauth-lea@1.0.2
