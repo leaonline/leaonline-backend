@@ -5,11 +5,12 @@ import { createCollection } from '../../factories/createCollection'
 import { parseContext } from '../../api/config/parseContext'
 import { createParentRoute } from '../../api/routes/createParentRoute'
 import { createChildRoute } from '../../api/routes/createChildRoute'
-import { subscribeSettings } from '../../api/config/subscribeSettings'
 
 const factorySettings = { name: Apps.name, schema: Apps.schema }
 const AppsCollection = createCollection(factorySettings)
 Apps.collection = () => AppsCollection
+
+Meteor.subscribe(Apps.publications.all.name)
 
 // the following registers a config loader callback and runs a
 // parsing mechanism and adds the respective routes to the navigation
@@ -28,7 +29,6 @@ Apps.loadConfig(function (name, done) {
     parseContext(name, config)
     createParentRoute(name, config)
     createChildRoute(name, config)
-    subscribeSettings(name, config)
     done(err, config)
   })
 })

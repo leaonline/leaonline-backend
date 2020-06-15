@@ -3,15 +3,15 @@ import { Template } from 'meteor/templating'
 import { Apps } from '../../../api/apps/client/Apps'
 import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { Schema } from '../../../api/schema/Schema'
+import { by300 } from '../../../utils/dely'
 import { formIsValid } from '../../../utils/form'
 import { parseSettings } from '../../config/parseSettings'
 import './contextSettings.html'
-import { by300 } from '../../../utils/dely'
 
 Template.contextSettings.onCreated(function () {
   const instance = this
+
   instance.autorun(() => {
-    if (!Apps.subscriptions().ready()) return
     const data = Template.currentData()
     const { appName, contextName } = data.params
     const app = Apps.get(appName)
@@ -61,6 +61,7 @@ Template.contextSettings.events({
       if (err) {
         alert(err.reason || err.message)
       }
+      console.log(Apps.methods.updateSettings.name, res)
     }))
   },
   'click .cancel-form-button' (event, templateInstance) {

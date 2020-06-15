@@ -10,6 +10,7 @@ import { onServer } from '../../../utils/arch'
 const _apps = new ReactiveDict()
 const _connections = {}
 const _trackers = {}
+Apps.debug = true
 
 function connect (name, url) {
   if (!_connections[name]) {
@@ -47,7 +48,7 @@ function log (...args) {
 
 function track (name, connection, ddpLogin) {
   const url = connection._stream.rawUrl
-  _trackers[name] = Tracker.autorun(() => {
+  Tracker.autorun(computation => {
     // skip this computation if there is
     // currently no logged in backend user
     if (Meteor.status().connected && !Meteor.user() && !Meteor.userId()) {
@@ -70,12 +71,17 @@ function track (name, connection, ddpLogin) {
 
     // also skip if we are not yet connected
     if (!status.connected) {
-      log(url, 'not yet connected -> skip')
+      log(name, 'not yet connected -> skip', status.retryCount)
+      if (status.retryCount >= 3) {
+        log(name, 'cancel connection')
+        computation.stop()
+      }
       return
     }
 
     // skip if we have not explcitly enabled the DDP login
     if (!ddpLogin) {
+      computation.stop()
       return
     }
 
@@ -86,23 +92,24 @@ function track (name, connection, ddpLogin) {
     updateLogin(name, userId)
     if (userId || loggingIn) return
 
-    log(url, 'get credentials')
+    log(name, 'get credentials')
     connection._loggingIn = true
     Apps.methods.getServiceCredentials.call((err, credentials) => {
       if (err || !credentials) {
         connection._loggingIn = false
         console.error(err)
-        log(url, 'no credentials received, skip login')
+        log(name, 'no credentials received, skip login')
         return
       }
-      log(url, 'init login')
+      log(name, 'init login')
       const options = { accessToken: credentials.accessToken, debug: Apps.debug }
       DDP.loginWithLea(connection, options, (err, res) => {
         connection._loggingIn = false
         if (err) {
           return console.error(err)
         } else {
-          log(url, 'logged in with token', !!res)
+          log(name, 'logged in with token', !!res)
+          computation.stop()
           configure(name)
         }
       })
@@ -176,20 +183,11 @@ Apps.all = function () {
   return all && Object.values(all)
 }
 
+Apps.subscribe = (appName, contextName) => Meteor.subscribe(Apps.publications.getByNames.name, { appName, contextName })
+
 const templates = new Map()
 Apps.registerTemplate = (name, options) => templates.set(name, options)
 Apps.getRegisteredTemplates = () => Array.from(templates)
-
-let _handle = Meteor.subscribe(Apps.publications.getByNames.name, { names: [] })
-
-Apps.subscribe = ({ names }) => {
-  _handle = Meteor.subscribe(Apps.publications.getByNames.name, { names }, { onStop: function (err) {
-    console.log(err)
-  }})
-  return _handle
-}
-Apps.subscriptions = () => _handle
-
 Apps.getUriBase = function (name) {
   check(name, String)
   const connection = _connections[name]

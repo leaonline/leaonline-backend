@@ -164,12 +164,25 @@ Apps.publications = {}
 Apps.publications.getByNames = {
   name: 'apps.publications.getByNames',
   schema: {
-    names: Array,
-    'names.$': String
+    appName: String,
+    contextName: String
   },
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(function ({ names = [] }) {
-    return Apps.collection().find({ name: { $in: names } })
+  run: onServer(function ({ appName, contextName }) {
+    return Apps.collection().find({ name: appName, context: contextName })
+  }),
+}
+
+Apps.publications.all = {
+  name: 'apps.publications.all',
+  schema: {},
+  log: function (...args) {
+    console.log(...args)
+  },
+  numRequests: 5,
+  timeInterval: 500,
+  run: onServer(function () {
+    return Apps.collection().find()
   }),
 }
