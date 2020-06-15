@@ -56,5 +56,12 @@ Template.contextSettings.events({
       templateInstance.state.set('updating', false)
       console.log(err, res)
     })
+  },
+  'click .cancel-form-button' (event, templateInstance) {
+    event.preventDefault()
+    if (templateInstance.data.onComplete) {
+      const { appName, contextName } = templateInstance.data.params
+      templateInstance.data.onComplete({ appName, contextName })
+    }
   }
 })
