@@ -1,5 +1,6 @@
 import { createLoggedinTrigger, createLoginTrigger, createNotFoundTrigger } from './triggers'
 import settings from '../../../resources/i18n/i18n_routes'
+import { gotoRoute } from './gotoRoute'
 
 export const Routes = {}
 
@@ -140,7 +141,11 @@ Routes.settings = {
   target: null,
   template: 'contextSettings',
   roles: null,
-  data: {},
+  data: {
+    onComplete({ appName, contextName }) {
+      gotoRoute({ appName, contextName })
+    }
+  },
   icon: 'cog'
 }
 
