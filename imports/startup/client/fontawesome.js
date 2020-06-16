@@ -1,1 +1,1 @@
-import '@fortawesome/fontawesome-free/js/all.min.js'
+import '@fortawesome/fontawesome-free/js/all.js'
