@@ -7,6 +7,7 @@ import { by300 } from '../../../utils/dely'
 import { formIsValid } from '../../../utils/form'
 import { parseSettings } from '../../config/parseSettings'
 import './contextSettings.html'
+import { defaultNotifications } from '../../../utils/defaultNotifications'
 
 Template.contextSettings.onCreated(function () {
   const instance = this
@@ -58,17 +59,20 @@ Template.contextSettings.events({
     templateInstance.state.set('submitting', true)
     Meteor.call(Apps.methods.updateSettings.name, settingsDoc, by300((err, res) => {
       templateInstance.state.set('submitting', false)
-      if (err) {
-        alert(err.reason || err.message)
-      }
-      console.log(Apps.methods.updateSettings.name, res)
+      defaultNotifications(err, res).success(function () {
+        closeSettings(templateInstance)
+      })
     }))
   },
   'click .cancel-form-button' (event, templateInstance) {
     event.preventDefault()
-    if (templateInstance.data.onComplete) {
-      const { appName, contextName } = templateInstance.data.params
-      templateInstance.data.onComplete({ appName, contextName })
-    }
+    closeSettings(templateInstance)
   }
 })
+
+function closeSettings (templateInstance) {
+  if (templateInstance.data.onComplete) {
+    const { appName, contextName } = templateInstance.data.params
+    templateInstance.data.onComplete({ appName, contextName })
+  }
+}
