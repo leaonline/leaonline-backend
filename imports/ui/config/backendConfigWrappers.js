@@ -11,6 +11,7 @@ import { defaultNotifications } from '../../utils/defaultNotifications'
 import { getDebug } from '../../utils/getDebug'
 import { formIsValid } from '../../utils/form'
 import { dataTarget } from '../../utils/event'
+import { by300 } from '../../utils/dely'
 
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
@@ -107,8 +108,8 @@ export const wrapHelpers = function (obj) {
     actionRemove () {
       return Template.instance().state.get(StateVariables.actionRemove)
     },
-    removing () {
-      return Template.instance().state.get(StateVariables.removing)
+    removing (id) {
+      return Template.instance().state.get(StateVariables.removing) === id
     }
   }, obj)
 }
@@ -126,16 +127,16 @@ export const wrapEvents = (obj) => {
         return
       }
 
-      templateInstance.state.set(StateVariables.removing, true)
+      templateInstance.state.set(StateVariables.removing, _id)
       const removeMethodDef = templateInstance.state.get(StateVariables.actionRemove)
       const method = removeMethodDef.name
       const app = templateInstance.data.app()
       const { connection } = app
 
-      connection.call(method, { _id }, (err, res) => {
-        templateInstance.state.set(StateVariables.removing, false)
+      connection.call(method, { _id }, by300((err, res) => {
+        templateInstance.state.set(StateVariables.removing, null)
         defaultNotifications(err, res)
-      })
+      }))
     }
   }, obj)
 }

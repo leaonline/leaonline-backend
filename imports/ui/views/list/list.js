@@ -6,12 +6,12 @@ import { dataTarget } from '../../../utils/event'
 import { Router } from '../../../api/routes/Router'
 import { formIsValid } from '../../../utils/form'
 import { getPreviewData } from '../../config/getPreviewData'
+import { defaultNotifications } from '../../../utils/defaultNotifications'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import '../../components/summary/summary'
 import './list.html'
-import { defaultNotifications } from '../../../utils/defaultNotifications'
 
 Template.genericList.onCreated(function () {
   const instance = this
