@@ -14,3 +14,5 @@ Schema.create = function (schemaDefinition, options) {
   const fullOptions = Object.assign({}, options, onClient({ tracker: Tracker }))
   return new SimpleSchema(schemaDefinition, fullOptions)
 }
+
+Schema.provider = SimpleSchema

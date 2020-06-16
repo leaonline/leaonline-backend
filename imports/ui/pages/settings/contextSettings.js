@@ -22,6 +22,7 @@ Template.contextSettings.onCreated(function () {
     parseSettings({ instance, config, appName })
 
     const schema = Apps.getSchemaForContext(config)
+
     instance.schema = Schema.create(schema)
 
     instance.state.set({

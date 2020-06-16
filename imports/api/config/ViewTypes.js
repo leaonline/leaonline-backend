@@ -2,7 +2,7 @@ export const ViewTypes = {
   list: {
     name: 'list',
     template: 'genericList',
-    label: 'formTypes.list',
+    label: 'viewTypes.list',
     load: async function () {
       return import('../../ui/views/list/list')
     }

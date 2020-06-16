@@ -1,18 +1,18 @@
 export const Alignment = {
   left: {
     name: 'left',
-    label: 'position.left'
+    label: 'alignment.left'
   },
   center: {
     name: 'center',
-    label: 'position.center'
+    label: 'alignment.center'
   },
   right: {
     name: 'right',
-    label: 'position.right'
+    label: 'alignment.right'
   },
   justify: {
     name: 'justify',
-    label: 'position.justify'
+    label: 'alignment.justify'
   }
 }

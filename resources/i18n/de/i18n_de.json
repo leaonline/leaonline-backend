@@ -12,7 +12,8 @@
     "insertDoc": "Ein neues Dokument anlegen",
     "updateDoc": "Ein Dokument bearbeiten",
     "confirmRemove": "Möchten Sie wirklich das Dokument \"{{title}}\" löschen?",
-    "settings": "Einstellungen bearbeiten"
+    "settings": "Einstellungen bearbeiten",
+    "submitting": "Sende Daten"
   },
   "grid": {
     "title": "Layout",
@@ -30,7 +31,37 @@
     "h5p": "H5P Format"
   },
   "form": {
-    "selectOne": "(Bitte wählen)"
+    "selectOne": "(Bitte wählen)",
+    "validation": {
+      "required": "{{label}} ist eine Pflichtfeld",
+      "uploadError": "Fehler beim Hochladen {{value}}",
+      "min": "{{label}} muss mindestens {{min}} sein",
+      "max": "{{label}} muss maximal {{max}} sein"
+    }
+  },
+  "apps": {
+    "useHistory": "Bearbeitungshistorie speichern",
+    "useComments": "Kommentare aktivieren",
+    "useDependencyTracking": "Abhängigkeiten verfolgen",
+    "field": "Feld",
+    "fields": {
+      "title": "Felder",
+      "exclude": "Ausblenden",
+      "hideLabel": "Titel ausblenden",
+      "form": "Besonderer Formular-Typ"
+    }
+  },
+  "viewTypes": {
+    "title": "Ansicht",
+    "list": "Liste",
+    "gallery": "Gallerie",
+    "document": "Einzeldokument",
+    "typeView": "Statische-Typen"
+  },
+  "formTypes": {
+    "imageSelect": "Bild aus Gallerie auswählen",
+    "taskContent": "Aufgaben-Inhalt",
+    "regExp": "Regulärer Ausdruck"
   },
   "common": {
     "ok": "OK",
@@ -38,6 +69,7 @@
     "back": "Zurück",
     "documents": "Dokumente",
     "document": "Dokument",
+    "name": "Name",
     "files": "Dateien",
     "continue": "Fortsetzen",
     "end": "Beenden",
@@ -83,6 +115,9 @@
     "sessions": {
       "title": "Benutzer Sessions"
     },
+    "settings": {
+      "title": "Einstellungen"
+    },
     "status": {
       "connection": "Verbindung",
       "overview": "Anwendungen",
@@ -103,5 +138,17 @@
       "title": "Kein Zugriffsrecht",
       "noUser": "Nicht als Benutzer angemeldet"
     }
+  },
+  "alignment": {
+    "title": "Ausrichtung",
+    "left": "Linksbündig",
+    "right": "Rechtsbündig",
+    "center": "Mittig",
+    "justify": "Blocksatz"
+  },
+  "notify": {
+    "success": "Aktion Erfolgreich!",
+    "warningTitle": "Aktion teilweise Erfolgreich!",
+    "warningDescription": "Es wurde weder ein Fehler noch ein Ergebnis zurückgemeldet."
   }
 }

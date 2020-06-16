@@ -32,13 +32,6 @@ export const FormTypes = {
       return import('./taskContent/taskContent')
     }
   },
-  item: {
-    name: 'itemForm',
-    template: 'leaItemForm',
-    load: async function () {
-      return import('./itemForm/itemForm')
-    }
-  },
   regExp: {
     name: 'regExp',
     template: 'regexp',

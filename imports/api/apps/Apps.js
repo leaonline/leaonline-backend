@@ -3,6 +3,8 @@ import { getConfigTypeOptions } from '../config/getConfigTypeOptions'
 import { getFormTypeOptions } from '../../ui/forms/getFormTypeOptions'
 import { getAlignmentOptions } from '../../ui/layout/definitions/getAlignmentOptions'
 import { firstOption } from '../../utils/firstOption'
+import { transformLabelsToTranslation } from '../../ui/config/transformLabelsToTranslation'
+import { getOptionsFromSchema } from '../../ui/config/getOptionsFromSchema'
 
 export const Apps = {
   name: 'apps',
@@ -60,8 +62,9 @@ Apps.schema = {
   // which template to use as main template for overview
   viewType: {
     type: String,
-    label: 'apps.viewType',
+    label: 'viewTypes.title',
     autoform: {
+      firstOption: firstOption,
       options: getConfigTypeOptions
     }
   },
@@ -78,7 +81,7 @@ Apps.schema = {
   },
   'fields.$.name': {
     type: String,
-    label: 'common.name',
+    label: 'common.name'
   },
   'fields.$.exclude': {
     type: Boolean,
@@ -92,7 +95,7 @@ Apps.schema = {
   },
   'fields.$.alignment': {
     type: String,
-    label: 'apps.fields.alignment',
+    label: 'alignment.title',
     optional: true,
     autoform: {
       firstOption: firstOption,
@@ -120,10 +123,14 @@ Apps.settings = {
 }
 
 Apps.getSchemaForContext = (context) => {
-  const fields = Object.keys(context.schema)
+  const fields = getOptionsFromSchema(context)
   const schema = Object.assign({}, Apps.schema)
+  transformLabelsToTranslation(schema)
   Object.assign(schema['fields.$.name'], {
-    allowedValues: fields
+    autoform: {
+      firstOption: firstOption,
+      options: fields
+    }
   })
   return schema
 }
