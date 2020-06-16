@@ -54,7 +54,8 @@
     "login": "Anmelden",
     "description": "Beschreibung",
     "noDocuments": "Es sind (ggf. noch) keine Dokumente vorhanden",
-    "noPreview": "Noch keine Vorschau vorhanden"
+    "noPreview": "Noch keine Vorschau vorhanden",
+    "loadDocs": "Lade Dokumente"
   },
   "upload": {
     "successful": "Upload erfolgreich!"

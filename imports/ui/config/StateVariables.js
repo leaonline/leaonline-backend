@@ -11,5 +11,6 @@ export const StateVariables = {
   documentFields: 'documentFields',
   documentsCount: 'documentsCount',
   allSubsComplete: 'allSubsComplete',
-  submitting: 'submitting'
+  submitting: 'submitting',
+  removing: 'removing'
 }

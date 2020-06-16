@@ -11,6 +11,7 @@ import '../../components/upload/upload'
 import '../../components/preview/preview'
 import '../../components/summary/summary'
 import './list.html'
+import { defaultNotifications } from '../../../utils/defaultNotifications'
 
 Template.genericList.onCreated(function () {
   const instance = this
@@ -97,15 +98,12 @@ Template.genericList.events(wrapEvents({
     const { connection } = app
 
     connection.call(actionInsert.name, insertDoc, by300((err, res) => {
-      console.log(err)
-      console.log(res)
       templateInstance.state.set(StateVariables.submitting, false)
-      if (err) {
-        // TODO handle form error
-        return console.error(err)
-      }
-      Router.queryParam({ action: null })
-      templateInstance.state.set('insertForm', false)
+      defaultNotifications(err, res)
+        .success(function () {
+          Router.queryParam({ action: null })
+          templateInstance.state.set('insertForm', false)
+        })
     }))
   },
   'click .show-source-button' (event, templateInstance) {
@@ -128,11 +126,7 @@ Template.genericList.events(wrapEvents({
     const { connection } = app
     connection.call(actonUpdate.name, updateDoc, by300((err, res) => {
       templateInstance.state.set(StateVariables.submitting, false)
-      if (err) {
-        return console.error(err)
-      } else {
-        console.log(res)
-      }
+      defaultNotifications(err, res)
     }))
   },
   'click .document-preview-button' (event, templateInstance) {

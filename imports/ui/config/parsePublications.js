@@ -16,6 +16,7 @@ export const parsePublications = function parsePublications ({ instance, config,
   allPublications.forEach(publication => {
     const { name } = publication
     allSubs[name] = false
+
     const onStop = function (err) {
       if (err) {
         console.error(name, err)
@@ -24,6 +25,7 @@ export const parsePublications = function parsePublications ({ instance, config,
         }
       }
     }
+
     const onReady = function () {
       logDebug(name, `complete`)
       allSubs[name] = true
@@ -40,6 +42,7 @@ export const parsePublications = function parsePublications ({ instance, config,
         }
       }
     }
+
     connection.subscribe(name, {}, { onStop, onReady })
   })
 }

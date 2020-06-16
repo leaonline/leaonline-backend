@@ -1,16 +1,16 @@
-import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
-import { getCollection } from '../../utils/collection'
+import { i18n } from '../../api/i18n/i18n'
+import { MutationChecker } from './MutationChecker'
 import { parseActions } from './parseActions'
 import { StateVariables } from './StateVariables'
 import { parseCollections } from './parseCollections'
 import { fieldHelpers, parseFields } from './parseFields'
 import { parsePublications } from './parsePublications'
-import { MutationChecker } from './MutationChecker'
+import { getCollection } from '../../utils/collection'
+import { defaultNotifications } from '../../utils/defaultNotifications'
 import { getDebug } from '../../utils/getDebug'
 import { formIsValid } from '../../utils/form'
 import { dataTarget } from '../../utils/event'
-import { i18n } from '../../api/i18n/i18n'
 
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
@@ -106,6 +106,9 @@ export const wrapHelpers = function (obj) {
     // /////////////////////////////////////////////////
     actionRemove () {
       return Template.instance().state.get(StateVariables.actionRemove)
+    },
+    removing () {
+      return Template.instance().state.get(StateVariables.removing)
     }
   }, obj)
 }
@@ -123,13 +126,15 @@ export const wrapEvents = (obj) => {
         return
       }
 
+      templateInstance.state.set(StateVariables.removing, true)
       const removeMethodDef = templateInstance.state.get(StateVariables.actionRemove)
       const method = removeMethodDef.name
       const app = templateInstance.data.app()
       const { connection } = app
 
       connection.call(method, { _id }, (err, res) => {
-        console.log(err, res)
+        templateInstance.state.set(StateVariables.removing, false)
+        defaultNotifications(err, res)
       })
     }
   }, obj)

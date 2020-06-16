@@ -1,6 +1,6 @@
 <template name="genericList">
     {{#unless loadComplete}}
-        {{> loading}}
+        {{> loading title=(i18n "common.loadDocs")}}
     {{/unless}}
 
     {{#if insertForm}}
@@ -66,7 +66,8 @@
                 </small>
             </span>
             <span class="no-wrap">
-                <a href="{{route "settings" app config.name}}" class="btn btn-outline-secondary" title="{{i18n "actions.settings"}}">
+                <a href="{{route "settings" app config.name}}" class="btn btn-outline-secondary"
+                   title="{{i18n "actions.settings"}}">
                     <i class="fas fa fa-fw fa-cog"></i>
                 </a>
                 {{#with actionUpload}}
@@ -126,10 +127,16 @@
                                     </button>
                                 {{/if}}
                                 {{#if actionRemove}}
-                                    <button class="btn btn-sm btn-outline-danger border-0 remove-button"
-                                            data-target="{{document._id}}">
-                                        <i class="fa fas fa-fw fa-trash"></i>
-                                    </button>
+                                    {{#unless removing}}
+                                        <button class="btn btn-sm btn-outline-danger border-0 remove-button"
+                                                data-target="{{document._id}}">
+                                            <i class="fa fas fa-fw fa-trash"></i>
+                                        </button>
+                                    {{else}}
+                                        <button class="btn btn-sm btn-outline-danger border-0 disabled" disabled>
+                                            <i class="fa fas fa-fw fa-refresh fa-spinner"></i>
+                                        </button>
+                                    {{/unless}}
                                 {{/if}}
                             </td>
                         </tr>
