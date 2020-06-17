@@ -2,6 +2,7 @@ import { Schema } from '../../api/schema/Schema'
 import { StateVariables } from './StateVariables'
 import { getCollection } from '../../utils/collection'
 import { toFormSchema } from './toFormSchema'
+import { TaskRenderers } from '../../api/task/TaskRenderers'
 
 const cleanOptions = {
   filter: false,
@@ -20,16 +21,17 @@ export const parseActions = function parseActions ({ instance, config, app, logD
     instance.state.set(StateVariables.actionRemove, actions.remove)
   }
 
-  if (actions.preview) {
-    console.log(actions.preview.type, actions.preview.name)
-    // logDebug('load preview', actions.preview.type, actions.preview.name)
-    // LeaCoreLib[actions.preview.type][actions.preview.name]
-    //   .load()
-    //   .then(() => {
-    //     logDebug('loaded', actions.preview.name)
-    //     instance.state.set(StateVariables.actionPreview, actions.preview)
-    //   })
-    //   .catch(e => console.error(e))
+  if (settingsDoc.previewType) {
+    const renderer = TaskRenderers.get(settingsDoc.previewType)
+    if (renderer) {
+      renderer.load()
+        .then(() => {
+          instance.state.set(StateVariables.actionPreview, renderer)
+        })
+        .catch(e => logDebug(`failed loading renderer <${settingsDoc.previewType}>`, e))
+    } else {
+      logDebug(new Error(`no renderer found for ${settingsDoc.previewType}`))
+    }
   }
 
   if (actions.insert) {

@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating'
+import { dataTarget } from '../../../utils/event'
 import '../stringified/stringified'
 import './preview.html'
-import { dataTarget } from '../../../utils/event'
 
 const sizes = {
   xl: 'xl',
@@ -21,6 +21,10 @@ Template.preview.helpers({
     const { titleField, doc } = data
     return (titleField && doc && doc[titleField])
   },
+  unsaved () {
+    const { data } = Template.instance()
+    return data.unsaved
+  },
   templateTarget () {
     const { data } = Template.instance()
     const { template } = data
@@ -33,6 +37,7 @@ Template.preview.helpers({
   },
   templateData () {
     const { data } = Template.instance()
+    data.isPreview = true
     return data
   },
   size (name) {

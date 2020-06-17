@@ -7,6 +7,14 @@
         <div class="card-body d-flex justify-content-between">
             <h4>{{i18n config.label}} - {{i18n "actions.insertDoc"}}</h4>
             <span>
+                {{#if actionPreview}}
+                    <button class="btn btn-sm btn-outline-secondary preview-formDoc-button">
+                        <i class="fa fas fa-fw fa-eye"></i>
+                    </button>
+                {{/if}}
+                <button class="btn btn-sm btn-outline-secondary show-source-button">
+					<i class="fa fa-fw fas fa-code"></i>
+				</button>
 				<button class="btn btn-sm btn-outline-secondary cancel-form-button">
 					<i class="fa fa-fw fas fa-times"></i>
 				</button>
@@ -32,7 +40,12 @@
         <div class="card-body d-flex justify-content-between">
             <h4>{{i18n config.label}} - {{i18n "actions.updateDoc"}}</h4>
             <span>
-				<button class="btn btn-sm btn-outline-secondary show-source-button">
+                {{#if actionPreview}}
+                    <button class="btn btn-sm btn-outline-secondary preview-formDoc-button">
+                        <i class="fa fas fa-fw fa-eye"></i>
+                    </button>
+                {{/if}}
+                <button class="btn btn-sm btn-outline-secondary show-source-button">
 					<i class="fa fa-fw fas fa-code"></i>
 				</button>
 				<button class="btn btn-sm btn-outline-secondary cancel-form-button">
@@ -98,7 +111,7 @@
                             {{#each field in (fields document)}}
                                 {{#if field.isCollection}}
                                     <td>
-                                        <a href class="document-preview-button" data-target="{{field.doc.value}}"
+                                        <a href class="linked-document-preview-button" data-target="{{field.doc.value}}"
                                            data-context="{{field.context}}">
                                             {{field.doc.label}}
                                         </a>
@@ -115,7 +128,7 @@
                             {{/each}}
                             <td class="text-right no-wrap">
                                 {{#if actionPreview}}
-                                    <button class="btn btn-sm btn-outline-primary border-0 preview-button"
+                                    <button class="btn btn-sm btn-outline-secondary border-0 current-document-preview-button"
                                             data-target="{{document._id}}">
                                         <i class="fa fas fa-fw fa-eye"></i>
                                     </button>

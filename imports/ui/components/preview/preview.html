@@ -23,13 +23,30 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<h4>{{titleField}}</h4>
+					<h4>
+                        {{titleField}}
+                    </h4>
+                    {{#if unsaved}}
+                        <span class="badge badge-pill badge-warning text-light">
+                            {{i18n "preview.containsUnsaved"}}
+                        </span>
+                    {{else}}
+                        <span class="badge badge-pill badge-success text-light">
+                            {{i18n "preview.noUnsaved"}}
+                        </span>
+                    {{/if}}
 					<hr>
-					{{>Template.dynamic template=templateTarget data=templateData}}
+					{{> Template.dynamic template=templateTarget data=templateData}}
 				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">{{i18n
-							'actions.close'}}</button>
+				<div class="modal-footer d-flex">
+                    {{!-- #if unsaved}}
+                        <button type="button" class="btn btn-primary">
+                            {{i18n 'actions.save'}}
+                        </button>
+                    {{/if --}}
+					<button type="button" class="btn btn-secondary ml-auto" data-dismiss="modal">
+                        {{i18n 'actions.close'}}
+                    </button>
 				</div>
 			</div>
 		</div>

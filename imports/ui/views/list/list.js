@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating'
+import { EJSON } from 'meteor/ejson'
 import { wrapEvents, wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
 import { StateVariables } from '../../config/StateVariables'
 import { StateActions } from '../../config/StateActions'
@@ -10,8 +11,8 @@ import { defaultNotifications } from '../../../utils/defaultNotifications'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
-import '../../components/summary/summary'
 import './list.html'
+
 
 Template.genericList.onCreated(function () {
   const instance = this
@@ -43,7 +44,7 @@ Template.genericList.helpers(wrapHelpers({
     const target = instance.state.get('previewTarget')
     if (!target) return
 
-    return Object.assign({}, target, { onClosed: onClosed.bind(instance)})
+    return Object.assign({}, target, { onClosed: onClosed.bind(instance) })
   }
 }))
 
@@ -74,14 +75,12 @@ Template.genericList.events(wrapEvents({
     templateInstance.state.set('insertForm', false)
     templateInstance.state.set('updateForm', false)
   },
-  'click .preview-button' (event, templateInstance) {
+  'click .current-document-preview-button' (event, templateInstance) {
     event.preventDefault()
-    const { template, titleField } = templateInstance.state.get(StateVariables.actionPreview)
-    if (!template) return
     const targetId = dataTarget(event, templateInstance)
     const doc = templateInstance.mainCollection.findOne(targetId)
-    if (!doc) return
-    templateInstance.state.set('previewTarget', { doc, template, titleField })
+    const unsaved = false // no need to compare list docs
+    previewDoc(templateInstance, { doc, unsaved })
   },
   // //////////////////////////////////////////////////////
   // FORM EVENTS
@@ -106,11 +105,19 @@ Template.genericList.events(wrapEvents({
         })
     }))
   },
+  'click .preview-formDoc-button' (event, templateInstance) {
+    event.preventDefault()
+    const doc = getUnsavedFormDoc(templateInstance)
+    const compare = getCompare(templateInstance)
+    previewDoc(templateInstance, { doc, compare })
+  },
   'click .show-source-button' (event, templateInstance) {
     event.preventDefault()
-    const doc = templateInstance.state.get('updateDoc')
-    const template = 'fallBack'
-    templateInstance.state.set('previewTarget', { doc, template })
+    const doc = getUnsavedFormDoc(templateInstance)
+    if (!doc) return
+    const compare = getCompare(templateInstance)
+    const template = 'stringified'
+    previewDoc(templateInstance, { doc, compare, template })
   },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
@@ -127,17 +134,62 @@ Template.genericList.events(wrapEvents({
     connection.call(actonUpdate.name, updateDoc, by300((err, res) => {
       templateInstance.state.set(StateVariables.submitting, false)
       defaultNotifications(err, res)
+        .success(function () {
+          Router.queryParam({ action: null })
+          templateInstance.state.set('updateForm', false)
+        })
     }))
   },
-  'click .document-preview-button' (event, templateInstance) {
+  'click .linked-document-preview-button' (event, templateInstance) {
     event.preventDefault()
     const docId = dataTarget(event, templateInstance)
     const contextName = dataTarget(event, templateInstance, 'context')
-    const previewTarget = getPreviewData({ docId, contextName })
+    const appName = templateInstance.data.app().name
+    const previewTarget = getPreviewData({ docId, contextName, appName })
     templateInstance.state.set({ previewTarget })
   }
 }))
 
 function onClosed () {
   this.state.set('previewTarget', null)
+}
+
+function previewDoc (templateInstance, { doc, unsaved, compare, template, titleField }) {
+  if (!doc) return console.warn('Attempt to preview undefined doc')
+
+  const previewTarget = { doc, unsaved, template, titleField }
+
+  if (typeof unsaved === 'undefined') {
+    previewTarget.unsaved = EJSON.stringify(doc) !== EJSON.stringify(compare)
+  }
+
+  if (typeof template === 'undefined') {
+    const renderer = templateInstance.state.get(StateVariables.actionPreview)
+    previewTarget.template = renderer?.template
+  }
+
+  if (typeof titleField === 'undefined') {
+    const config = templateInstance.data.config()
+    previewTarget.titleField = config.representative
+  }
+
+  templateInstance.state.set({ previewTarget })
+}
+
+
+function getUnsavedFormDoc (templateInstance) {
+  const isUpdateForm = !!templateInstance.state.get('updateDoc')
+  const targetForm = isUpdateForm
+    ? 'updateForm'
+    : 'insertForm'
+  const schema = isUpdateForm
+    ? templateInstance.actionUpdateSchema
+    : templateInstance.actionInsertSchema
+  return formIsValid(targetForm, schema)
+}
+
+function getCompare(templateInstance) {
+  const updateDoc = templateInstance.state.get('updateDoc')
+  if (updateDoc) delete updateDoc._id
+  return updateDoc
 }
