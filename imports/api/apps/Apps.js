@@ -5,6 +5,7 @@ import { getAlignmentOptions } from '../../ui/layout/definitions/getAlignmentOpt
 import { firstOption } from '../../utils/firstOption'
 import { transformLabelsToTranslation } from '../../ui/config/transformLabelsToTranslation'
 import { getOptionsFromSchema } from '../../ui/config/getOptionsFromSchema'
+import { getPrewiewRenderers } from '../../ui/config/getPrewiewRenderers'
 
 export const Apps = {
   name: 'apps',
@@ -66,6 +67,17 @@ Apps.schema = {
     autoform: {
       firstOption: firstOption,
       options: getConfigTypeOptions
+    }
+  },
+
+  // which renderer to use to preview documents
+  previewType: {
+    type: String,
+    optional: true,
+    label: 'previewTypes.title',
+    autoform: {
+      firstOption: firstOption,
+      options: getPrewiewRenderers()
     }
   },
 
