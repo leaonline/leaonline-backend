@@ -334,6 +334,10 @@ Template.afLeaTaskContent.events({
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.stateVars.get('elements')
+    const element = elements[index]
+    const { label } = TaskRenderers.get(element.subtype)
+    const title = i18n.get(label)
+    if (!window.confirm(i18n.get('actions.confirmRemove', { title }))) return
     elements.splice(index, 1)
     updateElements(elements, templateInstance)
   },
