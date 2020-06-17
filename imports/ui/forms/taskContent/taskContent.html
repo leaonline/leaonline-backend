@@ -8,7 +8,7 @@
             <div class="card-body row">
                 {{#each element in elements}}
                     <div class="col-12 col-md-{{element.width}} p-0 border border-{{#if overElement
-                                                                                        @index}}dark{{else}}0{{/if}} element-container"
+                                                                                        @index}}dark{{else}}white{{/if}} element-container"
                          data-index="{{@index}}">
                         {{>TaskRendererFactory content=element}}
                         {{#if overElement @index}}
