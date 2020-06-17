@@ -111,10 +111,12 @@
                             {{#each field in (fields document)}}
                                 {{#if field.isCollection}}
                                     <td>
+                                        <u>
                                         <a href class="linked-document-preview-button" data-target="{{field.doc.value}}"
                                            data-context="{{field.context}}">
                                             {{field.doc.label}}
                                         </a>
+                                        </u>
                                     </td>
                                 {{else if field.isType}}
                                     <td>
