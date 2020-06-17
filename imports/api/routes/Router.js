@@ -115,7 +115,7 @@ function createRoute (routeDef, onError) {
       // which can be explicitly prevented by switching showLoading to false
       if (!Template[routeDef.template] && routeDef.showLoading !== false) {
         const renderTarget = routeDef.target || _defaultTarget
-        this.render(renderTarget, _loadingTemplate, { title: routeDef.label })
+        this.render(renderTarget, _loadingTemplate, { whileWaiting: true, title: routeDef.label })
       }
     },
     waitOn () {

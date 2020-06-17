@@ -3,12 +3,12 @@ import { Template } from 'meteor/templating'
 import { Routes } from '../../api/routes/Routes'
 import { RoutesTree } from '../../api/routes/topLevelRoutes'
 import { Router } from '../../api/routes/Router'
-import '../../ui/pages/loading/loading'
+import { loadingTemplate } from '../../ui/pages/loading/loading'
 
 const defaultTarget = 'main-render-target'
 
 Router.titlePrefix('lea.online - ')
-Router.loadingTemplate('loading')
+Router.loadingTemplate(loadingTemplate)
 Router.defaultTarget(defaultTarget)
 /**
  * Load all routes definitions into the router

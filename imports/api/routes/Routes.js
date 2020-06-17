@@ -96,9 +96,13 @@ Routes.loading = {
     return true
   },
   target: null,
-  template: 'loading',
+  template: 'loadPage',
   roles: null,
-  data: null
+  data: {
+    fallback () {
+      gotoRoute(Routes.root)
+    }
+  }
 }
 
 /**

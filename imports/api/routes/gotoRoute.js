@@ -1,9 +1,11 @@
 import { Router } from './Router'
 import { RoutesTree } from './topLevelRoutes'
 
-export const gotoRoute = ({ appName, contextName }) => {
+export const gotoRoute = ({ path, appName, contextName }) => {
+  if (path) {
+    return Router.go(path())
+  }
   const { children } = RoutesTree.get(appName)
   const route = children.find(el => el.key === contextName)
-  const path = route.path()
-  Router.go(path)
+  Router.go(route.path())
 }
