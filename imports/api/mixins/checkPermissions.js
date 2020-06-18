@@ -1,12 +1,11 @@
 import { Meteor } from 'meteor/meteor'
 
 export const checkPermissions = function (options) {
-  const exception = options.isPublic || (options.permission && options.permission(...args))
+  const exception = options.isPublic
   if (exception) return options
 
   const runFct = options.run
   options.run = function run (...args) {
-    console.log('checkPermissions', this.userId, Meteor.user())
     // user level permission
     let userId = this.userId
     if (!userId) {
@@ -15,7 +14,7 @@ export const checkPermissions = function (options) {
     }
 
     if (!userId || !Meteor.users.findOne(userId)) {
-      throw new Meteor.Error('errors.permissionDenied')
+      throw new Meteor.Error('errors.permissionDenied', 'errors.userNotExists', userId)
     }
 
     return runFct.call(this, ...args)

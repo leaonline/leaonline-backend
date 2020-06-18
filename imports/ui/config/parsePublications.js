@@ -27,7 +27,7 @@ export const parsePublications = function parsePublications ({ instance, config,
     }
 
     const onReady = function () {
-      logDebug(name, `complete`)
+      logDebug(name, 'complete')
       allSubs[name] = true
       if (Object.values(allSubs).every(entry => entry === true)) {
         logDebug('all subs complete')

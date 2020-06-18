@@ -1,11 +1,11 @@
 import { EJSON } from 'meteor/ejson'
 import { Template } from 'meteor/templating'
-import highlight from 'highlight.js/lib/highlight';
-import jsonLang from 'highlight.js/lib/languages/json';
-import 'highlight.js/styles/github.css';
+import highlight from 'highlight.js/lib/highlight'
+import jsonLang from 'highlight.js/lib/languages/json'
+import 'highlight.js/styles/github.css'
 import './stringified.html'
 
-highlight.registerLanguage('json', jsonLang);
+highlight.registerLanguage('json', jsonLang)
 
 Template.stringified.helpers({
   stringify (target) {
@@ -15,6 +15,6 @@ Template.stringified.helpers({
 
 Template.stringified.onRendered(function () {
   document.querySelectorAll('pre code').forEach((block) => {
-    highlight.highlightBlock(block);
-  });
+    highlight.highlightBlock(block)
+  })
 })

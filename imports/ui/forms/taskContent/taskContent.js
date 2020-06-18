@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
 import { EJSON } from 'meteor/ejson'
 import { ReactiveDict } from 'meteor/reactive-dict'
@@ -226,7 +227,6 @@ Template.afLeaTaskContent.helpers({
     return Template.instance().stateVars.get('updatePreview')
   },
   isUpdateContentForm () {
-
     return Template.instance().data.value
   }
 })

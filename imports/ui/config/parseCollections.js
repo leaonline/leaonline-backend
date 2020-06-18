@@ -15,7 +15,6 @@ export const parseCollections = function parseCollections ({ instance, config, c
     : [config]).filter(context => context.isType === false)
 
   allCollections.forEach(collectionConfig => {
-
     const isFilesCollection = collectionConfig.isFilesCollection
     const collectionName = collectionConfig.name
     const collection = getCollection(collectionName)

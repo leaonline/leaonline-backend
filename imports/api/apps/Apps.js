@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor'
 import { onServer } from '../../utils/arch'
 import { getConfigTypeOptions } from '../config/getConfigTypeOptions'
 import { getFormTypeOptions } from '../../ui/forms/getFormTypeOptions'
@@ -89,7 +90,7 @@ Apps.schema = {
   },
   'fields.$': {
     type: Object,
-    label: 'apps.field',
+    label: 'apps.field'
   },
   'fields.$.name': {
     type: String,
@@ -126,7 +127,7 @@ Apps.schema = {
 }
 
 Apps.settings = {
-  fieldIncluded(field) {
+  fieldIncluded (field) {
     return field && field.excluded !== true
   },
   labelIncluded (field) {
@@ -190,7 +191,7 @@ Apps.publications.getByNames = {
   timeInterval: 500,
   run: onServer(function ({ appName, contextName }) {
     return Apps.collection().find({ name: appName, context: contextName })
-  }),
+  })
 }
 
 Apps.publications.all = {
@@ -203,5 +204,5 @@ Apps.publications.all = {
   timeInterval: 500,
   run: onServer(function () {
     return Apps.collection().find()
-  }),
+  })
 }

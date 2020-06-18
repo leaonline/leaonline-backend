@@ -1,13 +1,14 @@
+import { Template } from 'meteor/templating'
 import '../../components/stringified/stringified'
 import './typeView.html'
 
 Template.typeView.onCreated(function () {
   const instance = this
   instance.autorun(() => {
-    instance.state.set( { loadComplete: false })
+    instance.state.set({ loadComplete: false })
     const data = Template.currentData()
     instance.config = data.config()
-    setTimeout(() => instance.state.set( { loadComplete: true }), 300)
+    setTimeout(() => instance.state.set({ loadComplete: true }), 300)
   })
 })
 

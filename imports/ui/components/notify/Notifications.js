@@ -8,7 +8,7 @@ Notifications.add = function ({ title, type, content, details, visible = true, t
   const insertId = NotificationsCollection.insert({ title, type, content, details, visible, timeout })
   if (visible && typeof timeout === 'number' && timeout > 0) {
     setTimeout(() => {
-      const updated = NotificationsCollection.update(insertId, { $set: { visible: false } })
+      NotificationsCollection.update(insertId, { $set: { visible: false } })
     }, timeout)
   }
   return insertId

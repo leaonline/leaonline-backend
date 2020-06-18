@@ -14,7 +14,6 @@ export const getViewType = (name, context) => {
     return ViewTypes.gallery
   }
 
-
   // some config contexts are  represented by a single document,
   // which often holds app-wide configuration. We rather like to
   // represent this doc by a single-document template.

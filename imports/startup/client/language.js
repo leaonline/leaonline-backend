@@ -51,7 +51,7 @@ Schema.provider.setDefaultMessages({
       notAllowed: i18n.get('form.validation.notAllowed', ['{{{value}}}']),
       expectedType: i18n.get('form.validation.expectedType', ['{{{label}}}', '{{dataType}}']),
       regEx: i18n.get('form.validation.regExFail'),
-      keyNotInSchema: i18n.get('form.validation.keyNotInSchema' ['{{label}}']),
+      keyNotInSchema: i18n.get('form.validation.keyNotInSchema'['{{label}}']),
       valueAlreadyExists: i18n.get('form.valueAlreadyExists')
     }
   }

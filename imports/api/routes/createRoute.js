@@ -37,4 +37,3 @@ export const createRoute = (appName, config, parentRoute) => {
     }
   }
 }
-

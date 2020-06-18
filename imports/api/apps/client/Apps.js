@@ -5,11 +5,10 @@ import { check, Match } from 'meteor/check'
 import { Tracker } from 'meteor/tracker'
 import { DDP } from 'meteor/ddp-client'
 import { ReactiveDict } from 'meteor/reactive-dict'
-import { onServer } from '../../../utils/arch'
 
 const _apps = new ReactiveDict()
 const _connections = {}
-const _trackers = {}
+
 Apps.debug = true
 
 function connect (name, url) {
@@ -122,7 +121,7 @@ Apps.loadConfig = function (cb) {
 }
 
 let _loadConfigHandler = () => {
-  throw new Error(`No config loader registered! Register via Apps.loadConfig.`)
+  throw new Error('No config loader registered! Register via Apps.loadConfig.')
 }
 
 function configure (name) {

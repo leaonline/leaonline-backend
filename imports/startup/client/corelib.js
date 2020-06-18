@@ -6,5 +6,5 @@ import shuffle from 'fast-shuffle'
 setShuffle(shuffle)
 
 Meteor.startup(() => {
-  TTSEngine.configure({ ttsUrl: Meteor.settings.public.tts.url, mode:TTSEngine.modes.browser })
+  TTSEngine.configure({ ttsUrl: Meteor.settings.public.tts.url, mode: TTSEngine.modes.browser })
 })

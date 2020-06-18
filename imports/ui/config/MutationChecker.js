@@ -7,7 +7,7 @@ export class MutationChecker {
   compare (any, where) {
     const str = JSON.stringify(any, null, 0)
     if (this.original !== str) {
-      throw new Error(`[${name}]: ${where} => mutation detected`)
+      throw new Error(`[${this.name}]: ${where} => mutation detected`)
     }
   }
 }

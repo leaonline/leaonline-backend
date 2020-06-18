@@ -146,7 +146,7 @@ Routes.settings = {
   template: 'contextSettings',
   roles: null,
   data: {
-    onComplete({ appName, contextName }) {
+    onComplete ({ appName, contextName }) {
       gotoRoute({ appName, contextName })
     }
   },

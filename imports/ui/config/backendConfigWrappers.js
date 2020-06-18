@@ -6,13 +6,10 @@ import { StateVariables } from './StateVariables'
 import { parseCollections } from './parseCollections'
 import { fieldHelpers, parseFields } from './parseFields'
 import { parsePublications } from './parsePublications'
-import { getCollection } from '../../utils/collection'
 import { defaultNotifications } from '../../utils/defaultNotifications'
 import { getDebug } from '../../utils/getDebug'
-import { formIsValid } from '../../utils/form'
 import { dataTarget } from '../../utils/event'
 import { by300 } from '../../utils/dely'
-
 
 export const wrapOnCreated = function (instance, { data, debug, onSubscribed } = {}) {
   const logDebug = getDebug(instance, debug)
@@ -115,7 +112,7 @@ export const wrapHelpers = function (obj) {
 }
 
 export const wrapEvents = (obj) => {
-  const confirmRemove = (title) => i18n.get('actions.confirmRemove', {title})
+  const confirmRemove = (title) => i18n.get('actions.confirmRemove', { title })
   return Object.assign({}, {
     'click .remove-button' (event, templateInstance) {
       event.preventDefault()

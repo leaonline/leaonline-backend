@@ -7,7 +7,7 @@ export const getLabel = ({ key, context, field }) => {
   const labelType = typeof field.label
 
   if (!Apps.settings.fieldIncluded(field) || !Apps.settings.labelIncluded(field)) {
-      return false
+    return false
   }
 
   // default for undefined labels
@@ -32,5 +32,5 @@ export const getLabel = ({ key, context, field }) => {
     return typeDef !== false ? name : false
   }
 
-  throw new Error(`Unexpected label definition: ${label.toString()}`)
+  throw new TypeError(`Unexpected label definition: ${labelType}`)
 }

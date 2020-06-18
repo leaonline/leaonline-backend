@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor'
 import { Apps } from '../../api/apps/client/Apps' // note to use client/Apps here
 import { ServiceRegistry } from '../../api/config/ServiceRegistry'
 import { i18n } from '../../api/i18n/i18n'
@@ -17,7 +18,6 @@ Meteor.subscribe(Apps.publications.all.name)
 
 Apps.loadConfig(function (name, done) {
   const app = Apps.get(name)
-  const { url } = app
   const { connection } = app
   const lang = i18n.getLocale()
 
