@@ -53,6 +53,9 @@ Template.genericGallery.helpers(wrapHelpers({
     const config = Template.instance().data.config()
     return instance.mainCollection.filesCollection.link(file, config.preview, remoteUrl)
   },
+  kilobytes (bytes) {
+    return Number(bytes / 1000).toFixed(1)
+  },
   // /////////////////////////////////////////////////
   //  Upload
   // /////////////////////////////////////////////////
