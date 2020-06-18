@@ -8,6 +8,7 @@ import { getLabel } from './getLabel'
 import { getFieldSettings } from '../../api/apps/getFieldSettings'
 import { FormTypes } from '../forms/FormTypes'
 import { Apps } from '../../api/apps/Apps'
+import { createAddFieldsToQuery } from '../../api/queries/createAddFieldsToQuery'
 
 const settings = Meteor.settings.public.editor
 
@@ -19,6 +20,8 @@ const toTypeName = entry => entry.source
 // we often want to ensure our required fields are set
 // se we define a common helper here
 const areAllFieldsSet = fields => fields.every(name => !!AutoForm.getFieldValue(name))
+
+const addFieldsToQuery = createAddFieldsToQuery(AutoForm.getFieldValue)
 
 export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
   const { name } = config
@@ -128,16 +131,11 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
               : docs.map(toIndexOptions)
           }
 
-
-          // if the context has defined a filter.byField in it's dependencies
+          // if the context has defined a filter.fields in it's dependencies
           // we use the current field value and add it to the query to filter options
 
-          const optionsFilterField = filter?.byField
-          if (optionsFilterField) {
-            const optionsFilterValue = AutoForm.getFieldValue(optionsFilterField)
-            if (optionsFilterValue) {
-              query[optionsFilterField] = optionsFilterValue
-            }
+          if (filter?.fields) {
+            addFieldsToQuery(query, filter.fields)
           }
 
           const cursor = DependantCollection.find(query, transform)

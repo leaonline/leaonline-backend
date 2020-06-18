@@ -1,4 +1,7 @@
+import { createAddFieldsToQuery } from '../../api/queries/createAddFieldsToQuery'
 import { getCollection } from '../../utils/collection'
+
+const addFieldsToQuery = createAddFieldsToQuery(AutoForm.getFieldValue)
 
 /**
  * Returns a function that resolves to a field value at runtime.
@@ -29,6 +32,8 @@ const toExecutableEntry = entry => {
     case 'value':
       return () => entry.value
     case 'field':
+      return getIntervalFieldValueResolver(entry)
+    case 'document':
       return getDocumentFieldValueResolver(entry)
     case 'increment':
       return getIncrementValueResolver(entry)
@@ -36,6 +41,14 @@ const toExecutableEntry = entry => {
       throw new Error(`Unknown type: ${type}`)
   }
 }
+
+/**
+ * Returns a function, that resolves to the current field value of a given (form-internal) field
+ * @param source the name of the internal field to look out for.
+ * @return {function(): Any}
+ */
+
+const getIntervalFieldValueResolver = ({ source }) => () => AutoForm.getFieldValue(source)
 
 /**
  * Returns a function that resolves to a field of an externally linked document
@@ -62,11 +75,13 @@ const getDocumentFieldValueResolver = ({ source, collection, field }) => {
  * @return {function(): string}
  */
 
-const getIncrementValueResolver = ({ decimals, collection }) => {
+const getIncrementValueResolver = ({ decimals, filter, collection }) => {
   const Collection = getCollection(collection)
   if (!Collection) throw new Error(`Collection does not exist: ${collection}`)
+  const query = {}
   return function resolveIcrementValue () {
-    const count = Collection.find().count() + 1
+    addFieldsToQuery(query, filter?.fields)
+    const count = Collection.find(query).count() + 1
     return count.toString().padStart(decimals, '0')
 
   }
