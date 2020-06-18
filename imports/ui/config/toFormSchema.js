@@ -84,13 +84,14 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
 
     if (definitions.dependency) {
       const { dependency } = definitions
-      const { requires, collection, filesCollection, context, field, isArray } = dependency
+      const { requires, collection, filesCollection, context, field, isArray, filter } = dependency
 
       let hasOptions = false
 
       if (collection) {
         const transform = { sort: { [field]: 1 } }
         const query = dependency.query || {}
+
         let DependantCollection = getCollection(collection)
         const toOptions = doc => ({ value: doc._id, label: doc[field] })
         const toIndexOptions = (entry, index) => ({ value: index, label: entry })
@@ -101,6 +102,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
           if (!DependantCollection) {
             DependantCollection = getCollection(collection)
             if (!DependantCollection) {
+              // TODO raise warning to user?
               console.warn(`Undefined collection: ${collection}`)
               const formId = AutoForm.getFormId()
               AutoForm.addStickyValidationError(formId, key, 'errors.collectionNotFound', collection)
@@ -124,6 +126,18 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
             return isArray
               ? docs.flat().map(toIndexOptions)
               : docs.map(toIndexOptions)
+          }
+
+
+          // if the context has defined a filter.byField in it's dependencies
+          // we use the current field value and add it to the query to filter options
+
+          const optionsFilterField = filter?.byField
+          if (optionsFilterField) {
+            const optionsFilterValue = AutoForm.getFieldValue(optionsFilterField)
+            if (optionsFilterValue) {
+              query[optionsFilterField] = optionsFilterValue
+            }
           }
 
           const cursor = DependantCollection.find(query, transform)
@@ -198,6 +212,14 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
       }
     }
 
+    // grouping similar fields together by schema attribute "group"
+
+    if (definitions.group) {
+      autoform.group = definitions.group
+    }
+
+    // on explicit options we map them directly
+
     if (definitions.options) {
       const mappedOptions = definitions.options.map(option => ({
         value: option.value || option.name,
@@ -205,7 +227,6 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
       }))
       autoform.options = () => mappedOptions
       autoform.firstOption = definitions.optional ? () => i18n.get('form.selectOne') : false
-      // autoform.allowedValues = definitions.allowedValues
     }
 
     const labelType = typeof definitions.label
