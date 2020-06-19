@@ -1,18 +1,18 @@
 import { Template } from 'meteor/templating'
 import { EJSON } from 'meteor/ejson'
-import { wrapEvents, wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
 import { StateVariables } from '../../config/StateVariables'
 import { StateActions } from '../../config/StateActions'
-import { dataTarget } from '../../../utils/event'
 import { Router } from '../../../api/routes/Router'
+import { wrapEvents, wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
+import { dataTarget } from '../../../utils/event'
 import { formIsValid } from '../../../utils/form'
 import { getPreviewData } from '../../config/getPreviewData'
 import { defaultNotifications } from '../../../utils/defaultNotifications'
+import { defineUndefinedFields } from '../../../utils/defineUndefinedFields'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.html'
-
 
 Template.genericList.onCreated(function () {
   const instance = this
@@ -121,11 +121,13 @@ Template.genericList.events(wrapEvents({
   },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
-    const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema)
+
+    const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema, { template: templateInstance })
     if (!updateDoc) return
 
     const target = templateInstance.state.get('updateDoc')
     updateDoc._id = target._id
+    defineUndefinedFields(updateDoc, target)
 
     templateInstance.state.set(StateVariables.submitting, true)
     const actonUpdate = templateInstance.state.get('actionUpdate')
@@ -176,7 +178,6 @@ function previewDoc (templateInstance, { doc, unsaved, compare, template, titleF
   templateInstance.state.set({ previewTarget })
 }
 
-
 function getUnsavedFormDoc (templateInstance) {
   const isUpdateForm = !!templateInstance.state.get('updateDoc')
   const targetForm = isUpdateForm
@@ -188,7 +189,7 @@ function getUnsavedFormDoc (templateInstance) {
   return formIsValid(targetForm, schema)
 }
 
-function getCompare(templateInstance) {
+function getCompare (templateInstance) {
   const updateDoc = templateInstance.state.get('updateDoc')
   if (updateDoc) delete updateDoc._id
   return updateDoc

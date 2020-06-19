@@ -9,8 +9,8 @@ const cleanOptions = {
   autoConvert: false,
   removeEmptyStrings: false,
   trimStrings: false,
-  getAutoValues: true,
-  removeNullsFromArrays: true
+  getAutoValues: false,
+  removeNullsFromArrays: false
 }
 
 export const parseActions = function parseActions ({ instance, config, app, logDebug, settingsDoc }) {
