@@ -10,9 +10,9 @@ export const parseCollections = function parseCollections ({ instance, config, c
 
   // merge all contexts into a single list
   // so we can easily create everything in a row
-  const allCollections = (config.dependencies && config.dependencies.length > 0
+  const allCollections = (config.dependencies && config.dependencies.length > 0)
     ? [config].concat(config.dependencies)
-    : [config]).filter(context => context.isType === false)
+    : [config].filter(({ isType }) => isType === false)
 
   allCollections.forEach(collectionConfig => {
     const isFilesCollection = collectionConfig.isFilesCollection

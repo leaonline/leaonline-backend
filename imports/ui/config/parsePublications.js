@@ -2,9 +2,11 @@ import { StateVariables } from './StateVariables'
 
 const defaultLog = () => {}
 
-export const parsePublications = function parsePublications ({ instance, config, logDebug = defaultLog, onSubscribed, connection }) {
+export const parsePublications = function parsePublications ({ instance, config, logDebug = defaultLog, onSubscribed, settingsDoc, connection }) {
+  const reactiveSub = settingsDoc?.reactiveSub
   const allSubs = {}
   const allPublications = Object.values(config.publications)
+
   if (config.dependencies) {
     config.dependencies.forEach(dep => {
       if (!dep.isType) {
@@ -43,6 +45,16 @@ export const parsePublications = function parsePublications ({ instance, config,
       }
     }
 
-    connection.subscribe(name, {}, { onStop, onReady })
+    // we can explicitly prevent reactivity using a settings flag
+    if (reactiveSub === false) {
+      return connection.subscribe(name, {}, { onStop, onReady })
+    }
+
+    const sub = connection.subscribe(name, {}, { onStop })
+    Tracker.autorun(() => {
+      if (sub.ready()) {
+        onReady()
+      }
+    })
   })
 }

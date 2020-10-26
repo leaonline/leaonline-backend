@@ -9,6 +9,7 @@ import { getFieldSettings } from '../../api/apps/getFieldSettings'
 import { FormTypes } from '../forms/FormTypes'
 import { Apps } from '../../api/apps/Apps'
 import { createAddFieldsToQuery } from '../../api/queries/createAddFieldsToQuery'
+import { Schema } from '../../api/schema/Schema'
 
 const settings = Meteor.settings.public.editor
 
@@ -62,10 +63,19 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
       autoform.type = 'textarea'
     }
 
+    if (isRichText(definitions)) {
+      autoform.type = 'markdown'
+    }
+
     if (isRegExp(definitions)) {
       autoform.type = 'regexp'
       FormTypes.regExp.load()
       // autoform.translate = (...) => i18n.get(..)
+    }
+
+    if (isMediaUrl(definitions)) {
+      definitions.type = Schema.provider.RegEx.Url
+      autoform.type = 'url'
     }
 
     if (isBoolean(definitions)) {
@@ -240,7 +250,9 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
 }
 
 const { textAreaThreshold } = settings
-const isTextArea = value => value.type === String && typeof value.max === 'number' && value.max >= textAreaThreshold
+const isRichText = value => value.richText === true
+const isMediaUrl = value => value.isMediaUrl === true
+const isTextArea = value => value.type === String && !isRichText(value) && typeof value.max === 'number' && value.max >= textAreaThreshold
 const isRegExp = ({ type }) => type === RegExp
 const isBoolean = ({ type }) => type === Boolean
 const isSettingsForm = ({ form }) => form && FormTypes[form]
