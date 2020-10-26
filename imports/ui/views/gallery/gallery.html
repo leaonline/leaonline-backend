@@ -44,8 +44,14 @@
                             <div class="col-12 col-md-4 p-lg-3 p-1 img-description text-light d-block">
                                 <h4 class="text-break">{{file.name}}</h4>
                                 <p class="font-weight-light text-break">{{kilobytes file.size}} KB</p>
-                                <div class="actions text-right">
-                                    <a href="{{this}}?download=true" target="_blank"  class="btn btn-outline-primary" download="{{file.name}}">
+
+                                <div class="w-100">
+                                    <input type="text" readonly class="form-control" value="{{this}}">
+                                </div>
+
+
+                                <div class="actions d-flex justify-content-between mt-2">
+                                    <a href="{{this}}?download=true" target="_blank"  class="btn btn-primary" download="{{file.name}}">
                                         <i class="fa fas fa-fw fa-download"></i> {{i18n "actions.download"}}
                                     </a>
                                     {{#if actionRemove}}
