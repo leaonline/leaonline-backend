@@ -1,12 +1,63 @@
 <template name="genericDocument">
-	{{#unless loadComplete}}
-		{{>loading}}
-	{{else}}
-		<div class="w-100 {{#if isUpdating}}d-unavailable{{/if}}">
-			{{> quickForm id="updateForm" type="normal" schema=updateSchema doc=updateDoc }}
-			{{#if isUpdating}}
-				<span><i class="fa fas fa-fw fa-spinner fa-pulse"></i></span>
-			{{/if}}
-		</div>
-	{{/unless}}
+    {{#unless loadComplete}}
+        {{>loading}}
+    {{else}}
+
+        {{#unless editMode}}
+            <div class="d-flex justify-content-between">
+                <h2>{{i18n config.label}} ({{i18n "document.viewMode"}}) </h2>
+                <button class="btn btn-primary edit-button">
+                    {{i18n "actions.edit"}}
+                </button>
+            </div>
+            <hr>
+
+        {{! in view mode we use the defined renderer to display the fields}}
+
+            {{#autoForm id="viewForm" type="readonly" schema=updateSchema
+                        doc=updateDoc}}
+                {{#each afFieldNames}}
+                    {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
+                {{/each}}
+            {{/autoForm}}
+
+        {{else}}
+
+
+            <div class="d-flex justify-content-between">
+                <h2>{{i18n config.label}} ({{i18n "document.editMode"}}) </h2>
+                <button class="btn btn-outline-secondary cancel-edit-button">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <hr>
+
+        {{! edit mode we display using the autoForm from schema definitions  }}
+
+            <div class="w-100 {{#if isUpdating}}d-unavailable{{/if}}">
+                {{#autoForm id="updateForm" type="normal" schema=updateSchema
+                            doc=updateDoc }}
+                    {{#each afFieldNames}}
+                        {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
+                    {{/each}}
+                {{/autoForm}}
+
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-primary" type="submit" form="updateForm">
+                        {{i18n "actions.update"}}
+                    </button>
+                    <button class="btn btn-outline-secondary cancel-edit-button">
+                        {{i18n "actions.cancel"}}
+                    </button>
+                </div>
+
+                {{#if isUpdating}}
+                    <span>
+                        <i class="fa fas fa-fw fa-spinner fa-pulse"></i>
+                    </span>
+                {{/if}}
+            </div>
+
+        {{/unless}}
+    {{/unless}}
 </template>
