@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor'
 import { getCollection } from '../../utils/collection'
 import { createFilesCollection } from '../../factories/createFilesCollection'
 import { createCollection } from '../../factories/createCollection'

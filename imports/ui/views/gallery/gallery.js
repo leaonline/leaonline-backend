@@ -1,17 +1,9 @@
-import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
-import { getCollection } from '../../../utils/collection'
 import { dataTarget } from '../../../utils/event'
 import { Components } from '../../../api/core/Components'
 import { wrapEvents, wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
 import '../../components/upload/upload'
 import './gallery.html'
-
-const debug = (...args) => {
-  if (Meteor.isDevelopment) {
-    console.info('[Template.genericList]', ...args)
-  }
-}
 
 const coreComponentsLoaded = Components.load([Components.template.image])
 

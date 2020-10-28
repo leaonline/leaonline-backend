@@ -1,6 +1,5 @@
 import { Schema } from '../../api/schema/Schema'
 import { StateVariables } from './StateVariables'
-import { getCollection } from '../../utils/collection'
 import { toFormSchema } from './toFormSchema'
 import { TaskRenderers } from '../../api/task/TaskRenderers'
 

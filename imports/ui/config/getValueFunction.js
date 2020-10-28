@@ -1,3 +1,4 @@
+/* global AutoForm */
 import { createAddFieldsToQuery } from '../../api/queries/createAddFieldsToQuery'
 import { getCollection } from '../../utils/collection'
 
@@ -38,7 +39,7 @@ const toExecutableEntry = entry => {
     case 'increment':
       return getIncrementValueResolver(entry)
     default:
-      throw new Error(`Unknown type: ${type}`)
+      throw new Error(`Unknown type: ${entry.type}`)
   }
 }
 
@@ -83,7 +84,6 @@ const getIncrementValueResolver = ({ decimals, filter, collection }) => {
     addFieldsToQuery(query, filter?.fields)
     const count = Collection.find(query).count() + 1
     return count.toString().padStart(decimals, '0')
-
   }
 }
 

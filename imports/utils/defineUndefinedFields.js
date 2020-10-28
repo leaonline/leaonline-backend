@@ -25,7 +25,7 @@ export const defineUndefinedFields = (destination, source, { value, configurable
     // simple sanity check, whether our props have been defined correctly
     const destinationKeys = Object.keys(destination).sort().toString()
     const sourceKeys = Object.keys(source).sort().toString()
-    if(destinationKeys !== sourceKeys) {
+    if (destinationKeys !== sourceKeys) {
       throw new TypeError(`Property mismatch detected destination: ${destinationKeys}, source: ${sourceKeys}`)
     }
   }

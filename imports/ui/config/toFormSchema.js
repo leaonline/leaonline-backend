@@ -1,8 +1,8 @@
+/* global AutoForm */
 import { i18n } from '../../api/i18n/i18n'
 import { Meteor } from 'meteor/meteor'
 import { ContextRegistry } from '../../api/config/ContextRegistry'
 import { getCollection } from '../../utils/collection'
-import { resolveRepresentative } from '../../utils/resolveRepresentative'
 import { cloneObject } from '../../utils/cloneObject'
 import { getValueFunction } from './getValueFunction'
 import { getLabel } from './getLabel'
@@ -113,7 +113,9 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
 
       if (collection) {
         const transform = { sort: {} }
-        depFields.forEach(f => transform.sort[f] = 1)
+        depFields.forEach(f => {
+          transform.sort[f] = 1
+        })
 
         const query = dependency.query || {}
 

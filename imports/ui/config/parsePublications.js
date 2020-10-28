@@ -1,3 +1,4 @@
+import { Tracker } from 'meteor/tracker'
 import { StateVariables } from './StateVariables'
 
 const defaultLog = () => {}
@@ -22,9 +23,6 @@ export const parsePublications = function parsePublications ({ instance, config,
     const onStop = function (err) {
       if (err) {
         console.error(name, err)
-        if (err.message) {
-          alert(err.message)
-        }
       }
     }
 

@@ -1,6 +1,6 @@
 import { Template } from 'meteor/templating'
 import { wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
-import { formIsValid, validateFormData } from '../../../utils/form'
+import { formIsValid } from '../../../utils/form'
 import { StateVariables } from '../../config/StateVariables'
 import '../../components/stringified/stringified'
 import './document.html'
@@ -8,8 +8,6 @@ import { Router } from '../../../api/routes/Router'
 import { by300 } from '../../../utils/dely'
 import { defineUndefinedFields } from '../../../utils/defineUndefinedFields'
 import { defaultNotifications } from '../../../utils/defaultNotifications'
-
-const readonly = ''
 
 Template.genericDocument.onCreated(function () {
   const instance = this

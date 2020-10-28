@@ -2,16 +2,18 @@ import { StateVariables } from './StateVariables'
 import { ServiceRegistry } from '../../api/config/ServiceRegistry'
 import { ContextRegistry } from '../../api/config/ContextRegistry'
 import { getCollection } from '../../utils/collection'
-import { i18n } from '../../api/i18n/i18n'
 import { Template } from 'meteor/templating'
-import { cloneObject } from '../../utils/cloneObject'
 import { getLabel } from './getLabel'
 
-const fieldsFromCollection = function ({ value, collection, context, fieldConfig, path, isArray }) {
+function fieldsFromCollection ({ value, fieldConfig, path, isArray }) {
+  const collection = getCollection(fieldConfig.dependency.collection)
+  const context = ContextRegistry.get(fieldConfig.dependency.collection)
   const depField = fieldConfig.dependency.field
   const toDocumentField = entry => {
     const currentDoc = collection.findOne(entry)
-    if (!currentDoc) return value
+    if (!currentDoc) {
+      return value
+    }
 
     return {
       value: currentDoc._id,
@@ -36,7 +38,8 @@ const fieldsFromCollection = function ({ value, collection, context, fieldConfig
   return fields
 }
 
-const fieldsFromContext = function ({ context, value }) {
+function fieldsFromContext ({ fieldConfig, value }) {
+  const context = ContextRegistry.get(fieldConfig.dependency.context)
   if (context.isType) {
     const { representative } = context
     const type = Object.values(context.types).find(type => {
@@ -71,12 +74,9 @@ function getFieldResolvers (fieldConfig) {
     const isArray = Array.isArray(value)
     switch (fieldConfig.type) {
       case ServiceRegistry.fieldTypes.collection:
-        const collection = getCollection(fieldConfig.dependency.collection)
-        const collectionContext = ContextRegistry.get(fieldConfig.dependency.collection)
-        return fieldsFromCollection({ value, fieldConfig, collection, context: collectionContext, isArray })
+        return fieldsFromCollection({ value, fieldConfig, isArray })
       case ServiceRegistry.fieldTypes.context:
-        const context = ContextRegistry.get(fieldConfig.dependency.context)
-        return fieldsFromContext({ fieldConfig, context, value })
+        return fieldsFromContext({ fieldConfig, value })
       default:
         return { value, type }
     }
@@ -110,8 +110,6 @@ export const parseFields = function parseFields ({ instance, config, settingsDoc
       excludeFromList.add(key)
       return
     }
-
-
 
     fields[key] = 1
     fieldLabels[key] = fieldConfig.label
