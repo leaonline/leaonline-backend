@@ -8,20 +8,32 @@ import { cloneObject } from '../../utils/cloneObject'
 import { getLabel } from './getLabel'
 
 const fieldsFromCollection = function ({ value, collection, context, fieldConfig, path, isArray }) {
+  const depField = fieldConfig.dependency.field
   const toDocumentField = entry => {
     const currentDoc = collection.findOne(entry)
     if (!currentDoc) return value
+
     return {
       value: currentDoc._id,
-      label: currentDoc[fieldConfig.dependency.field]
+      label: (Array.isArray(depField)
+        ? depField.map(entry => currentDoc[entry]).join(' ')
+        : currentDoc[depField])
     }
   }
 
+  const fields = {}
+  fields.isCollection = true
+  fields.context = context.name
+
   if (isArray) {
-    return { docs: value.map(toDocumentField), isCollection: true, isArray: true, context: context.name }
+    fields.doc = value.map(toDocumentField)
+    fields.isArray = true
   } else {
-    return { doc: toDocumentField(value), isCollection: true, context: context.name, path }
+    fields.doc = toDocumentField(value)
+    fields.path = path
   }
+
+  return fields
 }
 
 const fieldsFromContext = function ({ context, value }) {
@@ -54,6 +66,7 @@ function getFieldConfig (config, key, field, fieldSettings) {
 }
 
 function getFieldResolvers (fieldConfig) {
+  const { type } = fieldConfig
   return (value) => {
     const isArray = Array.isArray(value)
     switch (fieldConfig.type) {
@@ -65,7 +78,7 @@ function getFieldResolvers (fieldConfig) {
         const context = ContextRegistry.get(fieldConfig.dependency.context)
         return fieldsFromContext({ fieldConfig, context, value })
       default:
-        return { value }
+        return { value, type }
     }
   }
 }
@@ -92,10 +105,13 @@ export const parseFields = function parseFields ({ instance, config, settingsDoc
 
     const fieldSettings = settingsDoc.fields && settingsDoc.fields.find(entry => entry.name === key)
     const fieldConfig = getFieldConfig(config, key, value, fieldSettings)
+
     if (fieldConfig.exclude) {
       excludeFromList.add(key)
       return
     }
+
+
 
     fields[key] = 1
     fieldLabels[key] = fieldConfig.label

@@ -5,7 +5,6 @@ import { ReactiveDict } from 'meteor/reactive-dict'
 import { TaskRenderers, RendererGroups } from '../../../api/task/TaskRenderers'
 import { Scoring } from '../../../api/task/Scoring'
 import { Apps } from '../../../api/apps/Apps'
-import { Components } from '../../../api/core/Components'
 import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { Schema } from '../../../api/schema/Schema'
 import { FormTypes } from '../FormTypes'
@@ -22,9 +21,6 @@ import './taskContent.css'
 import './taskContent.html'
 import './autoform'
 
-Components.load([
-  Components.template.icon
-])
 Scoring.init()
 const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init())
 

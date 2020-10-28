@@ -45,6 +45,9 @@ Template.genericList.helpers(wrapHelpers({
     if (!target) return
 
     return Object.assign({}, target, { onClosed: onClosed.bind(instance) })
+  },
+  isBoolean (value) {
+    return typeof value === 'boolean'
   }
 }))
 
@@ -126,7 +129,21 @@ Template.genericList.events(wrapEvents({
     if (!updateDoc) return
 
     const target = templateInstance.state.get('updateDoc')
+
+    // we need to clean both documents in case the schema is updated
+    // and the target still contains fields that are not part of the schema
+    const cleanOptions = {
+      mutate: true,
+      filter: true,
+      autoConvert: true,
+      removeEmptyStrings: true
+    }
+
+    templateInstance.actionUpdateSchema.clean(updateDoc, cleanOptions)
+    templateInstance.actionUpdateSchema.clean(target, cleanOptions)
+
     updateDoc._id = target._id
+
     defineUndefinedFields(updateDoc, target)
 
     templateInstance.state.set(StateVariables.submitting, true)

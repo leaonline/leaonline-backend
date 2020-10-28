@@ -2,6 +2,7 @@ import { i18n } from '../../api/i18n/i18n'
 import { Meteor } from 'meteor/meteor'
 import { ContextRegistry } from '../../api/config/ContextRegistry'
 import { getCollection } from '../../utils/collection'
+import { resolveRepresentative } from '../../utils/resolveRepresentative'
 import { cloneObject } from '../../utils/cloneObject'
 import { getValueFunction } from './getValueFunction'
 import { getLabel } from './getLabel'
@@ -32,7 +33,12 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
   const copy = cloneObject(schema)
 
   Object.entries(copy).forEach(([key, definitions]) => {
-    definitions.label = getLabel({ key, context: config, field: definitions, type: 'form' })
+    definitions.label = getLabel({
+      key,
+      context: config,
+      field: definitions,
+      type: 'form'
+    })
 
     const fieldSettings = getFieldSettings(settingsDoc, key) || {}
     const autoform = {}
@@ -99,15 +105,28 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
       const { dependency } = definitions
       const { requires, collection, filesCollection, context, field, isArray, filter } = dependency
 
+      // make all fields to Array structure by default so we can make all
+      // operations base on iterations and save us the complex if-branchings
+      const depFields = Array.isArray(field) ? field : [field]
+
       let hasOptions = false
 
       if (collection) {
-        const transform = { sort: { [field]: 1 } }
+        const transform = { sort: {} }
+        depFields.forEach(f => transform.sort[f] = 1)
+
         const query = dependency.query || {}
 
         let DependantCollection = getCollection(collection)
-        const toOptions = doc => ({ value: doc._id, label: doc[field] })
-        const toIndexOptions = (entry, index) => ({ value: index, label: entry })
+        const toDepLabel = doc => depFields.map(f => doc[f]).join(' - ')
+        const toOptions = doc => ({
+          value: doc._id,
+          label: toDepLabel(doc)
+        })
+        const toIndexOptions = (entry, index) => ({
+          value: index,
+          label: entry
+        })
 
         autoform.options = () => {
           // if in any case the dependant collection has not been loaded initially
@@ -135,7 +154,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
             const queryFieldValue = Array.isArray(fieldValue) ? fieldValue : [fieldValue]
             query._id = { $in: queryFieldValue }
 
-            const docs = DependantCollection.find(query, transform).fetch().map(entry => entry[field])
+            const docs = DependantCollection.find(query, transform).fetch().map(entry => toDepLabel(entry))
             return isArray
               ? docs.flat().map(toIndexOptions)
               : docs.map(toIndexOptions)
@@ -170,7 +189,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
 
       if (typeof context !== 'undefined') {
         const DependantContext = context ? ContextRegistry.get(context) : config
-        const valueField = definitions.dependency.valueField || DependantContext.representative
+        const valueField = definitions.dependency.valueField || (Array.isArray(DependantContext.representative) ? DependantContext.representative[0] : DependantContext.representative)
         const labelField = definitions.dependency.labelField || 'label'
 
         if (DependantContext.isItem) {

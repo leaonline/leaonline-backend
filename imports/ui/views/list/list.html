@@ -111,17 +111,21 @@
                             {{#each field in (fields document)}}
                                 {{#if field.isCollection}}
                                     <td>
-                                        <u>
                                         <a href class="linked-document-preview-button" data-target="{{field.doc.value}}"
                                            data-context="{{field.context}}">
                                             {{field.doc.label}}
                                         </a>
-                                        </u>
                                     </td>
                                 {{else if field.isType}}
-                                    <td>
+                                    <td class="text-center">
                                         <span class="p-1" title="{{i18n field.label}}">
                                             <i class="fa fas fa-fw fa-{{field.icon}} text-{{field.type}}"></i>
+                                        </span>
+                                    </td>
+                                {{else if (isBoolean field.value)}}
+                                    <td class="text-center">
+                                        <span class="p-1" title="{{i18n field.label}}">
+                                            <i class="fa fas fa-fw fa-check"></i>
                                         </span>
                                     </td>
                                 {{else}}
