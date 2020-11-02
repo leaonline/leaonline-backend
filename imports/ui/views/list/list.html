@@ -55,7 +55,7 @@
         </div>
 
         <div class="card-body {{#if submitting}}d-unavailable{{/if}}">
-            {{#autoForm id="updateForm" type="normal" schema=insertSchema  doc=updateDoc validate="none"}}
+            {{#autoForm id="updateForm" type="normal" schema=updateSchema  doc=updateDoc validate="none"}}
                 {{#each afFieldNames}}
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
                 {{/each}}
