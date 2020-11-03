@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import { getCollection } from '../../utils/collection'
 import { createFilesCollection } from '../../factories/createFilesCollection'
 import { createCollection } from '../../factories/createCollection'
+import { getDependenciesForContext } from './getDependenciesForContext'
 
 const validateUser = () => !!Meteor.userId()
 const defaultLog = () => {}
@@ -9,10 +10,12 @@ const defaultLog = () => {}
 export const parseCollections = function parseCollections ({ instance, config, connection, logDebug = defaultLog }) {
   instance.collections = instance.collections || new Map()
 
+  const dependencies = getDependenciesForContext(config)
+
   // merge all contexts into a single list
   // so we can easily create everything in a row
-  const allCollections = (config.dependencies && config.dependencies.length > 0)
-    ? [config].concat(config.dependencies)
+  const allCollections = dependencies.length > 0
+    ? [config].concat(dependencies)
     : [config].filter(({ isType }) => isType === false)
 
   allCollections.forEach(collectionConfig => {

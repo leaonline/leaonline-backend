@@ -1,5 +1,6 @@
 import { Tracker } from 'meteor/tracker'
 import { StateVariables } from './StateVariables'
+import { getDependenciesForContext } from './getDependenciesForContext'
 
 const defaultLog = () => {}
 
@@ -8,13 +9,12 @@ export const parsePublications = function parsePublications ({ instance, config,
   const allSubs = {}
   const allPublications = Object.values(config.publications)
 
-  if (config.dependencies) {
-    config.dependencies.forEach(dep => {
-      if (!dep.isType) {
-        Object.values(dep.publications).forEach(depPub => allPublications.push(depPub))
-      }
-    })
-  }
+  const dependencies = getDependenciesForContext(config)
+  dependencies.forEach(dep => {
+    if (!dep.isType) {
+      Object.values(dep.publications).forEach(depPub => allPublications.push(depPub))
+    }
+  })
 
   allPublications.forEach(publication => {
     const { name } = publication
