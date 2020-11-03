@@ -1,3 +1,8 @@
+/**
+ * @deprecated Use an interface in toFormSchema and automatically assign
+ * autoform form based on flags instead of manual configuration (convention
+ * over configuration)
+ */
 export const FormTypes = {
   imageSelect: {
     name: 'imageSelect',

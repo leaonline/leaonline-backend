@@ -271,7 +271,6 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
 }
 
 const { textAreaThreshold } = settings
-const isSortable = value => value.isSortable === true
 const isRichText = value => value.richText === true
 const isMediaUrl = value => value.isMediaUrl === true
 const isTextArea = value => value.type === String && !isRichText(value) && typeof value.max === 'number' && value.max >= textAreaThreshold

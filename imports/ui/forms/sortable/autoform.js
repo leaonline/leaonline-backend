@@ -1,4 +1,5 @@
-import { EJSON } from "meteor/ejson"
+/* global AutoForm */
+import { EJSON } from 'meteor/ejson'
 
 AutoForm.addInputType('leaSortable', {
   template: 'afSortable',

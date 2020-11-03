@@ -1,11 +1,13 @@
 import { Template } from 'meteor/templating'
-import { RactiveDict } from 'meteor/reactive-dict'
+import { ReactiveDict } from 'meteor/reactive-dict'
 import Sortable from 'sortablejs'
+// TODO remove the lea related imports and make this extension generic
+// TODO in order to publish it to atmosphere
 import { getCollection } from '../../../utils/collection'
+import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import './autoform'
 import './sortable.css'
 import './sortable.html'
-import { ContextRegistry } from '../../../api/config/ContextRegistry'
 
 Template.afSortable.onCreated(function () {
   const instance = this
@@ -60,7 +62,7 @@ Template.afSortable.onRendered(function () {
       const $element = instance.$(evt.item)
       $element.addClass('afsortable-entry')
       $element.removeClass('afsortable-unused')
-    },
+    }
   })
 
   createSortable($unused.get(0), {
@@ -74,7 +76,7 @@ Template.afSortable.onRendered(function () {
       const $element = instance.$(evt.item)
       $element.addClass('afsortable-unused')
       $element.removeClass('afsortable-entry')
-    },
+    }
   })
 
   updateData(instance)
