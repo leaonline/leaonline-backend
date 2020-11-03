@@ -13,6 +13,14 @@ export const FormTypes = {
       return import('./imageSelect/imageSelect')
     }
   },
+  sortable: {
+    name: 'sortable',
+    template: 'leaSortable',
+    schema: {},
+    load: async function () {
+      return import('./sortable/sortable')
+    }
+  },
   taskContent: {
     name: 'taskContent',
     template: 'leaTaskContent',
