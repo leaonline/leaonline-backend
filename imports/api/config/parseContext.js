@@ -2,8 +2,6 @@ import { ContextRegistry } from './ContextRegistry'
 import { JSONReviver } from './JSONReviver'
 import { getViewType } from './getViewType'
 
-const toContextByName = name => ContextRegistry.get(name)
-
 /**
  * This transforms the config from the app to a more usable structure.
  * At first it revives the stringified schema, because JSON does not support the schema constructors
@@ -28,14 +26,6 @@ export const parseContext = (name, application) => {
     }
 
     ContextRegistry.add(context.name, context)
-  })
-
-  // round 2 - map dependencies
-
-  content.forEach(context => {
-    if (context.dependencies && context.dependencies.length > 0) {
-      context.dependencies = context.dependencies.map(toContextByName)
-    }
   })
 
   // reassign for later use
