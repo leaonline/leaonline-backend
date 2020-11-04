@@ -131,7 +131,6 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
         })
 
         autoform.options = function () {
-          const self = this
           const formId = AutoForm.getFormId()
 
           // if in any case the dependant collection has not been loaded initially
@@ -180,7 +179,6 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
             const { doc } = formData
             query[filter.self] = doc._id
           }
-
 
           const cursor = DependantCollection.find(query, transform)
           if (cursor.count() === 0) {
