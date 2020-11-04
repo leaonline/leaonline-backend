@@ -8,7 +8,9 @@
 
 export const toArray = (value, { includeUndefined = false, includeNull = false } = {}) => {
   if (Array.isArray(value)) return value
-  if (typeof value === 'undefined' && !includeUndefined) return []
+  const valueType = typeof value
+  if (valueType === 'undefined' && !includeUndefined) return []
+  if (valueType === 'object') return Object.entries(value)
   if (value === null && !includeNull) return []
   return [value]
 }

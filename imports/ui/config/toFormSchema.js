@@ -130,23 +130,27 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
           label: entry
         })
 
-        autoform.options = () => {
+        autoform.options = function () {
+          const self = this
+          const formId = AutoForm.getFormId()
+
           // if in any case the dependant collection has not been loaded initially
           // we can try to load it here, again and re-check it and falling back if necessary
           if (!DependantCollection) {
             DependantCollection = getCollection(collection)
-            if (!DependantCollection) {
-              // TODO raise warning to user?
-              console.warn(`Undefined collection: ${collection}`)
-              const formId = AutoForm.getFormId()
-              AutoForm.addStickyValidationError(formId, key, 'errors.collectionNotFound', collection)
-              return []
-            }
+          }
+
+          // TODO raise warning to user?
+          if (!DependantCollection) {
+            console.error(`Undefined collection: ${collection}`)
+            const formId = AutoForm.getFormId()
+            AutoForm.addStickyValidationError(formId, key, 'errors.collectionNotFound', collection)
+            return []
           }
 
           if (requires) {
             const fieldValue = AutoForm.getFieldValue(requires)
-            if (!fieldValue) return []
+            if (fieldValue) return []
 
             // relations between docs are always linked via _id
             // so this should be working for long term, too
@@ -169,8 +173,20 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
             addFieldsToQuery(query, filter.fields)
           }
 
+          if (filter?.self) {
+            const formData = AutoForm.getCurrentDataForForm(formId)
+            if (!formData) return []
+
+            const { doc } = formData
+            query[filter.self] = doc._id
+          }
+
+
           const cursor = DependantCollection.find(query, transform)
-          if (cursor.count() === 0) return []
+          if (cursor.count() === 0) {
+            return []
+          }
+
           return cursor.fetch().map(toOptions)
         }
 

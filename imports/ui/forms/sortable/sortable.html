@@ -1,6 +1,6 @@
 <template name="afSortable">
     <ul class="list-group afsortable-sort-target">
-        {{#each option in options}}
+        {{#each option in selectedOptions}}
             <li class="list-group-item afsortable-entry d-flex justify-content-between"
                 data-target="{{option.value}}">
                 <span>{{option.label}}</span>

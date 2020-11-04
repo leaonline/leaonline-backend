@@ -13,27 +13,32 @@ Template.afSortable.onCreated(function () {
   const instance = this
   instance.stateVars = new ReactiveDict()
 
-  const { data } = instance
-  const { atts } = data
+  instance.autorun(() => {
+    const data = Template.currentData()
+    const { atts } = data
 
-  instance.context = ContextRegistry.get(atts.collection)
-  instance.collection = getCollection(atts.collection)
+    instance.context = ContextRegistry.get(atts.collection)
+    instance.collection = getCollection(atts.collection)
 
-  const invalid = atts.class && atts.class.indexOf('invalid') > -1
-  const disabled = Object.prototype.hasOwnProperty.call(atts, 'disabled')
-  const dataSchemaKey = atts['data-schema-key']
-  const options = data.value
-    ? getOptions(data.value, instance.context, instance.collection)
-    : data.selectOptions
+    const invalid = atts.class && atts.class.indexOf('invalid') > -1
+    const disabled = Object.prototype.hasOwnProperty.call(atts, 'disabled')
+    const dataSchemaKey = atts['data-schema-key']
+    const selectedOptions = getSelectedOptions(data.value, instance.context, instance.collection)
+    const unselectedOptions = getUnselectedOptions(selectedOptions, data.selectOptions)
 
-  const unselectedOptions = getUnselectedOptions(options, data.selectOptions)
-
-  instance.state.set({ options, invalid, disabled, dataSchemaKey, unselectedOptions })
+    instance.state.set({
+      invalid,
+      disabled,
+      dataSchemaKey,
+      selectedOptions,
+      unselectedOptions
+    })
+  })
 })
 
 Template.afSortable.helpers({
-  options () {
-    return Template.instance().state.get('options')
+  selectedOptions () {
+    return Template.instance().state.get('selectedOptions')
   },
   unselectedOptions () {
     return Template.instance().state.get('unselectedOptions')
@@ -82,21 +87,21 @@ Template.afSortable.onRendered(function () {
   updateData(instance)
 })
 
-function getOptions (value, context, collection) {
-  return value.map(_id => {
-    const doc = collection.findOne(_id)
-    return {
-      value: _id,
-      label: doc[context.representative]
-    }
+function getSelectedOptions (value, context, collection) {
+  return (value || []).map(value => {
+    const doc = collection.findOne(value)
+    const { representative } = context
+    const label = Array.isArray(representative)
+      ? representative.map(key => doc[key]).join(' - ')
+      : doc[representative]
+    return { value, label }
   })
 }
 
 function getUnselectedOptions (options, allOptions) {
   if (options.length === allOptions.length) return []
 
-  return allOptions
-    .filter(doc => !options.find(search => search.value === doc.value))
+  return (allOptions || []).filter(doc => !options.find(search => search.value === doc.value))
 }
 
 function createSortable (target, options) {
