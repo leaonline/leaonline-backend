@@ -18,11 +18,15 @@ location.shift()
 const hostName = location[0]
 const isOfHosts = !!hosts[hostName]
 
+// we use this as a relative path + queryParams in order to
+// fully restore the template state (in case the template supports it)
+const fullPath = `${pathname}${window.location.search}`
+
 if (isOfHosts) {
   Router.addLoadDependency(new Promise(resolve => {
     Apps.onHostLoaded(hostName, (err, res) => {
       if (!err && !!res) {
-        setTimeout(() => Router.go(pathname), 300)
+        setTimeout(() => Router.go(fullPath), 300)
       }
       resolve()
     })

@@ -1,18 +1,27 @@
 import { Template } from 'meteor/templating'
 import { EJSON } from 'meteor/ejson'
 import { StateVariables } from '../../config/StateVariables'
-import { StateActions } from '../../config/StateActions'
-import { Router } from '../../../api/routes/Router'
-import { wrapEvents, wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
+import { StateActions, updateStateAction } from '../../config/StateActions'
+import {
+  wrapEvents,
+  wrapHelpers,
+  wrapOnCreated
+} from '../../config/backendConfigWrappers'
 import { dataTarget } from '../../../utils/event'
 import { formIsValid } from '../../../utils/form'
 import { getPreviewData } from '../../config/getPreviewData'
 import { defaultNotifications } from '../../../utils/defaultNotifications'
 import { defineUndefinedFields } from '../../../utils/defineUndefinedFields'
+import {
+  getQueryParam,
+  setQueryParam
+} from '../../../api/routes/utils/queryParams'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.html'
+
+const entryIsTrue = entry => entry === true
 
 Template.genericList.onCreated(function () {
   const instance = this
@@ -21,11 +30,38 @@ Template.genericList.onCreated(function () {
     const data = Template.currentData()
     const { pathname } = window.location
     const lastPath = instance.state.get('lastPath')
+
     if (lastPath !== pathname) {
       instance.state.clear()
     }
+
     wrapOnCreated(instance, { data, debug: false })
     instance.state.set('lastPath', pathname)
+  })
+
+  instance.autorun(() => {
+    const allSubsComplete = instance.state.get(StateVariables.allSubsComplete)
+    if (!allSubsComplete) return
+
+    // since we may need to dynamically load special form types
+    // we need to wait until they are loaded or the form will run into errors
+    const formsLoaded = instance.state.get(StateVariables.formTypesLoaded)
+    if (formsLoaded && !Object.values(formsLoaded).every(entryIsTrue)) return
+
+    const action = getQueryParam('action')
+    const doc = getQueryParam('doc')
+
+    let updateDoc
+    if (doc) {
+      updateDoc = instance.mainCollection.findOne(doc)
+      if (!updateDoc) {
+        console.error('Document', doc, 'not found')
+        console.error(instance.mainCollection.find().fetch())
+        return
+      }
+    }
+
+    updateStateAction({ action, updateDoc, instance })
   })
 })
 
@@ -54,29 +90,16 @@ Template.genericList.helpers(wrapHelpers({
 Template.genericList.events(wrapEvents({
   'click .insert-button' (event, templateInstance) {
     event.preventDefault()
-    Router.queryParam({ action: StateActions.insert })
-    templateInstance.state.set('insertForm', true)
+    setQueryParam({ action: StateActions.insert })
   },
   'click .edit-button' (event, templateInstance) {
     event.preventDefault()
     const target = dataTarget(event, templateInstance)
-    Router.queryParam({ action: StateActions.update, doc: target })
-    const updateDoc = templateInstance.mainCollection.findOne(target)
-    if (!updateDoc) {
-      // notify err
-      console.info(target, templateInstance.mainCollection.find().fetch())
-      return console.error('no doc found')
-    } else {
-      console.log('update doc', updateDoc)
-    }
-    templateInstance.state.set('updateDoc', updateDoc)
-    templateInstance.state.set('updateForm', true)
+    setQueryParam({ action: StateActions.update, doc: target })
   },
   'click .cancel-form-button' (event, templateInstance) {
     event.preventDefault()
-    Router.queryParam({ action: null })
-    templateInstance.state.set('insertForm', false)
-    templateInstance.state.set('updateForm', false)
+    setQueryParam({ action: null })
   },
   'click .current-document-preview-button' (event, templateInstance) {
     event.preventDefault()
@@ -103,8 +126,7 @@ Template.genericList.events(wrapEvents({
       templateInstance.state.set(StateVariables.submitting, false)
       defaultNotifications(err, res)
         .success(function () {
-          Router.queryParam({ action: null })
-          templateInstance.state.set('insertForm', false)
+          setQueryParam({ action: null })
         })
     }))
   },
@@ -154,8 +176,7 @@ Template.genericList.events(wrapEvents({
       templateInstance.state.set(StateVariables.submitting, false)
       defaultNotifications(err, res)
         .success(function () {
-          Router.queryParam({ action: null })
-          templateInstance.state.set('updateForm', false)
+          setQueryParam({ action: null })
         })
     }))
   },

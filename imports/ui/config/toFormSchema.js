@@ -11,6 +11,7 @@ import { FormTypes } from '../forms/FormTypes'
 import { Apps } from '../../api/apps/Apps'
 import { createAddFieldsToQuery } from '../../api/queries/createAddFieldsToQuery'
 import { Schema } from '../../api/schema/Schema'
+import { StateVariables } from './StateVariables'
 
 const settings = Meteor.settings.public.editor
 
@@ -18,6 +19,8 @@ const settings = Meteor.settings.public.editor
 // we define our requiredFields based on the type value
 const isValueField = entry => entry.type === 'field'
 const toTypeName = entry => entry.source
+const byName = (a, b,) => a.localeCompare(b)
+const withMinus = ' - '
 
 // we often want to ensure our required fields are set
 // se we define a common helper here
@@ -25,7 +28,7 @@ const areAllFieldsSet = fields => fields.every(name => !!AutoForm.getFieldValue(
 
 const addFieldsToQuery = createAddFieldsToQuery(AutoForm.getFieldValue)
 
-export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
+export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => {
   const { name } = config
 
   // first we define all the properties on the copy
@@ -92,8 +95,30 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
     }
 
     if (isSettingsForm(fieldSettings)) {
+      // we check for the targeted form and load it dynamically in case it's
+      // not loaded yet
       const targetForm = FormTypes[fieldSettings.form]
-      targetForm.load()
+      const formTypesStatus = instance.state.get(StateVariables.formTypesLoaded) || {}
+
+      if (!targetForm.loaded) {
+        formTypesStatus[fieldSettings.form] = false
+        instance.state.set(StateVariables.formTypesLoaded, formTypesStatus)
+
+        targetForm.load()
+          .then(() => {
+            const fts = instance.state.get(StateVariables.formTypesLoaded)
+            fts[fieldSettings.form] = true
+            instance.state.set(StateVariables.formTypesLoaded, fts)
+          })
+          .catch(e => {
+            console.error(e)
+            instance.state.set(StateVariables.formTypesLoaded, null)
+          })
+      } else {
+        formTypesStatus[fieldSettings.form] = true
+        instance.state.set(StateVariables.formTypesLoaded, formTypesStatus)
+      }
+
       autoform.type = targetForm.template
       autoform.connection = app.connection
       autoform.app = app.name
@@ -120,7 +145,12 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
         const query = dependency.query || {}
 
         let DependantCollection = getCollection(collection)
-        const toDepLabel = doc => depFields.map(f => doc[f]).join(' - ')
+
+        const toDepLabel = doc => depFields
+          .map(f => doc[f])
+          .sort(byName)
+          .join(withMinus)
+
         const toOptions = doc => ({
           value: doc._id,
           label: toDepLabel(doc)
@@ -172,12 +202,19 @@ export const toFormSchema = ({ schema, config, settingsDoc, app }) => {
             addFieldsToQuery(query, filter.fields)
           }
 
+          // we can set a filter on the options to have a certain field being
+          // set to be the _id of the current edited document.
+          // If the current document does not exist (e.g. insertForm) we
+          // allow all values in order to support haveing this field to be set
+          // with at least an initial value
           if (filter?.self) {
             const formData = AutoForm.getCurrentDataForForm(formId)
             if (!formData) return []
 
             const { doc } = formData
-            query[filter.self] = doc._id
+            if (doc) {
+              query[filter.self] = doc._id
+            }
           }
 
           const cursor = DependantCollection.find(query, transform)

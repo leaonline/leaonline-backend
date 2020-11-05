@@ -12,5 +12,6 @@ export const StateVariables = {
   documentsCount: 'documentsCount',
   allSubsComplete: 'allSubsComplete',
   submitting: 'submitting',
-  removing: 'removing'
+  removing: 'removing',
+  formTypesLoaded: 'formTypesLoaded'
 }
