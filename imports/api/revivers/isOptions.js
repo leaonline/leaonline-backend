@@ -1,7 +1,8 @@
 import { getCollection } from '../../utils/collection'
 
 export const isOptions = (key, value) => {
-  if (key === 'options' && !Array.isArray(value)) {
+  // TODO can we move this to {toFormSchema}? All other options are parsed there
+  if (key === 'options' && !Array.isArray(value) && value?.collectionName) {
     const optionsProjection = Object.assign({}, value.projection)
     const optonsMapFct = (el) => {
       return {

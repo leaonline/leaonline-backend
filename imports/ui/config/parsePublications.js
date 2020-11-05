@@ -7,7 +7,7 @@ const defaultLog = () => {}
 export const parsePublications = function parsePublications ({ instance, config, logDebug = defaultLog, onSubscribed, settingsDoc, connection }) {
   const reactiveSub = settingsDoc?.reactiveSub
   const allSubs = {}
-  const allPublications = Object.values(config.publications)
+  const allPublications = Object.values(config.publications || {})
 
   const dependencies = getDependenciesForContext(config)
   dependencies.forEach(dep => {

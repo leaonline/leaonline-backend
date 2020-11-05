@@ -1,7 +1,7 @@
 import { toArray } from '../../utils/toArray'
 
 export const createAddFieldsToQuery = (fieldsResolver, { skipUndefined = true } = {}) => (query, fields) => {
-  const fieldsArray = toArray(fields)
+  const fieldsArray = toArray(fields, { objectToEntries: true })
   if (fieldsArray.length === 0) return query
 
   fieldsArray.forEach(fieldDefinition => {

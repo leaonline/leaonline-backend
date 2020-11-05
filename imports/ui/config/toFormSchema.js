@@ -172,6 +172,8 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
           // TODO raise warning to user?
           if (!DependantCollection) {
             console.error(`Undefined collection: ${collection}`)
+            console.error(ContextRegistry.get(collection))
+            console.error(ContextRegistry.get(name))
             const formId = AutoForm.getFormId()
             AutoForm.addStickyValidationError(formId, key, 'errors.collectionNotFound', collection)
             return []
@@ -298,15 +300,44 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
       autoform.group = definitions.group
     }
 
-    // on explicit options we map them directly
+    // on explicit options we need to handle them separately
 
     if (definitions.options) {
-      const mappedOptions = definitions.options.map(option => ({
-        value: option.value || option.name,
-        label: () => i18n.get(option.label)
-      }))
-      autoform.options = () => mappedOptions
-      autoform.firstOption = definitions.optional ? () => i18n.get('form.selectOne') : false
+      const optionsType = typeof definitions.options
+
+      // the default case is an array, which is mapped into options
+      if (Array.isArray(definitions.options)) {
+        const mappedOptions = definitions.options.map(option => ({
+          value: option.value || option.name,
+          label: () => i18n.get(option.label)
+        }))
+        autoform.options = () => mappedOptions
+      }
+
+      else if (optionsType === 'function') {
+        autoform.options = definitions.options
+      }
+
+      // the more complex case is where options are, for example, computed
+      // by a certain method and input
+      else if (optionsType === 'object') {
+        const toIndexedTokens = (token, index) => ({ value: index, label: token })
+        const tokenize = getValueFunction(definitions.options)
+        autoform.options = function () {
+          const tokens = tokenize()
+          return tokens.map(toIndexedTokens)
+        }
+      }
+
+      // and throw if we really don't know what the type is
+      else {
+        throw new Error(`Unknown definition for options: ${definitions.options}`)
+      }
+
+      // in any case we need to define a first option property
+      autoform.firstOption = definitions.optional
+        ? () => i18n.get('form.selectOne')
+        : false
     }
 
     const labelType = typeof definitions.label

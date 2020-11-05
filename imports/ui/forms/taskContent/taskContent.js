@@ -37,8 +37,10 @@ AutoForm.addInputType('leaTaskContent', {
   }
 })
 
-const rendererGroups = Object.values(RendererGroups)
 const typeSchemas = {}
+const rendererGroups = Object
+  .values(RendererGroups)
+  .filter(gr => !!gr.isTaskContent)
 
 const getContent = (element) => {
   if (element.type !== 'item') return element
@@ -60,7 +62,12 @@ const isItem = name => {
   return context && context.isItem
 }
 
-const contentFromItem = (name, value) => ({ type: 'item', subtype: name, value, width: '12' })
+const contentFromItem = (name, value) => ({
+  type: 'item',
+  subtype: name,
+  value,
+  width: '12'
+})
 
 const getImageForm = ({ imagesCollection, save = 'url', uriBase, version }) => ({
   type: FormTypes.imageSelect.template,
@@ -75,21 +82,23 @@ const loadDependencies = (config, appName) => {
   const app = Apps.get(appName)
   const { connection } = app
 
-  dependencies.forEach(dependency => {
-    const instance = {}
-    parseCollections({
-      config: dependency,
-      connection: connection,
-      instance: instance
+  dependencies
+    .map(name => ContextRegistry.get(name))
+    .forEach(dependency => {
+      const instance = {}
+      parseCollections({
+        config: dependency,
+        connection: connection,
+        instance: instance
+      })
+      parsePublications({
+        config: dependency,
+        connection: connection,
+        instance: null,
+        logDebug: (...args) => console.log(...args),
+        onSubscribed: () => console.log('subscribed', config.name)
+      })
     })
-    parsePublications({
-      config: dependency,
-      connection: connection,
-      instance: null,
-      logDebug: (...args) => console.log(...args),
-      onSubscribed: () => console.log('subscribed', config.name)
-    })
-  })
 }
 
 const getItemSchema = ({ name, app, settingsDoc }) => {
@@ -131,7 +140,14 @@ const createTypeSchema = (name, templateInstance) => {
   const { app } = templateInstance.data.atts
   const { settingsDoc } = templateInstance.data.atts
   const uriBase = connection._stream.rawUrl
-  _currentTypeSchema = currentTypeSchema({ name, imagesCollection, version, uriBase, app, settingsDoc })
+  _currentTypeSchema = currentTypeSchema({
+    name,
+    imagesCollection,
+    version,
+    uriBase,
+    app,
+    settingsDoc
+  })
 }
 
 Template.afLeaTaskContent.onCreated(function () {
@@ -207,8 +223,9 @@ Template.afLeaTaskContent.helpers({
     return previewContent && previewContent.type === 'item'
   },
   previewContent () {
-    const instance = Template.instance()
     if (!renderersLoaded.get()) return
+
+    const instance = Template.instance()
     const previewContent = instance.stateVars.get('previewContent')
     if (!previewContent) return
 
@@ -267,19 +284,34 @@ Template.afLeaTaskContent.events({
   'click .preview-content-button' (event, templateInstance) {
     event.preventDefault()
 
-    const name = templateInstance.stateVars.get('currentTypeToAdd')
+    const type = templateInstance.stateVars.get('currentTypeToAdd')
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
-
     if (!insertDoc) return
-    templateInstance.stateVars.set({ previewContent: null, updatePreview: true })
+
+    const isItemContent = isItem(type)
+
+    templateInstance.stateVars.set({
+      previewContent: null,
+      updatePreview: true
+    })
+
 
     // we use a timeout here to allow some update
     // indicator when clicking on the button
     setTimeout(() => {
-      const previewContent = (isItem(name))
-        ? contentFromItem(name, insertDoc)
+      const previewContent = isItemContent
+        ? contentFromItem(type, insertDoc)
         : insertDoc
-      templateInstance.stateVars.set({ previewContent, updatePreview: false })
+
+      // if we have an item we want to initialize the scoring in order to allow
+      // a full preview including a scoring engine to test against
+      const scoreContent = isItemContent && {
+        type: 'preview',
+        subtype: Scoring.name,
+        scores: Scoring.run(type, previewContent.value, [])
+      }
+
+      templateInstance.stateVars.set({ previewContent, scoreContent, updatePreview: false })
     }, 300)
   },
   'hidden.bs.modal' (event, templateInstance) {
@@ -364,6 +396,15 @@ function updateElements (elements, templateInstance) {
   templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
 }
 
+/**
+ * Handler for scoring item inputs
+ * @param userId
+ * @param sessionId
+ * @param taskId
+ * @param page
+ * @param type
+ * @param responses
+ */
 function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
   const instance = this
   const previewContent = instance.stateVars.get('previewContent')
@@ -371,6 +412,7 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
     console.info('[TaskContent]: no content to submit onItemInput')
     return
   }
+
   const itemDoc = previewContent.value // item docs are stored in value
   const scoreResults = Scoring.run(type, itemDoc, { responses })
   const scoreContent = {

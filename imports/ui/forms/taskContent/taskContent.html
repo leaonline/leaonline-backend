@@ -5,26 +5,34 @@
         </div>
     {{else}}
         <div class="card">
+            {{#with elements}}
             <div class="card-body row">
-                {{#each element in elements}}
-                    <div class="col-12 col-md-{{element.width}} p-0 border border-{{#if overElement
-                                                                                        @index}}dark{{else}}white{{/if}} element-container"
+                {{#each element in this}}
+                    <div class="col-12 col-md-{{element.width}} p-0 border border-{{#if
+                            overElement
+                            @index}}dark{{else}}white{{/if}} element-container"
                          data-index="{{@index}}">
                         {{>TaskRendererFactory content=element}}
                         {{#if overElement @index}}
                             <span class="element-action-buttons bg-white">
-						<button class="btn btn-sm btn-primary edit-element" data-index="{{@index}}">
+						<button class="btn btn-sm btn-primary edit-element"
+                                data-index="{{@index}}">
 							<i class="fa fas fa-fw fa-edit"></i>
 						</button>
 						<button class="btn btn-sm btn-secondary up-element"
-                                data-index="{{@index}}" disabled="{{#if firstElement @index}}disabled{{/if}}">
+                                data-index="{{@index}}"
+                                disabled="{{#if firstElement
+                                                @index}}disabled{{/if}}">
 							<i class="fa fas fa-fw fa-caret-up"></i>
 						</button>
 						<button class="btn btn-sm btn-secondary down-element"
-                                data-index="{{@index}}" disabled="{{#if lastElement @index}}disabled{{/if}}">
+                                data-index="{{@index}}"
+                                disabled="{{#if lastElement
+                                                @index}}disabled{{/if}}">
 							<i class="fa fas fa-fw fa-caret-down"></i>
 						</button>
-						<button class="btn btn-sm btn-danger remove-element" data-index="{{@index}}">
+						<button class="btn btn-sm btn-danger remove-element"
+                                data-index="{{@index}}">
 							<i class="fa fas fa-fw fa-times"></i>
 						</button>
 					</span>
@@ -32,7 +40,8 @@
                     </div>
                 {{/each}}
             </div>
-            <div class="card-footer bg-white">
+            {{/with}}
+            <div class="card-{{#if elements}}footer{{else}}body{{/if}} bg-white">
                 <button class="btn btn-primary add-content-button">
                     <i class="fa fas fa-plus"></i>
                 </button>
@@ -40,41 +49,53 @@
         </div>
 
         <!-- Modal -->
-        <div class="modal fade" id="taskContentModel" tabindex="-1" role="dialog"
+        <div class="modal fade" id="taskContentModel" tabindex="-1"
+             role="dialog"
              aria-labelledby="taskContentModelTitle"
              aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-xxl" role="document">
+            <div class="modal-dialog modal-dialog-scrollable modal-xxl"
+                 role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         {{#if currentTypeToAdd}}
                             <button class="btn btn-outline-secondary modal-back-button">
-                                <i class="fa fas fa-fw fa-caret-left"></i> {{i18n "actions.back"}}
+                                <i class="fa fas fa-fw fa-caret-left"></i> {{i18n
+                                    "actions.back"}}
                             </button>
                         {{else}}
-                            <h5 class="modal-title" id="taskContentModelTitle">{{i18n currentLegalLabel}}</h5>
+                            <h5 class="modal-title"
+                                id="taskContentModelTitle">{{i18n
+                                    "taskRenderers.taskContent"}}</h5>
                         {{/if}}
-                        <button type="button" class="close" data-dismiss="modal" aria-label="{{i18n 'actions.close'}}">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="{{i18n 'actions.close'}}">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        {{#with currentTypeToAdd}}
+
+                    {{#with currentTypeToAdd}}
+                        <div class="modal-body">
                             <div class="row">
                                 <div class="col">
-                                    <h4 class="text-center mb-4">{{i18n "item.title"}}: {{i18n this.label}}</h4>
+                                    <h4 class="text-center mb-4">{{i18n
+                                            "item.title"}}: {{i18n
+                                            this.label}}</h4>
                                     {{>quickForm id="afLeaTaskAddContenTypeForm" type="normal" buttonClasses="d-none" schema=currentTypeSchema doc=currentElement}}
                                 </div>
                                 <div class="col">
 
                                     {{!-- RENDERING THE PREVIEW CONTENT HERE --}}
-                                    <h4 class="text-center mb-4">{{i18n "common.preview"}}</h4>
+                                    <h4 class="text-center mb-4">{{i18n
+                                            "common.preview"}}</h4>
                                     {{#with previewContent}}
                                         {{>TaskRendererFactory content=this}}
 
                                         {{!-- additionally, if the preview content is an item
                                               we also render the scoring results as preview --}}
                                         {{#if isItemContent this}}
-                                            <h4 class="text-center my-4">{{i18n "scoring.title"}}</h4>
+                                            <h4 class="text-center my-4">
+                                                {{i18n "scoring.title"}}
+                                            </h4>
                                             {{#with scoreContent}}
                                                 {{>TaskRendererFactory content=this}}
                                             {{/with}}
@@ -88,47 +109,56 @@
                                     {{/with}}
                                 </div>
                             </div>
-                        {{else}}
+                        </div>
+                    {{else}}
+                        <div class="modal-body text-center">
                             {{#each group in contentGroups}}
                                 <h4 class="my-4">{{i18n group.label}}</h4>
-                                <div class="row my-4">
+                                <div class="row my-4 d-flex justify-content-center text-center">
                                     {{#each type in (contentTypes group.name)}}
                                         <div class="col-md-4 col-lg-3 col-xl-2">
                                             <button class="btn btn-outline-primary btn-lg select-content-type-button w-100 h-100"
                                                     data-name="{{type.name}}">
-                                                <span><i class="fa fas fa-fw fa-{{type.icon}}"></i></span>
+                                                <span><i
+                                                        class="fa fas fa-fw fa-{{type.icon}}"></i></span>
                                                 <span>{{i18n type.label}}</span>
                                             </button>
                                         </div>
                                     {{/each}}
                                 </div>
                             {{/each}}
-                        {{/with}}
-                    </div>
+                        </div>
+                    {{/with}}
                     <div class="modal-footer d-flex">
                         {{#if currentTypeToAdd}}
                             <span class="mr-auto">
                             {{#unless currentElement}}
-                                <button class="btn btn-success" type="submit" form="afLeaTaskAddContenTypeForm">
+                                <button class="btn btn-success" type="submit"
+                                        form="afLeaTaskAddContenTypeForm">
                                     {{i18n "actions.create"}}
                                 </button>
                             {{else}}
-                                <button class="btn btn-primary" type="submit" form="afLeaTaskAddContenTypeForm">
+                                <button class="btn btn-primary" type="submit"
+                                        form="afLeaTaskAddContenTypeForm">
                                     {{i18n "actions.update"}}
                                 </button>
                             {{/unless}}
                                 {{#unless updatePreview}}
                                     <button class="btn btn-outline-secondary preview-content-button">
-                                    {{>icon name="sync" }} {{i18n "actions.preview"}}
+                                    {{>icon name="sync" }} {{i18n
+                                            "actions.preview"}}
                                 </button>
                                 {{else}}
-                                    <button class="btn btn-secondary preview-content-button disabled" disabled>
-                                    {{>icon name="sync" spin=true }} {{i18n "actions.preview"}}
+                                    <button class="btn btn-secondary preview-content-button disabled"
+                                            disabled>
+                                    {{>icon name="sync" spin=true }} {{i18n
+                                            "actions.preview"}}
                                 </button>
                                 {{/unless}}
                             </span>
                         {{/if}}
-                        <button type="button" class="btn btn-secondary ml-auto" data-dismiss="modal">
+                        <button type="button" class="btn btn-secondary ml-auto"
+                                data-dismiss="modal">
                             {{i18n 'actions.close'}}
                         </button>
                     </div>
@@ -138,10 +168,12 @@
     {{/unless}}
 
     {{!-- ERRORS, VALIDATION ETC, --}}
-    <div class="{{#unless invalid}}d-block{{else}}d-block{{/unless}} help-block text-danger">
+    <div class="{{#unless
+            invalid}}d-block{{else}}d-block{{/unless}} help-block text-danger">
         <small>{{afFieldMessage name=name}}</small>
     </div>
 
     <!-- autoform related -->
-    <input type="hidden" class="afLeaTaskContentHiddenInput" data-schema-key="{{dataSchemaKey}}"/>
+    <input type="hidden" class="afLeaTaskContentHiddenInput"
+           data-schema-key="{{dataSchemaKey}}"/>
 </template>

@@ -1,6 +1,7 @@
 /* global AutoForm */
 import { createAddFieldsToQuery } from '../../api/queries/createAddFieldsToQuery'
 import { getCollection } from '../../utils/collection'
+import { toArray } from '../../utils/toArray'
 
 const addFieldsToQuery = createAddFieldsToQuery(AutoForm.getFieldValue)
 
@@ -13,12 +14,26 @@ const addFieldsToQuery = createAddFieldsToQuery(AutoForm.getFieldValue)
  */
 
 export const getValueFunction = ({ method, input }) => {
-  const mappedInput = input.map(toExecutableEntry)
+  const mappedInput = toArray(input).map(toExecutableEntry)
   switch (method) {
     case 'concat':
       return getValueConcat(mappedInput)
+    case 'tokenize':
+      return getTokenizeValueResolver(mappedInput)
     default:
       throw new Error(`Unknown method ${method}`)
+  }
+}
+
+const byWhiteSpace = /\s+/g
+
+export const getTokenizeValueResolver = mappedInput => {
+  const sourceField = mappedInput[0].source
+  return () => {
+    const source = AutoForm.getFieldValue(sourceField)
+    return source && source.length > 0
+      ? source.split(byWhiteSpace)
+      : []
   }
 }
 
@@ -38,6 +53,8 @@ const toExecutableEntry = entry => {
       return getDocumentFieldValueResolver(entry)
     case 'increment':
       return getIncrementValueResolver(entry)
+    case 'self':
+      return entry
     default:
       throw new Error(`Unknown type: ${entry.type}`)
   }

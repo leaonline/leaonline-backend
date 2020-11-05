@@ -6,11 +6,23 @@
  * @return {Array}
  */
 
-export const toArray = (value, { includeUndefined = false, includeNull = false } = {}) => {
+export const toArray = (value, { includeUndefined = false, includeNull = false, objectToEntries = false } = {}) => {
   if (Array.isArray(value)) return value
+
   const valueType = typeof value
-  if (valueType === 'undefined' && !includeUndefined) return []
-  if (valueType === 'object') return Object.entries(value)
-  if (value === null && !includeNull) return []
+  if (valueType === 'undefined' && !includeUndefined) {
+    return []
+  }
+
+  if (valueType === 'object') {
+    return objectToEntries
+      ? Object.entries(value)
+      : [value]
+  }
+
+  if (value === null && !includeNull) {
+    return []
+  }
+
   return [value]
 }
