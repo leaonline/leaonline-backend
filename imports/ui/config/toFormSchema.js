@@ -19,7 +19,7 @@ const settings = Meteor.settings.public.editor
 // we define our requiredFields based on the type value
 const isValueField = entry => entry.type === 'field'
 const toTypeName = entry => entry.source
-const byName = (a, b,) => a.localeCompare(b)
+const byName = (a, b) => a.localeCompare(b)
 const withMinus = ' - '
 
 // we often want to ensure our required fields are set
@@ -312,25 +312,30 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
           label: () => i18n.get(option.label)
         }))
         autoform.options = () => mappedOptions
-      }
 
-      else if (optionsType === 'function') {
+        // if the function has already been declared we do not do any
+        // further processing
+        // eslint-ignore-next-line
+      } else if (optionsType === 'function') {
         autoform.options = definitions.options
-      }
 
-      // the more complex case is where options are, for example, computed
-      // by a certain method and input
-      else if (optionsType === 'object') {
-        const toIndexedTokens = (token, index) => ({ value: index, label: token })
+        // the more complex case is where options are, for example, computed
+        // by a certain method and input
+        // eslint-ignore-next-line
+      } else if (optionsType === 'object') {
+        const toIndexedTokens = (token, index) => ({
+          value: index,
+          label: token
+        })
         const tokenize = getValueFunction(definitions.options)
         autoform.options = function () {
           const tokens = tokenize()
           return tokens.map(toIndexedTokens)
         }
-      }
 
-      // and throw if we really don't know what the type is
-      else {
+        // and throw if we really don't know what the type is
+        // eslint-ignore-next-line
+      } else {
         throw new Error(`Unknown definition for options: ${definitions.options}`)
       }
 

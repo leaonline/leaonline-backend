@@ -295,7 +295,6 @@ Template.afLeaTaskContent.events({
       updatePreview: true
     })
 
-
     // we use a timeout here to allow some update
     // indicator when clicking on the button
     setTimeout(() => {
