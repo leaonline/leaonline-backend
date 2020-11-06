@@ -1,4 +1,9 @@
-const defaultOptions = { value: null, configurable: true, enumerable: true, writable: true }
+const defaultOptions = {
+  value: null,
+  configurable: true,
+  enumerable: true,
+  writable: true
+}
 
 /**
  * Scans the destination doc for missing keys and defines them explicitly as properties of value null.
@@ -11,7 +16,8 @@ const defaultOptions = { value: null, configurable: true, enumerable: true, writ
  */
 
 export const defineUndefinedFields = (destination, source, { value, configurable, enumerable, writable } = {}) => {
-  const options = Object.assign({}, { value, configurable, enumerable, writable }, defaultOptions)
+  const currentOptions = { value, configurable, enumerable, writable }
+  const options = Object.assign({}, currentOptions, defaultOptions)
 
   let propertiesDefined = false
   Object.entries(source).forEach(([key, value]) => {
@@ -23,9 +29,12 @@ export const defineUndefinedFields = (destination, source, { value, configurable
 
   if (propertiesDefined) {
     // simple sanity check, whether our props have been defined correctly
-    const destinationKeys = Object.keys(destination).sort().toString()
-    const sourceKeys = Object.keys(source).sort().toString()
-    if (destinationKeys !== sourceKeys) {
+    //
+    const destinationKeys = Object.keys(destination).sort()
+    const sourceKeys = Object.keys(source).sort()
+    const allSourceKeysConvered = sourceKeys.every(key => destinationKeys.includes(key))
+
+    if (!allSourceKeysConvered) {
       throw new TypeError(`Property mismatch detected destination: ${destinationKeys}, source: ${sourceKeys}`)
     }
   }
