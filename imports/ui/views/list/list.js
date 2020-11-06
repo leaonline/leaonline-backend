@@ -62,6 +62,7 @@ Template.genericList.onCreated(function () {
     }
 
     updateStateAction({ action, updateDoc, instance })
+    console.log(instance.updateSchema)
   })
 })
 

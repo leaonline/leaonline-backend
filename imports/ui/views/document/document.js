@@ -13,6 +13,7 @@ Template.genericDocument.onCreated(function () {
   const instance = this
   const onSubscribed = () => {
     const updateDoc = instance.mainCollection.findOne() || {}
+    console.log('update doc', updateDoc)
     delete updateDoc._id
     instance.state.set({ updateDoc })
   }
@@ -50,12 +51,9 @@ Template.genericDocument.events({
     event.preventDefault()
     templateInstance.state.set('editMode', true)
   },
-  'click .cancel-edit-button' (event, templateInstance) {
-    event.preventDefault()
-    templateInstance.state.set('editMode', false)
-  },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
+debugger
     const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema, {
       template: templateInstance,
       fallback: false
@@ -64,7 +62,6 @@ Template.genericDocument.events({
     if (!updateDoc) return
 
     const target = templateInstance.state.get('updateDoc')
-    updateDoc._id = target._id
 
     // we need to clean both documents in case the schema is updated
     // and the target still contains fields that are not part of the schema
@@ -78,6 +75,7 @@ Template.genericDocument.events({
     templateInstance.actionUpdateSchema.clean(updateDoc, cleanOptions)
     templateInstance.actionUpdateSchema.clean(target, cleanOptions)
 
+    updateDoc._id = target._id
     defineUndefinedFields(updateDoc, target)
 
     templateInstance.state.set(StateVariables.submitting, true)
@@ -85,7 +83,9 @@ Template.genericDocument.events({
     const actonUpdate = templateInstance.state.get('actionUpdate')
     const app = templateInstance.data.app()
     const { connection } = app
+
     connection.call(actonUpdate.name, updateDoc, by300((err, res) => {
+      if (err) console.error(err)
       templateInstance.state.set(StateVariables.submitting, false)
       defaultNotifications(err, res)
         .success(function () {
@@ -95,5 +95,9 @@ Template.genericDocument.events({
           templateInstance.state.set('editMode', false)
         })
     }))
+  },
+  'click .cancel-edit-button' (event, templateInstance) {
+    event.preventDefault()
+    templateInstance.state.set('editMode', false)
   }
 })

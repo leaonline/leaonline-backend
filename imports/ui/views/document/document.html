@@ -4,6 +4,8 @@
     {{else}}
 
         {{#unless editMode}}
+        {{!-- VIEWMODE --}}
+
             <div class="d-flex justify-content-between">
                 <h2>{{i18n config.label}} ({{i18n "document.viewMode"}}) </h2>
                 <button class="btn btn-primary edit-button">
@@ -12,7 +14,7 @@
             </div>
             <hr>
 
-        {{! in view mode we use the defined renderer to display the fields}}
+            {{! in view mode we use the defined renderer to display the fields}}
 
             {{#autoForm id="viewForm" type="readonly" schema=updateSchema
                         doc=updateDoc}}
@@ -22,7 +24,7 @@
             {{/autoForm}}
 
         {{else}}
-
+        {{!-- EDITMODE --}}
 
             <div class="d-flex justify-content-between">
                 <h2>{{i18n config.label}} ({{i18n "document.editMode"}}) </h2>
@@ -32,7 +34,7 @@
             </div>
             <hr>
 
-        {{! edit mode we display using the autoForm from schema definitions  }}
+            {{! edit mode we display using the autoForm from schema definitions  }}
 
             <div class="w-100 {{#if isUpdating}}d-unavailable{{/if}}">
                 {{#autoForm id="updateForm" type="normal" schema=updateSchema
@@ -42,8 +44,9 @@
                     {{/each}}
                 {{/autoForm}}
 
-                <div class="d-flex justify-content-between">
-                    <button class="btn btn-primary" type="submit" form="updateForm">
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-primary submit-btn" type="submit"
+                        form="updateForm">
                         {{i18n "actions.update"}}
                     </button>
                     <button class="btn btn-outline-secondary cancel-edit-button">
