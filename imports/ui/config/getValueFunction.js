@@ -28,12 +28,22 @@ export const getValueFunction = ({ method, input }) => {
 const byWhiteSpace = /\s+/g
 
 export const getTokenizeValueResolver = mappedInput => {
-  const sourceField = mappedInput[0].source
+  const input = mappedInput[0]
+  const { source, pattern, delimiter } = input
   return () => {
-    const source = AutoForm.getFieldValue(sourceField)
-    return source && source.length > 0
-      ? source.split(byWhiteSpace)
-      : []
+    const fieldValue = AutoForm.getFieldValue(source)
+    if (!fieldValue || fieldValue.length === 0) {
+      return []
+    }
+
+    if (pattern) {
+      console.info(fieldValue)
+      console.info(pattern)
+      console.info(fieldValue.match(pattern))
+      return fieldValue.match(pattern)
+    }
+
+    return fieldValue.split(delimiter || byWhiteSpace)
   }
 }
 
