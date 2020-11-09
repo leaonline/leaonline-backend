@@ -28,6 +28,29 @@ const areAllFieldsSet = fields => fields.every(name => !!AutoForm.getFieldValue(
 
 const addFieldsToQuery = createAddFieldsToQuery(AutoForm.getFieldValue)
 
+const loadTargetForm = ({ targetForm, instance, fieldSettings }) => {
+  const formTypesStatus = instance.state.get(StateVariables.formTypesLoaded) || {}
+
+  if (!targetForm.loaded) {
+    formTypesStatus[fieldSettings.form] = false
+    instance.state.set(StateVariables.formTypesLoaded, formTypesStatus)
+
+    targetForm.load()
+      .then(() => {
+        const fts = instance.state.get(StateVariables.formTypesLoaded)
+        fts[fieldSettings.form] = true
+        instance.state.set(StateVariables.formTypesLoaded, fts)
+      })
+      .catch(e => {
+        console.error(e)
+        instance.state.set(StateVariables.formTypesLoaded, null)
+      })
+  } else {
+    formTypesStatus[fieldSettings.form] = true
+    instance.state.set(StateVariables.formTypesLoaded, formTypesStatus)
+  }
+}
+
 export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => {
   const { name } = config
 
@@ -94,30 +117,27 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
       autoform.nullLabel = () => i18n.get('form.selectOne')
     }
 
+    if (isPageContent(definitions)) {
+      autoform.type = FormTypes.taskContent.template
+      autoform.connection = app.connection
+      autoform.app = app.name
+      Object.assign(autoform, definitions.dependency)
+      loadTargetForm({
+        targetForm: FormTypes.taskContent,
+        instance: instance,
+        fieldSettings: fieldSettings
+      })
+    }
+
     if (isSettingsForm(fieldSettings)) {
       // we check for the targeted form and load it dynamically in case it's
       // not loaded yet
       const targetForm = FormTypes[fieldSettings.form]
-      const formTypesStatus = instance.state.get(StateVariables.formTypesLoaded) || {}
-
-      if (!targetForm.loaded) {
-        formTypesStatus[fieldSettings.form] = false
-        instance.state.set(StateVariables.formTypesLoaded, formTypesStatus)
-
-        targetForm.load()
-          .then(() => {
-            const fts = instance.state.get(StateVariables.formTypesLoaded)
-            fts[fieldSettings.form] = true
-            instance.state.set(StateVariables.formTypesLoaded, fts)
-          })
-          .catch(e => {
-            console.error(e)
-            instance.state.set(StateVariables.formTypesLoaded, null)
-          })
-      } else {
-        formTypesStatus[fieldSettings.form] = true
-        instance.state.set(StateVariables.formTypesLoaded, formTypesStatus)
-      }
+      loadTargetForm({
+        targetForm,
+        instance,
+        fieldSettings
+      })
 
       autoform.type = targetForm.template
       autoform.connection = app.connection
@@ -359,6 +379,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
 
 const { textAreaThreshold } = settings
 const isRichText = value => value.richText === true
+const isPageContent = value => value.isPageContent === true
 const isMediaUrl = value => value.isMediaUrl === true
 const isTextArea = value => value.type === String && !isRichText(value) && typeof value.max === 'number' && value.max >= textAreaThreshold
 const isRegExp = ({ type }) => type === RegExp

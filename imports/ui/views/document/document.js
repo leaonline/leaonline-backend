@@ -53,7 +53,6 @@ Template.genericDocument.events({
   },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
-debugger
     const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema, {
       template: templateInstance,
       fallback: false
