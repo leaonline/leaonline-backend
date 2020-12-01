@@ -230,12 +230,9 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
           // allow all values in order to support haveing this field to be set
           // with at least an initial value
           if (filter?.self) {
-            const formData = AutoForm.getCurrentDataForForm(formId)
-            if (!formData) return []
-
-            const { doc } = formData
-            if (doc) {
-              query[filter.self] = doc._id
+            const formData = AutoForm.getCurrentDataForForm()
+            if (formData?.doc) {
+              query[filter.self] = formData?.doc._id
             }
           }
 

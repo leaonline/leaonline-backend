@@ -1,23 +1,33 @@
 <template name="afSortable">
-    <ul class="list-group afsortable-sort-target">
-        {{#each option in selectedOptions}}
-            <li class="list-group-item afsortable-entry d-flex justify-content-between"
-                data-target="{{option.value}}">
-                <span>{{option.label}}</span>
-            </li>
-        {{/each}}
-    </ul>
 
-    <p>{{i18n "drop.unused"}}</p>
+    <span class="float-right">include</span>
+    <div class="card">
+        <div class="card-body">
+            <ul class="list-group afsortable-sort-target">
+                {{#each option in selectedOptions}}
+                    <li class="list-group-item afsortable-entry d-flex justify-content-between"
+                        data-target="{{option.value}}">
+                        <span>{{option.label}}</span>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
 
-    <ul class="list-group afsortable-unused-target mt-3">
-        {{#each option in unselectedOptions}}
-            <li class="list-group-item d-flex justify-content-between afsortable-unused"
-                data-target="{{option.value}}">
-                <span>{{option.label}}</span>
-            </li>
-        {{/each}}
-    </ul>
+    <div class="w-100 text-right">exclude</div>
+
+    <div class="card">
+        <div class="card-body">
+            <ul class="list-group afsortable-unused-target mt-3">
+                {{#each option in unselectedOptions}}
+                    <li class="list-group-item d-flex justify-content-between afsortable-unused"
+                        data-target="{{option.value}}">
+                        <span>{{option.label}}</span>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
 
     {{!-- ERRORS, VALIDATION ETC, --}}
     <div class="{{#unless

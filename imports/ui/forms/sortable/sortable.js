@@ -1,10 +1,6 @@
 import { Template } from 'meteor/templating'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import Sortable from 'sortablejs'
-// TODO remove the lea related imports and make this extension generic
-// TODO in order to publish it to atmosphere
-import { getCollection } from '../../../utils/collection'
-import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import './autoform'
 import './sortable.css'
 import './sortable.html'
@@ -17,13 +13,12 @@ Template.afSortable.onCreated(function () {
     const data = Template.currentData()
     const { atts } = data
 
-    instance.context = ContextRegistry.get(atts.collection)
-    instance.collection = getCollection(atts.collection)
-
     const invalid = atts.class && atts.class.indexOf('invalid') > -1
     const disabled = Object.prototype.hasOwnProperty.call(atts, 'disabled')
     const dataSchemaKey = atts['data-schema-key']
-    const selectedOptions = getSelectedOptions(data.value, instance.context, instance.collection)
+
+
+    const selectedOptions = getSelectedOptions(data.value, data.selectOptions)
     const unselectedOptions = getUnselectedOptions(selectedOptions, data.selectOptions)
 
     instance.state.set({
@@ -87,15 +82,8 @@ Template.afSortable.onRendered(function () {
   updateData(instance)
 })
 
-function getSelectedOptions (value, context, collection) {
-  return (value || []).map(value => {
-    const doc = collection.findOne(value)
-    const { representative } = context
-    const label = Array.isArray(representative)
-      ? representative.map(key => doc[key]).join(' - ')
-      : doc[representative]
-    return { value, label }
-  })
+function getSelectedOptions (value = [], allOptions = []) {
+  return allOptions.filter(document => value.includes(document.value))
 }
 
 function getUnselectedOptions (options, allOptions) {

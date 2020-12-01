@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
 import { EJSON } from 'meteor/ejson'
+import { Random } from 'meteor/random'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import { TaskRenderers, RendererGroups } from '../../../api/task/TaskRenderers'
 import { Scoring } from '../../../api/task/Scoring'
@@ -265,16 +266,23 @@ Template.afLeaTaskContent.events({
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
     if (!insertDoc) return
 
+    const elements = templateInstance.stateVars.get('elements')
+    const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
+
     const contentElementDoc = (isItem(name))
       ? contentFromItem(name, insertDoc)
       : insertDoc
 
-    const elements = templateInstance.stateVars.get('elements')
-    const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
-
     if (typeof currentElementIndex === 'number') {
+      const currentElementDoc = elements[currentElementIndex]
+      if (currentElementDoc.contentId) {
+        contentElementDoc.contentId = currentElementDoc.contentId
+      } else {
+        contentElementDoc.contentId = Random.id()
+      }
       elements.splice(currentElementIndex, 1, contentElementDoc)
     } else {
+      contentElementDoc.contentId = Random.id()
       elements.push(contentElementDoc)
     }
 

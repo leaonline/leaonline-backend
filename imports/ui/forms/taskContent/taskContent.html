@@ -80,7 +80,11 @@
                                     <h4 class="text-center mb-4">{{i18n
                                             "item.title"}}: {{i18n
                                             this.label}}</h4>
-                                    {{>quickForm id="afLeaTaskAddContenTypeForm" type="normal" buttonClasses="d-none" schema=currentTypeSchema doc=currentElement}}
+                                    {{#autoForm id="afLeaTaskAddContenTypeForm" type="normal" schema=currentTypeSchema doc=currentElement}}
+                                        {{#each afFieldNames}}
+                                            {{> afQuickField  name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
+                                        {{/each}}
+                                    {{/autoForm}}
                                 </div>
                                 <div class="col">
 

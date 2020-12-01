@@ -67,6 +67,8 @@ Template.afImageSelect.helpers({
     return Template.instance().stateVars.get(StateVariables.galleryMode)
   },
   link (doc) {
+    if (doc.link) return doc.link
+
     const instance = Template.instance()
     const version = instance.data.atts.version
     const uriBase = instance.data.atts.uriBase

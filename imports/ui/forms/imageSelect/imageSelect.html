@@ -8,7 +8,7 @@
 					</button>
 					<figure class="figure border border-light p-1 shadow">
 						{{#with link this}}
-							<img src="{{this}}" class="figure-img img-fluid rounded" alt="{{../name}}">
+                            {{> image src=this title=../name alt=../name class="figure-img img-fluid rounded" cors="Anonymous"}}
 							<figcaption class="figure-caption p-1">
 								{{../name}}
 								<button class="btn btn-sm btn-outline-danger border-0 remove-image-button">
@@ -33,15 +33,15 @@
 				</button>
 			</div>
 			<div class="card-body bg-white row">
-				{{#each image in images}}
+				{{#each imageDoc in images}}
 					<div class="col">
 						<figure class="figure border border-light p-1 shadow">
-							{{#with link image}}
-								<a href class="image-select" data-target="{{image._id}}">
-									<img src="{{this}}" class="figure-img img-fluid rounded" alt="{{image.name}}">
+							{{#with link imageDoc}}
+								<a href class="image-select" data-target="{{imageDoc._id}}">
+                                    {{> image src=this title=imageDoc.name alt=imageDoc.name class="figure-img img-fluid rounded" cors="Anonymous"}}
 								</a>
 								<figcaption class="figure-caption p-1">
-									{{image.name}}
+									{{imageDoc.name}}
 								</figcaption>
 							{{/with}}
 						</figure>
