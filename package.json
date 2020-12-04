@@ -21,7 +21,7 @@
     "bootstrap": "^4.5.3",
     "dely": "^1.0.2",
     "fast-shuffle": "^3.0.0",
-    "highlight.js": "^9.18.3",
+    "highlight.js": "^10.4.1",
     "jquery": "^3.5.1",
     "lozad": "^1.16.0",
     "meteor-node-stubs": "^1.0.1",
