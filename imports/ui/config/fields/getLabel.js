@@ -1,12 +1,13 @@
-import { Apps } from '../../api/apps/Apps'
 
 const getFallbackLabel = (config, key) => `${config.name}.${key}`
+const fieldIsExcluded = field => !!field.excluded
+const labelIsExcluded = field => !!field.hideLabel
 
 export const getLabel = ({ key, context, field }) => {
   const type = context.type
   const labelType = typeof field.label
 
-  if (!Apps.settings.fieldIncluded(field) || !Apps.settings.labelIncluded(field)) {
+  if (fieldIsExcluded(field) || labelIsExcluded(field)) {
     return false
   }
 

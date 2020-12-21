@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating'
-import { parseFields } from '../../config/parseFields'
+import { parseFields } from '../../config/fields/parseFields'
 import { getDebug } from '../../../utils/getDebug'
 import { StateVariables } from '../../config/StateVariables'
 import './summary.html'

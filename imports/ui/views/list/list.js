@@ -20,6 +20,8 @@ import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.html'
+import { debounce } from '../../../utils/debounce'
+import { ContextRegistry } from '../../../api/config/ContextRegistry'
 
 const entryIsTrue = entry => entry === true
 
@@ -62,7 +64,6 @@ Template.genericList.onCreated(function () {
     }
 
     updateStateAction({ action, updateDoc, instance })
-    console.log(instance.updateSchema)
   })
 })
 
@@ -83,8 +84,28 @@ Template.genericList.helpers(wrapHelpers({
 
     return Object.assign({}, target, { onClosed: onClosed.bind(instance) })
   },
-  isBoolean (value) {
-    return typeof value === 'boolean'
+  isBoolean (field) {
+    return field.type === Boolean
+  },
+  cellAtts (key, isHeader) {
+    const config = Template.instance().fieldConfig[key]
+    if (!config) return null
+
+    const isCentered = config.isType || config.type === Boolean
+    let alignment = config.alignment || (isCentered && 'center') || 'left'
+    const alignmentClass = `text-${alignment}`
+    const fullWidth = config.stretch ? 'w-100' : ''
+    const noWrap = isHeader ? 'no-wrap' : ''
+    const classNames = `${alignmentClass} ${fullWidth} ${noWrap}`
+    return {
+      class: classNames
+    }
+  },
+  showSearch () {
+    return Template.getState('showSearch')
+  },
+  searchFailed () {
+    return Template.getState('searchFailed')
   }
 }))
 
@@ -188,8 +209,89 @@ Template.genericList.events(wrapEvents({
     const appName = templateInstance.data.app().name
     const previewTarget = getPreviewData({ docId, contextName, appName })
     templateInstance.state.set({ previewTarget })
-  }
+  },
+  'click .search-button' (event, templateInstance) {
+    event.preventDefault()
+    const showSearch = !templateInstance.state.get('showSearch')
+    templateInstance.state.set({ showSearch })
+    setTimeout(() => {
+      templateInstance.$('.list-search-input').focus()
+    }, 100)
+  },
+  'click .close-search-button' (event, templateInstance) {
+    event.preventDefault()
+    templateInstance.state.set({
+      showSearch: false,
+      query: {},
+      searchFailed: false
+    })
+  },
+  'input .list-search-input': debounce((event, templateInstance) => {
+    event.preventDefault()
+    const value = templateInstance.$(event.currentTarget).val().trim()
+    if (value.length < 2) {
+      return templateInstance.state.set({
+        query: {},
+        searchFailed: false
+      })
+    }
+
+    let indices
+
+    try {
+      indices = getSearchIndices({ value, templateInstance })
+    } catch (e) {
+      console.error(e)
+      indices = []
+    }
+
+    if (indices.length === 0) {
+      return templateInstance.state.set({ searchFailed: true })
+    }
+
+    const query = { _id: { $in: indices } }
+    templateInstance.state.set({ query, searchFailed: false })
+  }, 200)
 }))
+
+function getSearchIndices ({ value, templateInstance }) {
+  return templateInstance.mainCollection
+    .find()
+    .map(doc => {
+      const found = templateInstance.fieldLabels.some(({ key }) => {
+        const config = templateInstance.fieldConfig[key]
+        const resolver = config?.resolver
+        let docValue = resolver ? resolver(doc[key]) : doc[key]
+
+        if (docValue === undefined || docValue === null) {
+          return false
+        }
+
+        if (config.dependency) {
+          const { doc } = docValue
+          if (!doc || !doc.label) return
+          return doc.label.includes(value)
+        }
+
+        // some simple fields are split int { type, value }
+        // so we need to extract their value
+        docValue = Object.hasOwnProperty.call(docValue, 'value')
+          ? docValue.value
+          : docValue
+
+        if (config.type === String) {
+          return docValue?.includes(value)
+        }
+        if (config.type === Number) {
+          return docValue.toString().includes(value)
+        }
+      })
+
+      if (found) return doc._id
+
+    })
+    .filter(entry => !!entry)
+}
 
 function onClosed () {
   this.state.set('previewTarget', null)

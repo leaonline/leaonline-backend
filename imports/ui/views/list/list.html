@@ -27,8 +27,10 @@
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
                 {{/each}}
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-success" type="submit">{{i18n "actions.create"}}</button>
-                    <button class="btn btn-outline-secondary cancel-form-button">{{i18n "actions.cancel"}}</button>
+                    <button class="btn btn-success" type="submit">{{i18n
+                            "actions.create"}}</button>
+                    <button class="btn btn-outline-secondary cancel-form-button">{{i18n
+                            "actions.cancel"}}</button>
                 </div>
             {{/autoForm}}
             {{#if submitting}}
@@ -55,13 +57,16 @@
         </div>
 
         <div class="card-body {{#if submitting}}d-unavailable{{/if}}">
-            {{#autoForm id="updateForm" type="normal" schema=updateSchema  doc=updateDoc validate="none"}}
+            {{#autoForm id="updateForm" type="normal" schema=updateSchema
+                        doc=updateDoc validate="none"}}
                 {{#each afFieldNames}}
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
                 {{/each}}
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-secondary" type="submit">{{i18n "actions.update"}}</button>
-                    <button class="btn btn-outline-secondary cancel-form-button">{{i18n "actions.cancel"}}</button>
+                    <button class="btn btn-secondary" type="submit">{{i18n
+                            "actions.update"}}</button>
+                    <button class="btn btn-outline-secondary cancel-form-button">{{i18n
+                            "actions.cancel"}}</button>
                 </div>
             {{/autoForm}}
             {{#if submitting}}
@@ -78,8 +83,16 @@
                     <span>{{count}} {{i18n "common.documents"}}</span>
                 </small>
             </span>
+
+            {{! top-right action buttons }}
+
             <span class="no-wrap">
-                <a href="{{route "settings" app config.name}}" class="btn btn-outline-secondary"
+                    <button class="btn btn-outline-secondary search-button">
+                       <i class="fas fa fa-fw fa-search"></i>
+                    </button>
+
+                <a href="{{route "settings" app config.name}}"
+                   class="btn btn-outline-secondary"
                    title="{{i18n "actions.settings"}}">
                     <i class="fas fa fa-fw fa-cog"></i>
                 </a>
@@ -88,48 +101,90 @@
                 {{/with}}
                 {{#with actionInsert}}
                     <button class="btn btn-success insert-button">
-                    <i class="fas fa fa-fw fa-plus"></i>
-                    <span>{{i18n "actions.create"}}</span>
-                </button>
+                       <i class="fas fa fa-fw fa-plus"></i>
+                        <span>{{i18n "actions.create"}}</span>
+                    </button>
                 {{/with}}
             </span>
         </div>
 
         {{#with documents}}
-            <div class="card-body bg-white">
+
+            {{! search input }}
+
+            {{#if showSearch}}
+            <div class="card-body bg-white mt-1">
+                <div class="input-group">
+                <input type="text" class="list-search-input form-control {{#if searchFailed}}is-invalid{{/if}}"
+                       placeholder={{i18n "search.placeholder"}} aria-describedby="button-addon2">
+                    <button class="btn btn-outline-{{#if searchFailed}}danger{{else}}secondary{{/if}} close-search-button" type="button" id="button-addon2">
+                        <i class="fa fas fa-fw fa-times"></i>
+                    </button>
+                </div>
+                {{#if searchFailed}}
+                    <small class="text-danger">{{i18n "search.failed"}}</small>
+                {{/if}}
+            </div>
+            {{/if}}
+
+
+            {{! documents table }}
+
+            <div class="card-body bg-white mt-1">
                 <table class="table table-striped">
                     <tr>
                         <th>#</th>
                         {{#each label in fieldLabels}}
-                            <th>{{#if label}}{{i18n label}}{{/if}}</th>
+                            <th {{cellAtts label.key true}}>
+                                {{! label could be disabled from being displayed }}
+                                {{#if label.value}}
+                                    {{i18n label.value}}
+                                {{/if}}
+                            </th>
                         {{/each}}
                         <th></th>
                     </tr>
                     {{#each document in this}}
                         <tr>
                             <td class="text-muted">{{@index}}</td>
+
+                            {{!-- resolve fields by given type def --}}
+
                             {{#each field in (fields document)}}
+
                                 {{#if field.isCollection}}
+                                {{! isCollection --> resolve document}}
                                     <td>
-                                        <a href class="linked-document-preview-button" data-target="{{field.doc.value}}"
+                                        <a href
+                                           class="linked-document-preview-button"
+                                           data-target="{{field.doc.value}}"
                                            data-context="{{field.context}}">
                                             {{field.doc.label}}
                                         </a>
                                     </td>
                                 {{else if field.isType}}
                                     <td class="text-center">
-                                        <span class="p-1" title="{{i18n field.label}}">
+                                        <span class="p-1"
+                                              title="{{i18n field.label}}">
                                             <i class="fa fas fa-fw fa-{{field.icon}} text-{{field.type}}"></i>
                                         </span>
                                     </td>
-                                {{else if (isBoolean field.value)}}
+                                {{else if (isBoolean field)}}
                                     <td class="text-center">
-                                        <span class="p-1" title="{{i18n field.label}}">
-                                            <i class="fa fas fa-fw fa-check"></i>
+                                        <span class="p-1"
+                                              title="{{i18n field.label}}">
+                                            {{#if field.value}}
+                                                <i class="fa fas fa-fw fa-toggle-on"></i>
+                                            {{else}}
+                                                <i class="fa fas fa-fw fa-toggle-off text-muted"></i>
+                                            {{/if}}
                                         </span>
                                     </td>
                                 {{else}}
-                                    <td>{{field.value}}</td>
+                                {{! simple values }}
+                                    <td>
+                                        {{field.value}}
+                                    </td>
                                 {{/if}}
                             {{/each}}
                             <td class="text-right no-wrap">
@@ -152,7 +207,8 @@
                                             <i class="fa fas fa-fw fa-trash"></i>
                                         </button>
                                     {{else}}
-                                        <button class="btn btn-sm btn-outline-danger border-0 disabled" disabled>
+                                        <button class="btn btn-sm btn-outline-danger border-0 disabled"
+                                                disabled>
                                             <i class="fa fas fa-fw fa-refresh fa-spinner"></i>
                                         </button>
                                     {{/unless}}

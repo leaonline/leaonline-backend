@@ -1,0 +1,1 @@
+export const fieldShouldBeExcluded  = ({ key, type }) => type === Array || type === Object || key.includes('$')

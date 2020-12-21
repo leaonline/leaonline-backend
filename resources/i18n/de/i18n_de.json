@@ -15,6 +15,10 @@
     "settings": "Einstellungen bearbeiten",
     "submitting": "Sende Daten"
   },
+  "search": {
+    "placeholder": "Suchtext eingeben",
+    "failed": "Keine Ergebnisse"
+  },
   "grid": {
     "title": "Layout",
     "2": "16%",

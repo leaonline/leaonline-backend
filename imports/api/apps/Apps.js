@@ -106,6 +106,11 @@ Apps.schema = {
     label: 'apps.fields.hideLabel',
     optional: true
   },
+  'fields.$.stretch': {
+    type: Boolean,
+    label: 'apps.fields.stretch',
+    optional: true
+  },
   'fields.$.alignment': {
     type: String,
     label: 'alignment.title',
@@ -123,15 +128,6 @@ Apps.schema = {
       firstOption: firstOption,
       options: getFormTypeOptions
     }
-  }
-}
-
-Apps.settings = {
-  fieldIncluded (field) {
-    return field && field.excluded !== true
-  },
-  labelIncluded (field) {
-    return field && field.hideLabel !== true
   }
 }
 

@@ -4,7 +4,7 @@ import { MutationChecker } from './MutationChecker'
 import { parseActions } from './parseActions'
 import { StateVariables } from './StateVariables'
 import { parseCollections } from './parseCollections'
-import { fieldHelpers, parseFields } from './parseFields'
+import { parseFields } from './fields/parseFields'
 import { parsePublications } from './parsePublications'
 import { defaultNotifications } from '../../utils/defaultNotifications'
 import { getDebug } from '../../utils/getDebug'
@@ -33,7 +33,26 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
 
 export const wrapHelpers = function (obj) {
   return Object.assign({}, {
-    ...fieldHelpers(),
+    fields (document) {
+      const instance = Template.instance()
+      const { fieldConfig } = instance
+      const fields = instance.state.get(StateVariables.documentFields)
+
+      return fields && fields.map(key => {
+        const value = document[key]
+        const config = fieldConfig[key]
+        const resolver = config?.resolver
+
+        if (!resolver) {
+          return value
+        } else {
+          return resolver(value)
+        }
+      })
+    },
+    fieldLabels () {
+      return Template.instance().fieldLabels
+    },
     app () {
       return Template.instance().state.get(StateVariables.app) || {}
     },
@@ -45,7 +64,13 @@ export const wrapHelpers = function (obj) {
     },
     documents () {
       const instance = Template.instance()
-      return instance.mainCollection && instance.mainCollection.find()
+      const query = instance.state.get('query') || {}
+      const transform = instance.state.get('transform') || {}
+      const cursor = instance.mainCollection && instance.mainCollection.find(query, transform)
+
+      if (!cursor || cursor.count() === 0) return null
+
+      return cursor
     },
     files () {
       const instance = Template.instance()
