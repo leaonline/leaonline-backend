@@ -72,7 +72,6 @@ function getFieldResolver (fieldConfig) {
  */
 export const parseFields = function parseFields ({ instance, config, settingsDoc }) {
   const fieldLabels = {}
-  const fieldResolvers = {}
   const fields = {}
 
   const schema = Object.assign({}, config.schema)

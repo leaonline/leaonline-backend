@@ -16,12 +16,11 @@ import {
   getQueryParam,
   setQueryParam
 } from '../../../api/routes/utils/queryParams'
+import { debounce } from '../../../utils/debounce'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.html'
-import { debounce } from '../../../utils/debounce'
-import { ContextRegistry } from '../../../api/config/ContextRegistry'
 
 const entryIsTrue = entry => entry === true
 
@@ -92,7 +91,7 @@ Template.genericList.helpers(wrapHelpers({
     if (!config) return null
 
     const isCentered = config.isType || config.type === Boolean
-    let alignment = config.alignment || (isCentered && 'center') || 'left'
+    const alignment = config.alignment || (isCentered && 'center') || 'left'
     const alignmentClass = `text-${alignment}`
     const fullWidth = config.stretch ? 'w-100' : ''
     const noWrap = isHeader ? 'no-wrap' : ''
@@ -288,7 +287,6 @@ function getSearchIndices ({ value, templateInstance }) {
       })
 
       if (found) return doc._id
-
     })
     .filter(entry => !!entry)
 }

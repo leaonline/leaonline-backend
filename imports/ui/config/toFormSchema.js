@@ -181,7 +181,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
         })
 
         autoform.options = function () {
-          const formId = AutoForm.getFormId()
+          AutoForm.getFormId() // trigger reactivity
 
           // if in any case the dependant collection has not been loaded initially
           // we can try to load it here, again and re-check it and falling back if necessary

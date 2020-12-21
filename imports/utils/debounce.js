@@ -1,8 +1,8 @@
 export const debounce = (func, wait, immediate) => {
   let timeout
 
-  return function () {
-    const context = this, args = arguments
+  return function (...args) {
+    const context = this
     clearTimeout(timeout)
 
     timeout = setTimeout(() => {

@@ -17,7 +17,6 @@ Template.afSortable.onCreated(function () {
     const disabled = Object.prototype.hasOwnProperty.call(atts, 'disabled')
     const dataSchemaKey = atts['data-schema-key']
 
-
     const selectedOptions = getSelectedOptions(data.value, data.selectOptions)
     const unselectedOptions = getUnselectedOptions(selectedOptions, data.selectOptions)
 

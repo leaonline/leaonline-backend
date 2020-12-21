@@ -1,3 +1,4 @@
+/* global AutoForm */
 import { AutoFormThemeBootstrap4 } from 'meteor/communitypackages:autoform-bootstrap4/dynamic'
 import 'meteor/aldeed:autoform/dynamic'
 
