@@ -23,6 +23,24 @@ import '../../components/preview/preview'
 import './list.html'
 
 const entryIsTrue = entry => entry === true
+const validateDocs = instance => function () {
+  const ctx = instance.actionInsertSchema.newContext()
+  const validationErrors = {}
+
+  console.info('validate docs', instance.mainCollection.find().count())
+  instance.mainCollection.find().forEach(doc => {
+    const { _id, ...rest } = doc
+
+    ctx.validate(rest)
+    if (ctx.isValid()) {
+      return
+    }
+
+    validationErrors[_id] = ctx.validationErrors()
+  })
+
+  instance.state.set({ validationErrors })
+}
 
 Template.genericList.onCreated(function () {
   const instance = this
@@ -43,6 +61,8 @@ Template.genericList.onCreated(function () {
   instance.autorun(() => {
     const allSubsComplete = instance.state.get(StateVariables.allSubsComplete)
     if (!allSubsComplete) return
+
+    Tracker.nonreactive(validateDocs(instance))
 
     // since we may need to dynamically load special form types
     // we need to wait until they are loaded or the form will run into errors
@@ -99,6 +119,27 @@ Template.genericList.helpers(wrapHelpers({
     return {
       class: classNames
     }
+  },
+  trAtts (docId) {
+    const instance = Template.instance()
+    const validationErrors = instance.state.get('validationErrors') || {}
+    const hasError = Array.isArray(validationErrors[docId])
+      ? 'bg-warning'
+      : ''
+
+    const classNames = `text-muted ${hasError}`
+    const atts = { class: classNames }
+
+    if (hasError.length > 0) {
+      let errorsTitle = ''
+      validationErrors[docId].forEach(error => {
+        errorsTitle += `${error.name} - ${error.type}\n`
+      })
+
+      atts.title = errorsTitle
+    }
+
+    return atts
   },
   showSearch () {
     return Template.getState('showSearch')

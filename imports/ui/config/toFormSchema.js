@@ -51,6 +51,12 @@ const loadTargetForm = ({ targetForm, instance, fieldSettings }) => {
   }
 }
 
+// use to map tokens to AutoForm options
+const toIndexedTokens = (token, index) => ({
+  value: index,
+  label: token
+})
+
 export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => {
   const { name } = config
 
@@ -340,14 +346,12 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
         // by a certain method and input
         // eslint-ignore-next-line
       } else if (optionsType === 'object') {
-        const toIndexedTokens = (token, index) => ({
-          value: index,
-          label: token
-        })
         const tokenize = getValueFunction(definitions.options)
         autoform.options = function () {
           const tokens = tokenize()
-          return tokens.map(toIndexedTokens)
+          return tokens
+            ? tokens.map(toIndexedTokens)
+            : []
         }
 
         // and throw if we really don't know what the type is

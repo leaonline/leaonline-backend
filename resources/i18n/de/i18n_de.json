@@ -1,6 +1,7 @@
 {
   "actions": {
     "create": "Erstellen",
+    "edit": "Bearbeiten",
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "remove": "Entfernen",
@@ -14,6 +15,10 @@
     "confirmRemove": "Möchten Sie wirklich das Dokument \"{{title}}\" löschen?",
     "settings": "Einstellungen bearbeiten",
     "submitting": "Sende Daten"
+  },
+  "document": {
+    "viewMode": "Vorschau",
+    "editMode": "In Bearbeitung"
   },
   "search": {
     "placeholder": "Suchtext eingeben",

@@ -146,7 +146,7 @@
                     </tr>
                     {{#each document in this}}
                         <tr>
-                            <td class="text-muted">{{@index}}</td>
+                            <td {{trAtts document._id}}>{{@index}}</td>
 
                             {{!-- resolve fields by given type def --}}
 

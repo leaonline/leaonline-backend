@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor'
-import { getCollection } from '../../utils/collection'
-import { createFilesCollection } from '../../factories/createFilesCollection'
-import { createCollection } from '../../factories/createCollection'
-import { getDependenciesForContext } from './getDependenciesForContext'
+import { getCollection } from '../../../utils/collection'
+import { createFilesCollection } from '../../../factories/createFilesCollection'
+import { createCollection } from '../../../factories/createCollection'
+import { getDependenciesForContext } from '../getDependenciesForContext'
 
 const validateUser = () => !!Meteor.userId()
 const defaultLog = () => {}
@@ -53,7 +53,13 @@ export const parseCollections = function parseCollections ({ instance, config, c
       throw new Error(`Expected collection to be created by name <${collectionName}>`)
     }
   })
+
   const mainCollectionName = config.mainCollection || config.name
   instance.mainCollection = instance.collections.get(mainCollectionName)
+
+  if (!instance.mainCollection) {
+    throw new Error(`Expected mainCollection for ${mainCollectionName}`)
+  }
+
   logDebug('collections created')
 }
