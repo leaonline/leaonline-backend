@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating'
+import { Tracker } from 'meteor/tracker'
 import { EJSON } from 'meteor/ejson'
 import { StateVariables } from '../../config/StateVariables'
 import { StateActions, updateStateAction } from '../../config/StateActions'

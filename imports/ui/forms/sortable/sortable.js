@@ -54,6 +54,7 @@ Template.afSortable.onRendered(function () {
     animation: 150,
     ghostClass: 'bg-primary',
     group: 'shared',
+    swapThreshold: 1,
     onEnd: function () {
       updateData(instance)
     },
@@ -68,6 +69,7 @@ Template.afSortable.onRendered(function () {
     animation: 150,
     ghostClass: 'bg-primary',
     group: 'shared',
+    swapThreshold: 1,
     onEnd: function () {
       updateData(instance)
     },

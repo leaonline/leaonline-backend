@@ -1,3 +1,7 @@
 .afsortable-unused {
-    opacity: 0.5;
+    opacity: 0.75;
+}
+
+.afsortable-list {
+    min-height: 300px;
 }

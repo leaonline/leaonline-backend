@@ -68,7 +68,7 @@ seba:minifiers-autoprefixer
 leaonline:theme
 
 # autoform
-aldeed:autoform@7.0.1!
+aldeed:autoform@7.0.0!
 communitypackages:autoform-bootstrap4
 communitypackages:autoform-bootstrap3
 communitypackages:autoform-plain
