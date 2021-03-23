@@ -30,7 +30,7 @@ const validateDocs = instance => function () {
 
   console.info('validate docs', instance.mainCollection.find().count())
   instance.mainCollection.find().forEach(doc => {
-    const { _id, ...rest } = doc
+    const { _id, meta, ...rest } = doc
 
     ctx.validate(rest)
     if (ctx.isValid()) {
