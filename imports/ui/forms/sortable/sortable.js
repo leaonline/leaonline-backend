@@ -104,6 +104,7 @@ function updateData (templateInstance) {
   $source.map((index, node) => {
     const value = templateInstance.$(node).data('target')
     values.push(value)
+    return undefined
   })
   $destination.val(JSON.stringify(values))
 }

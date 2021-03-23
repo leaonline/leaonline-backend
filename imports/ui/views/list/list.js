@@ -310,7 +310,11 @@ function getSearchIndices ({ value, templateInstance }) {
 
         if (config.dependency) {
           const { doc } = docValue
-          if (!doc || !doc.label) return
+
+          if (!doc || !doc.label) {
+            return false
+          }
+
           return doc.label.includes(value)
         }
 
@@ -323,12 +327,11 @@ function getSearchIndices ({ value, templateInstance }) {
         if (config.type === String) {
           return docValue?.includes(value)
         }
-        if (config.type === Number) {
-          return docValue.toString().includes(value)
-        }
+
+        return config.type === Number && docValue.toString().includes(value)
       })
 
-      if (found) return doc._id
+      return found && doc._id
     })
     .filter(entry => !!entry)
 }
