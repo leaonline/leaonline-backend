@@ -1,6 +1,6 @@
 import { EJSON } from 'meteor/ejson'
 import { Template } from 'meteor/templating'
-import highlight from 'highlight.js/lib/highlight'
+import highlight from 'highlight.js/lib/core'
 import jsonLang from 'highlight.js/lib/languages/json'
 import 'highlight.js/styles/github.css'
 import './stringified.html'
