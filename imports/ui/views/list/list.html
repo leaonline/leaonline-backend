@@ -1,7 +1,4 @@
 <template name="genericList">
-    {{#unless loadComplete}}
-        {{> loading title=(i18n "common.loadDocs")}}
-    {{/unless}}
 
     {{#if insertForm}}
         <div class="card-body d-flex justify-content-between">
@@ -86,49 +83,75 @@
 
             {{! top-right action buttons }}
 
-            <span class="no-wrap">
-                    <button class="btn btn-outline-secondary search-button">
-                       <i class="fas fa fa-fw fa-search"></i>
-                    </button>
+            <span class="no-wrap form-row alert-items-center">
+                 {{! search input }}
 
-                <a href="{{route "settings" app config.name}}"
-                   class="btn btn-outline-secondary"
-                   title="{{i18n "actions.settings"}}">
-                    <i class="fas fa fa-fw fa-cog"></i>
-                </a>
-                {{#with actionUpload}}
-                    {{> upload filesCollection=uploadFilesCollection accept=this.accept class="ml-auto"}}
-                {{/with}}
-                {{#with actionInsert}}
-                    <button class="btn btn-success insert-button">
-                       <i class="fas fa fa-fw fa-plus"></i>
-                        <span>{{i18n "actions.create"}}</span>
-                    </button>
-                {{/with}}
+                {{#if showSearch}}
+                    <div class="col-7">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"
+                                      id="basic-addon1">
+                                     <i class="fas fa fa-fw fa-search"></i>
+                                </span>
+                            </div>
+                            <input type="text"
+                                   class="list-search-input form-control {{#if
+                                           searchFailed}}is-invalid{{/if}}"
+                                   placeholder={{i18n
+                                           "search.placeholder"}} aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-{{#if
+                                        searchFailed}}danger{{else}}secondary{{/if}} close-search-button"
+                                        type="button" id="button-addon2">
+                                    <i class="fa fas fa-fw fa-times"></i>
+                                </button>
+                            </div>
+                            </div>
+                        {{#if searchFailed}}
+                            <small class="text-danger">{{i18n "search.failed"}}</small>
+                        {{/if}}
+                    </div>
+                {{/if}}
+
+                <div class="col-auto">
+                    {{#unless showSearch}}
+                        <button class="btn btn-outline-secondary search-button">
+                            <i class="fas fa fa-fw fa-search"></i>
+                        </button>
+                    {{/unless}}
+                    <a href="{{route "settings" app config.name}}"
+                       class="btn btn-outline-secondary"
+                       title="{{i18n "actions.settings"}}">
+                        <i class="fas fa fa-fw fa-cog"></i>
+                    </a>
+                    {{#with actionUpload}}
+                        {{> upload filesCollection=uploadFilesCollection accept=this.accept class="ml-auto"}}
+                    {{/with}}
+                    {{#with actionInsert}}
+                        <button class="btn btn-success insert-button">
+                            <i class="fas fa fa-fw fa-plus"></i>
+                            <span>{{i18n "actions.create"}}</span>
+                        </button>
+                    {{/with}}
+                </div>
             </span>
         </div>
 
+        {{#unless loadComplete}}
+            <div class="card-body">
+                <div class="alert alert-info">
+                    {{> loading title=(i18n "common.loadDocs")}}
+                </div>
+            </div>
+        {{/unless}}
+
         {{#with documents}}
 
-            {{! search input }}
-
-            {{#if showSearch}}
-            <div class="card-body bg-white mt-1">
-                <div class="input-group">
-                <input type="text" class="list-search-input form-control {{#if searchFailed}}is-invalid{{/if}}"
-                       placeholder={{i18n "search.placeholder"}} aria-describedby="button-addon2">
-                    <button class="btn btn-outline-{{#if searchFailed}}danger{{else}}secondary{{/if}} close-search-button" type="button" id="button-addon2">
-                        <i class="fa fas fa-fw fa-times"></i>
-                    </button>
-                </div>
-                {{#if searchFailed}}
-                    <small class="text-danger">{{i18n "search.failed"}}</small>
-                {{/if}}
-            </div>
-            {{/if}}
 
 
-            {{! documents table }}
+
+        {{! documents table }}
 
             <div class="card-body bg-white mt-1">
                 <table class="table table-striped">

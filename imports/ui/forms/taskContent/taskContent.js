@@ -15,7 +15,7 @@ import { getCollection } from '../../../utils/collection'
 import { i18n } from '../../../api/i18n/i18n'
 import { toFormSchema } from '../../config/toFormSchema'
 import { parseCollections } from '../../config/collection/parseCollections'
-import { parsePublications } from '../../config/parsePublications'
+import { loadDocumentsWithDependencies } from '../../config/loadDocumentsWithDependencies'
 import { reactiveAsyncLoader } from '../../../utils/reactiveAsyncLoader'
 import '../imageSelect/imageSelect'
 import './taskContent.css'
@@ -92,7 +92,7 @@ const loadDependencies = (config, appName) => {
         connection: connection,
         instance: instance
       })
-      parsePublications({
+      loadDocumentsWithDependencies({
         config: dependency,
         connection: connection,
         instance: null,

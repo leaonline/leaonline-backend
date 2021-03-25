@@ -7,6 +7,16 @@ import { getDependenciesForContext } from '../getDependenciesForContext'
 const validateUser = () => !!Meteor.userId()
 const defaultLog = () => {}
 
+// TODO use backendconfig, defined by content service
+const defaultSchema = {
+  _id: String,
+  meta: {
+    optional: true,
+    type: Object,
+    blackbox: true
+  }
+}
+
 export const parseCollections = function parseCollections ({ instance, config, connection, logDebug = defaultLog }) {
   instance.collections = instance.collections || new Map()
 
@@ -25,21 +35,25 @@ export const parseCollections = function parseCollections ({ instance, config, c
 
     if (collection) {
       instance.collections.set(collectionName, collection)
-    } else {
-      // create filesCollection if flag is truthy
-      const filesCollectionSource = createCollection({
-        name: collectionName,
-        schema: {},
-        connection: connection
-      })
+    }
 
-      instance.collections.set(collectionName, filesCollectionSource)
+    else {
+      const localCollection = createCollection({
+        name: null,
+        schema: Object.assign({},config.schema, defaultSchema),
+        connection: connection,
+        attachSchema: false
+      }, collectionName)
+
+      localCollection._name = collectionName
+
+      instance.collections.set(collectionName, localCollection)
 
       // additionally create files collection
       if (isFilesCollection) {
         createFilesCollection({
           collectionName: collectionName,
-          collection: filesCollectionSource,
+          collection: localCollection,
           ddp: connection,
           maxSize: config.maxSize,
           extension: config.extensions,

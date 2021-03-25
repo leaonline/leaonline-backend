@@ -5,7 +5,7 @@ import { parseActions } from './parseActions'
 import { StateVariables } from './StateVariables'
 import { parseCollections } from './collection/parseCollections'
 import { parseFields } from './fields/parseFields'
-import { parsePublications } from './parsePublications'
+import { loadDocumentsWithDependencies } from './loadDocumentsWithDependencies'
 import { defaultNotifications } from '../../utils/defaultNotifications'
 import { getDebug } from '../../utils/getDebug'
 import { dataTarget } from '../../utils/event'
@@ -21,13 +21,12 @@ export const wrapOnCreated = function (instance, { data, debug, onSubscribed } =
   const config = data.config()
   const mutationChecker = new MutationChecker(config, config.name)
   const settingsDoc = data.settings() || {}
-
   instance.state.set(StateVariables.app, appName)
   instance.state.set(StateVariables.config, config)
   parseCollections({ instance, config, connection, logDebug })
   parseFields({ instance, config, logDebug, appName, settingsDoc })
   parseActions({ instance, config, logDebug, settingsDoc, app })
-  parsePublications({ instance, config, logDebug, onSubscribed, settingsDoc, connection })
+  loadDocumentsWithDependencies({ instance, config, logDebug, onSubscribed, settingsDoc, connection })
   mutationChecker.compare(config)
 }
 

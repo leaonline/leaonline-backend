@@ -18,6 +18,8 @@ import {
   setQueryParam
 } from '../../../api/routes/utils/queryParams'
 import { debounce } from '../../../utils/debounce'
+import { upsertIntoCollection } from '../../../utils/upsertIntoCollection'
+import { getCollection } from '../../../utils/collection'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
@@ -28,19 +30,27 @@ const validateDocs = instance => function () {
   const ctx = instance.actionInsertSchema.newContext()
   const validationErrors = {}
 
-  console.info('validate docs', instance.mainCollection.find().count())
+  // this is to attach validation errors to the table-entry's first column
+  // TODO: translate errors
   instance.mainCollection.find().forEach(doc => {
     const { _id, meta, ...rest } = doc
-
     ctx.validate(rest)
-    if (ctx.isValid()) {
-      return
+    if (!ctx.isValid()) {
+      validationErrors[_id] = ctx.validationErrors()
     }
-
-    validationErrors[_id] = ctx.validationErrors()
   })
 
   instance.state.set({ validationErrors })
+}
+
+const updateDocumentState = ({ connection, context, docId }) => {
+  connection.call(context.methods.getOne.name, { _id: docId }, (err, doc) => {
+    defaultNotifications(err, doc)
+      .success(function () {
+        const collection = getCollection(context.name)
+        upsertIntoCollection(collection, [doc])
+      })
+  })
 }
 
 Template.genericList.onCreated(function () {
@@ -53,10 +63,9 @@ Template.genericList.onCreated(function () {
 
     if (lastPath !== pathname) {
       instance.state.clear()
+      wrapOnCreated(instance, { data, debug: false })
+      instance.state.set('lastPath', pathname)
     }
-
-    wrapOnCreated(instance, { data, debug: false })
-    instance.state.set('lastPath', pathname)
   })
 
   instance.autorun(() => {
@@ -182,13 +191,16 @@ Template.genericList.events(wrapEvents({
 
     templateInstance.state.set(StateVariables.submitting, true)
     const actionInsert = templateInstance.state.get('actionInsert')
+    const actionGetOne = templateInstance.state.get('actionGet')
     const app = templateInstance.data.app()
+    const config = templateInstance.data.config()
     const { connection } = app
 
-    connection.call(actionInsert.name, insertDoc, by300((err, res) => {
+    connection.call(actionInsert.name, insertDoc, by300((err, insertDocId) => {
       templateInstance.state.set(StateVariables.submitting, false)
-      defaultNotifications(err, res)
+      defaultNotifications(err, insertDocId)
         .success(function () {
+          updateDocumentState({ connection, context: config, docId: insertDocId })
           setQueryParam({ action: null })
         })
     }))
@@ -239,6 +251,11 @@ Template.genericList.events(wrapEvents({
       templateInstance.state.set(StateVariables.submitting, false)
       defaultNotifications(err, res)
         .success(function () {
+          updateDocumentState({
+            context: templateInstance.data.config(),
+            connection: connection,
+            docId: target._id
+          })
           setQueryParam({ action: null })
         })
     }))
@@ -269,7 +286,7 @@ Template.genericList.events(wrapEvents({
   },
   'input .list-search-input': debounce((event, templateInstance) => {
     event.preventDefault()
-    const value = templateInstance.$(event.currentTarget).val().trim()
+    const value = templateInstance.$(event.currentTarget).val().trim().toLowerCase()
     if (value.length < 2) {
       return templateInstance.state.set({
         query: {},
@@ -302,33 +319,33 @@ function getSearchIndices ({ value, templateInstance }) {
       const found = templateInstance.fieldLabels.some(({ key }) => {
         const config = templateInstance.fieldConfig[key]
         const resolver = config?.resolver
-        let docValue = resolver ? resolver(doc[key]) : doc[key]
+        let fieldValue = resolver ? resolver(doc[key]) : doc[key]
 
-        if (docValue === undefined || docValue === null) {
+        if (fieldValue === undefined || fieldValue === null) {
           return false
         }
 
         if (config.dependency) {
-          const { doc } = docValue
+          const { doc } = fieldValue
 
           if (!doc || !doc.label) {
             return false
           }
 
-          return doc.label.includes(value)
+          return String(doc.label).toLowerCase().includes(value)
         }
 
         // some simple fields are split int { type, value }
         // so we need to extract their value
-        docValue = Object.hasOwnProperty.call(docValue, 'value')
-          ? docValue.value
-          : docValue
+        fieldValue = Object.hasOwnProperty.call(fieldValue, 'value')
+          ? fieldValue.value
+          : fieldValue
 
         if (config.type === String) {
-          return docValue?.includes(value)
+          return fieldValue && fieldValue.toLowerCase().includes(value)
         }
 
-        return config.type === Number && docValue.toString().includes(value)
+        return config.type === Number && fieldValue.toString().includes(value)
       })
 
       return found && doc._id
