@@ -18,12 +18,11 @@ import {
   setQueryParam
 } from '../../../api/routes/utils/queryParams'
 import { debounce } from '../../../utils/debounce'
-import { upsertIntoCollection } from '../../../utils/upsertIntoCollection'
-import { getCollection } from '../../../utils/collection'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.html'
+import { updateDocumentState } from '../../../utils/updateDocumentState'
 
 const entryIsTrue = entry => entry === true
 const validateDocs = instance => function () {
@@ -41,16 +40,6 @@ const validateDocs = instance => function () {
   })
 
   instance.state.set({ validationErrors })
-}
-
-const updateDocumentState = ({ connection, context, docId }) => {
-  connection.call(context.methods.getOne.name, { _id: docId }, (err, doc) => {
-    defaultNotifications(err, doc)
-      .success(function () {
-        const collection = getCollection(context.name)
-        upsertIntoCollection(collection, [doc])
-      })
-  })
 }
 
 Template.genericList.onCreated(function () {

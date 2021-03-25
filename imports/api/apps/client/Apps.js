@@ -105,6 +105,7 @@ function track (name, connection, ddpLogin) {
       DDP.loginWithLea(connection, options, (err, res) => {
         connection._loggingIn = false
         if (err) {
+          Meteor.logout()
           return console.error(err)
         } else {
           log(name, 'logged in with token', !!res)

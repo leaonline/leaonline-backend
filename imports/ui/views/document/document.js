@@ -8,9 +8,11 @@ import { Router } from '../../../api/routes/Router'
 import { by300 } from '../../../utils/dely'
 import { defineUndefinedFields } from '../../../utils/defineUndefinedFields'
 import { defaultNotifications } from '../../../utils/defaultNotifications'
+import { updateDocumentState } from '../../../utils/updateDocumentState'
 
 Template.genericDocument.onCreated(function () {
   const instance = this
+
   const onSubscribed = () => {
     const updateDoc = instance.mainCollection.findOne() || {}
     console.log('update doc', updateDoc)
@@ -24,9 +26,9 @@ Template.genericDocument.onCreated(function () {
     const lastPath = instance.state.get('lastPath')
     if (lastPath !== pathname) {
       instance.state.clear()
+      wrapOnCreated(instance, { data, onSubscribed, debug: true })
       instance.state.set('lastPath', pathname)
     }
-    wrapOnCreated(instance, { data, onSubscribed, debug: true })
   })
 })
 
@@ -81,6 +83,7 @@ Template.genericDocument.events({
     templateInstance.state.set('isUpdating', true)
     const actonUpdate = templateInstance.state.get('actionUpdate')
     const app = templateInstance.data.app()
+    const config = templateInstance.data.config()
     const { connection } = app
 
     connection.call(actonUpdate.name, updateDoc, by300((err, res) => {
@@ -88,6 +91,12 @@ Template.genericDocument.events({
       templateInstance.state.set(StateVariables.submitting, false)
       defaultNotifications(err, res)
         .success(function () {
+          updateDocumentState({
+            docId: target._id,
+            connection: connection,
+            context: config,
+            onComplete: doc => templateInstance.state.set('updateDoc', doc)
+          })
           Router.queryParam({ action: null })
           templateInstance.state.set('updateForm', false)
           templateInstance.state.set('isUpdating', false)
