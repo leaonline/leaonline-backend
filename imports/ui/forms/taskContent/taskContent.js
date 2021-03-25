@@ -422,7 +422,6 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
   const instance = this
   const previewContent = instance.stateVars.get('previewContent')
   if (!previewContent) {
-    debugger
     console.info('[TaskContent]: no content to submit onItemInput')
     return
   }
