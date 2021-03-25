@@ -5,8 +5,9 @@
  * @param collection
  * @param source
  * @param skipInvalid
+ * @param reactive
  */
-export const upsertIntoCollection = (collection, source, { skipInvalid } = {}) => {
+export const upsertIntoCollection = (collection, source, { skipInvalid, reactive = true } = {}) => {
   const documents = Array.isArray(source)
     ? source
     : [source]
@@ -24,7 +25,7 @@ export const upsertIntoCollection = (collection, source, { skipInvalid } = {}) =
         }
       }
 
-      if (collection.findOne(doc._id, { reactive: false })) {
+      if (collection.findOne(doc._id, { reactive })) {
         return collection.update(doc._id, { $set: doc })
       } else {
         return collection.insert(doc)

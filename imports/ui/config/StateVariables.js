@@ -13,5 +13,12 @@ export const StateVariables = {
   allSubsComplete: 'allSubsComplete',
   submitting: 'submitting',
   removing: 'removing',
-  formTypesLoaded: 'formTypesLoaded'
+  formTypesLoaded: 'formTypesLoaded',
+
+  /**
+   * Number if pages if pagination is to be implemted
+   */
+  pageCount: 'pageCount',
+  docsPerPage: 'docsPerPage',
+  currentPage: 'currentPage'
 }

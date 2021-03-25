@@ -30,8 +30,7 @@ export const loadDocumentsWithDependencies = function loadDocumentsWithDependenc
         // we could rewrite this part to use a callback, like onComplete
         // se we can eliminate the dependency to instance entirely here
         if (instance) {
-          const count = instance.mainCollection.find().count()
-          logDebug(instance.mainCollection, instance.mainCollection.find().fetch())
+          const count = instance.mainCollection.find({}, { reactive: false }).count()
           instance.state.set(StateVariables.documentsCount, count)
           instance.state.set(StateVariables.allSubsComplete, true)
         }
@@ -55,8 +54,7 @@ export const loadDocumentsWithDependencies = function loadDocumentsWithDependenc
         // we could rewrite this part to use a callback, like onComplete
         // se we can eliminate the dependency to instance entirely here
         if (instance) {
-          const count = instance.mainCollection.find().count()
-          logDebug(instance.mainCollection, instance.mainCollection.find().fetch())
+          const count = instance.mainCollection.find().count({}, { reactive: false })
           instance.state.set(StateVariables.documentsCount, count)
           instance.state.set(StateVariables.allSubsComplete, true)
         }

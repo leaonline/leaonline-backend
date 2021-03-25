@@ -18,11 +18,11 @@ import {
   setQueryParam
 } from '../../../api/routes/utils/queryParams'
 import { debounce } from '../../../utils/debounce'
+import { updateDocumentState } from '../../../utils/updateDocumentState'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.html'
-import { updateDocumentState } from '../../../utils/updateDocumentState'
 
 const entryIsTrue = entry => entry === true
 const validateDocs = instance => function () {
@@ -44,6 +44,8 @@ const validateDocs = instance => function () {
 
 Template.genericList.onCreated(function () {
   const instance = this
+  instance.state.set(StateVariables.docsPerPage, 15)
+  instance.state.set(StateVariables.currentPage, 0)
 
   instance.autorun(() => {
     const data = Template.currentData()
@@ -52,7 +54,16 @@ Template.genericList.onCreated(function () {
 
     if (lastPath !== pathname) {
       instance.state.clear()
-      wrapOnCreated(instance, { data, debug: false })
+      Tracker.nonreactive(() => wrapOnCreated(instance, {
+        data,
+        debug: false,
+        onSubscribed () {
+          const query = instance.state.get('query') || {}
+          const transform = instance.state.get('transform') || {}
+          const list = instance.mainCollection.find(query, transform).fetch()
+          updateList(list, instance)
+        }
+      }))
       instance.state.set('lastPath', pathname)
     }
   })
@@ -73,10 +84,10 @@ Template.genericList.onCreated(function () {
 
     let updateDoc
     if (doc) {
-      updateDoc = instance.mainCollection.findOne(doc)
+      updateDoc = instance.mainCollection.findOne(doc, { reactive: false })
       if (!updateDoc) {
         console.error('Document', doc, 'not found')
-        console.error(instance.mainCollection.find().fetch())
+        console.error(instance.mainCollection.find({}, { reactive: false }).fetch())
         return
       }
     }
@@ -88,6 +99,27 @@ Template.genericList.onCreated(function () {
 Template.genericList.helpers(wrapHelpers({
   loadComplete () {
     return Template.instance().state.get(StateVariables.allSubsComplete)
+  },
+  list () {
+    const instance = Template.instance()
+    const list = instance.state.get('list')
+    const currentPage = instance.state.get(StateVariables.currentPage) || 0
+    const docsPerPage = 15
+    const start = currentPage * docsPerPage
+    const end = start + docsPerPage
+    return list.slice(start, end)
+  },
+  isCurrentPage (index) {
+    return Template.getState(StateVariables.currentPage) === index
+  },
+  getIndex (index) {
+    const instance = Template.instance()
+    const currentPage = instance.state.get(StateVariables.currentPage) || 0
+    const docsPerPage = 15
+    return (currentPage * docsPerPage) + (index + 1)
+  },
+  pages () {
+    return Template.getState(StateVariables.pageCount)
   },
   insertForm () {
     return Template.getState('insertForm')
@@ -119,27 +151,6 @@ Template.genericList.helpers(wrapHelpers({
       class: classNames
     }
   },
-  trAtts (docId) {
-    const instance = Template.instance()
-    const validationErrors = instance.state.get('validationErrors') || {}
-    const hasError = Array.isArray(validationErrors[docId])
-      ? 'bg-warning'
-      : ''
-
-    const classNames = `text-muted ${hasError}`
-    const atts = { class: classNames }
-
-    if (hasError.length > 0) {
-      let errorsTitle = ''
-      validationErrors[docId].forEach(error => {
-        errorsTitle += `${error.name} - ${error.type}\n`
-      })
-
-      atts.title = errorsTitle
-    }
-
-    return atts
-  },
   showSearch () {
     return Template.getState('showSearch')
   },
@@ -149,6 +160,11 @@ Template.genericList.helpers(wrapHelpers({
 }))
 
 Template.genericList.events(wrapEvents({
+  'click .set-page-button' (event, templateInstance) {
+    event.preventDefault()
+    const index = dataTarget(event, templateInstance)
+    templateInstance.state.set(StateVariables.currentPage, index)
+  },
   'click .insert-button' (event, templateInstance) {
     event.preventDefault()
     setQueryParam({ action: StateActions.insert })
@@ -188,7 +204,15 @@ Template.genericList.events(wrapEvents({
       templateInstance.state.set(StateVariables.submitting, false)
       defaultNotifications(err, insertDocId)
         .success(function () {
-          updateDocumentState({ connection, context: config, docId: insertDocId })
+          updateDocumentState({
+            connection: connection,
+            context: config,
+            docId: insertDocId,
+            onComplete () {
+              const list = templateInstance.mainCollection.find().fetch()
+              updateList(list, templateInstance)
+            }
+          })
           setQueryParam({ action: null })
         })
     }))
@@ -266,20 +290,23 @@ Template.genericList.events(wrapEvents({
   },
   'click .close-search-button' (event, templateInstance) {
     event.preventDefault()
+    const fullList = templateInstance.mainCollection.find({}, { reactive: false }).fetch()
+    updateList(fullList, templateInstance)
     templateInstance.state.set({
       showSearch: false,
-      query: {},
       searchFailed: false
     })
   },
   'input .list-search-input': debounce((event, templateInstance) => {
     event.preventDefault()
     const value = templateInstance.$(event.currentTarget).val().trim().toLowerCase()
+    const transform = templateInstance.state.get('transform')
     if (value.length < 2) {
-      return templateInstance.state.set({
-        query: {},
+      const fullList = templateInstance.mainCollection.find({}, { reactive: false }).fetch()
+      templateInstance.state.set({
         searchFailed: false
       })
+      return updateList(fullList, templateInstance)
     }
 
     let indices
@@ -296,8 +323,14 @@ Template.genericList.events(wrapEvents({
     }
 
     const query = { _id: { $in: indices } }
-    templateInstance.state.set({ query, searchFailed: false })
-  }, 200)
+    const filteredDocs = templateInstance.mainCollection.find(query, transform).fetch()
+
+    templateInstance.state.set({
+      searchFailed: false
+    })
+
+    updateList(filteredDocs, templateInstance)
+  }, 500)
 }))
 
 function getSearchIndices ({ value, templateInstance }) {
@@ -382,4 +415,75 @@ function getCompare (templateInstance) {
   const updateDoc = templateInstance.state.get('updateDoc')
   if (updateDoc) delete updateDoc._id
   return updateDoc
+}
+
+/**
+ * Prepares the list of documents for rendering.
+ * This allows us to avoid lots of computations in the helpers.
+ * @param list
+ * @param instance
+ * @return {*}
+ */
+function prepareList (list, instance) {
+  const validationErrors = instance.state.get('validationErrors') || {}
+  const { fieldConfig } = instance
+  const fields = instance.state.get(StateVariables.documentFields)
+
+  return list.map(document => {
+    return {
+      trAtts: getTableRowAttributes(document, validationErrors),
+      fields: getTableRowFields(document, fieldConfig, fields),
+      document: document
+    }
+  })
+}
+
+function getTableRowAttributes (document, validationErrors) {
+  const docId = document._id
+  const errorClass = Array.isArray(validationErrors[docId])
+    ? 'bg-warning'
+    : ''
+
+  const classNames = `text-muted ${errorClass}`
+  const atts = { class: classNames }
+
+  if (errorClass.length > 0) {
+    let errorsTitle = ''
+    validationErrors[docId].forEach(error => {
+      errorsTitle += `${error.name} - ${error.type}\n`
+    })
+
+    atts.title = errorsTitle
+  }
+
+  return atts
+}
+
+function getTableRowFields (document, fieldConfig, fields) {
+  return fields && fields.map(key => {
+    const value = document[key]
+    const config = fieldConfig[key]
+    const resolver = config?.resolver
+
+    if (!resolver) {
+      return value
+    } else {
+      return resolver(value)
+    }
+  })
+}
+
+function updateList (list, templateInstance) {
+  const prepared = prepareList(list, templateInstance)
+  const docsPerPage = 15
+  const count = list.length
+  const numberOfPages = Math.ceil(count / docsPerPage)
+  const pageCount = []
+  for (let i = 0; i < numberOfPages; i++) pageCount[i] = i + 1
+
+  templateInstance.state.set({
+    list: prepared,
+    [StateVariables.currentPage]: 0,
+    [StateVariables.pageCount]: pageCount
+  })
 }

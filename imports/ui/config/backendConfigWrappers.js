@@ -65,6 +65,8 @@ export const wrapHelpers = function (obj) {
       const instance = Template.instance()
       const query = instance.state.get('query') || {}
       const transform = instance.state.get('transform') || {}
+
+      console.warn('documents called', query)
       const cursor = instance.mainCollection && instance.mainCollection.find(query, transform)
 
       if (!cursor || cursor.count() === 0) return null
