@@ -7,7 +7,7 @@ import { loadingTemplate } from '../../ui/pages/loading/loading'
 
 const defaultTarget = 'main-render-target'
 
-Router.titlePrefix('lea.online - ')
+Router.titlePrefix('lea.backend - ')
 Router.loadingTemplate(loadingTemplate)
 Router.defaultTarget(defaultTarget)
 /**
