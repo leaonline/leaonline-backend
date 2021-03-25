@@ -1,9 +1,9 @@
 <template name="afImageSelect">
 	{{#unless galleryMode}}
 		<div class="card">
-			<div class="card-body bg-white d-flex">
+			<div class="card-body p-1 bg-white d-flex">
 				{{#with selectedImage}}
-					<button class="btn btn-primary open-gallery-button">
+					<button class="btn btn-primary btn-sm open-gallery-button">
 						<i class="fa fas fa-fw fa-edit"></i>
 					</button>
 					<figure class="figure border border-light p-1 shadow">
@@ -18,7 +18,7 @@
 						{{/with}}
 					</figure>
 				{{else}}
-					<button class="btn btn-primary open-gallery-button">
+					<button class="btn btn-primary btn-sm open-gallery-button">
 						<i class="fa fas fa-fw fa-plus"></i>
 					</button>
 				{{/with}}

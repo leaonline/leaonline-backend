@@ -41,14 +41,20 @@ AutoForm.addInputType('leaTaskContent', {
 const typeSchemas = {}
 const rendererGroups = Object
   .values(RendererGroups)
-  .filter(gr => !!gr.isTaskContent)
+  .filter(group => group.isTaskContent)
 
 const getContent = (element) => {
-  if (element.type !== 'item') return element
+  if (element.type !== 'item') {
+    return element
+  }
+
   const context = ContextRegistry.get(element.subtype)
-  if (!context) throw new Error(`Missing context for subtype ${element.subtype}`)
+  if (!context) {
+    throw new Error(`Missing context for subtype ${element.subtype}`)
+  }
   const collection = getCollection(context.name)
   element.value = collection.findOne(element.value)
+
   return element
 }
 
@@ -416,6 +422,7 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
   const instance = this
   const previewContent = instance.stateVars.get('previewContent')
   if (!previewContent) {
+    debugger
     console.info('[TaskContent]: no content to submit onItemInput')
     return
   }
