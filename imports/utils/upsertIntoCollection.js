@@ -26,9 +26,7 @@ export const upsertIntoCollection = (collection, source, { skipInvalid } = {}) =
 
       if (collection.findOne(doc._id, { reactive: false })) {
         return collection.update(doc._id, { $set: doc })
-      }
-
-      else {
+      } else {
         return collection.insert(doc)
       }
     } catch (e) {

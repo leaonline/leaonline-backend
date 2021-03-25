@@ -191,7 +191,6 @@ Template.genericList.events(wrapEvents({
 
     templateInstance.state.set(StateVariables.submitting, true)
     const actionInsert = templateInstance.state.get('actionInsert')
-    const actionGetOne = templateInstance.state.get('actionGet')
     const app = templateInstance.data.app()
     const config = templateInstance.data.config()
     const { connection } = app

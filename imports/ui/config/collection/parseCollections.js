@@ -35,12 +35,10 @@ export const parseCollections = function parseCollections ({ instance, config, c
 
     if (collection) {
       instance.collections.set(collectionName, collection)
-    }
-
-    else {
+    } else {
       const localCollection = createCollection({
         name: null,
-        schema: Object.assign({},config.schema, defaultSchema),
+        schema: Object.assign({}, config.schema, defaultSchema),
         connection: connection,
         attachSchema: false
       }, collectionName)
