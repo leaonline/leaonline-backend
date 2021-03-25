@@ -8,9 +8,13 @@ import { LocalCollections } from '../factories/LocalCollections'
  * @return {*}
  */
 export const getCollection = name => {
-  if (LocalCollections.has(name)) {
-    return LocalCollections.get(name)
+  const ctxName = typeof name === 'string'
+    ? name
+    : name.name
+
+  if (LocalCollections.has(ctxName)) {
+    return LocalCollections.get(ctxName)
   }
 
-  return _originalGetCollection(name)
+  return _originalGetCollection(ctxName)
 }
