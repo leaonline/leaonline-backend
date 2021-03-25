@@ -1,6 +1,6 @@
 import { Template } from 'meteor/templating'
 import { ReactiveDict } from 'meteor/reactive-dict'
-import { Mongo } from 'meteor/mongo'
+import { getCollection } from '../../../utils/collection'
 import './autoform'
 import './imageSelect.css'
 import './imageSelect.html'
@@ -22,7 +22,7 @@ Template.afImageSelect.onCreated(function () {
   const { data } = instance
   const { atts } = data
 
-  const imagesCollection = Mongo.Collection.get(atts.imagesCollection)
+  const imagesCollection = getCollection(atts.imagesCollection)
   if (!imagesCollection) {
     throw new Error(`Could not find imagesCollection by name <${atts.imagesCollection}>`)
   }
