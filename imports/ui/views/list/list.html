@@ -6,15 +6,15 @@
             <span>
                 {{#if actionPreview}}
                     <button class="btn btn-sm btn-outline-secondary preview-formDoc-button">
-                        <i class="fa fas fa-fw fa-eye"></i>
+                        {{> icon name="eye" fw=true}}
                     </button>
                 {{/if}}
                 <button class="btn btn-sm btn-outline-secondary show-source-button">
-					<i class="fa fa-fw fas fa-code"></i>
-				</button>
+                    {{> icon name="code" fw=true}}
+                </button>
 				<button class="btn btn-sm btn-outline-secondary cancel-form-button">
-					<i class="fa fa-fw fas fa-times"></i>
-				</button>
+                    {{> icon name="times" fw=true}}
+                </button>
 			</span>
         </div>
 
@@ -31,7 +31,7 @@
                 </div>
             {{/autoForm}}
             {{#if submitting}}
-                <span><i class="fa fas fa-fw fa-spinner fa-pulse"></i></span>
+                <span>{{> icon name="spinner" fw=true pulse=true}}</span>
                 <span>{{i18n "actions.submitting"}}</span>
             {{/if}}
         </div>
@@ -41,15 +41,15 @@
             <span>
                 {{#if actionPreview}}
                     <button class="btn btn-sm btn-outline-secondary preview-formDoc-button">
-                        <i class="fa fas fa-fw fa-eye"></i>
+                        {{> icon name="eye" fw=true}}
                     </button>
                 {{/if}}
                 <button class="btn btn-sm btn-outline-secondary show-source-button">
-					<i class="fa fa-fw fas fa-code"></i>
-				</button>
+                    {{> icon name="code" fw=true}}
+                </button>
 				<button class="btn btn-sm btn-outline-secondary cancel-form-button">
-					<i class="fa fa-fw fas fa-times"></i>
-				</button>
+                    {{> icon name="times" fw=true}}
+                </button>
 			</span>
         </div>
 
@@ -67,7 +67,7 @@
                 </div>
             {{/autoForm}}
             {{#if submitting}}
-                <span><i class="fa fas fa-fw fa-spinner fa-pulse"></i></span>
+                <span>{{> icon name="spinner" fw=true pulse=true}}</span>
                 <span>{{i18n "actions.submitting"}}</span>
             {{/if}}
         </div>
@@ -76,7 +76,7 @@
             <span class="no-wrap">
                 <h4>{{i18n config.label}}</h4>
                 <small>
-                    <i class="fa fa-fw fa-file"></i>
+                    {{> icon name="file" fw=true}}
                     <span>{{count}} {{i18n "common.documents"}}</span>
                 </small>
             </span>
@@ -92,7 +92,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"
                                       id="basic-addon1">
-                                     <i class="fas fa fa-fw fa-search"></i>
+                                    {{> icon name="search" fw=true}}
                                 </span>
                             </div>
                             <input type="text"
@@ -104,12 +104,13 @@
                                 <button class="btn btn-outline-{{#if
                                         searchFailed}}danger{{else}}secondary{{/if}} close-search-button"
                                         type="button" id="button-addon2">
-                                    <i class="fa fas fa-fw fa-times"></i>
+                                    {{> icon name="times" fw=true}}
                                 </button>
                             </div>
                             </div>
                         {{#if searchFailed}}
-                            <small class="text-danger">{{i18n "search.failed"}}</small>
+                            <small class="text-danger">{{i18n
+                                    "search.failed"}}</small>
                         {{/if}}
                     </div>
                 {{/if}}
@@ -117,20 +118,20 @@
                 <div class="col-auto">
                     {{#unless showSearch}}
                         <button class="btn btn-outline-secondary search-button">
-                            <i class="fas fa fa-fw fa-search"></i>
+                            {{> icon name="search" fw=true}}
                         </button>
                     {{/unless}}
                     <a href="{{route "settings" app config.name}}"
                        class="btn btn-outline-secondary"
                        title="{{i18n "actions.settings"}}">
-                        <i class="fas fa fa-fw fa-cog"></i>
+                        {{> icon name="cog" fw=true}}
                     </a>
                     {{#with actionUpload}}
                         {{> upload filesCollection=uploadFilesCollection accept=this.accept class="ml-auto"}}
                     {{/with}}
                     {{#with actionInsert}}
                         <button class="btn btn-success insert-button">
-                            <i class="fas fa fa-fw fa-plus"></i>
+                            {{> icon name="plus" fw=true}}
                             <span>{{i18n "actions.create"}}</span>
                         </button>
                     {{/with}}
@@ -145,122 +146,123 @@
                 </div>
             </div>
 
-            {{else}}
+        {{else}}
 
 
-            {{! pagination }}
+        {{! pagination }}
             <div class="d-block w-100 text-center">
-            {{#each page in pages}}
-                {{#if isCurrentPage @index}}
-                    <button class="btn btn-sm btn-secondary">
-                        {{page}}
-                    </button>
-                {{else}}
-                <button class="btn btn-sm btn-outline-secondary set-page-button border-0"
-                    data-target={{@index}}>
-                    {{page}}
-                </button>
-                {{/if}}
-            {{/each}}
+                {{#each page in pages}}
+                    {{#if isCurrentPage @index}}
+                        <button class="btn btn-sm btn-secondary">
+                            {{page}}
+                        </button>
+                    {{else}}
+                        <button class="btn btn-sm btn-outline-secondary set-page-button border-0"
+                                data-target={{@index}}>
+                            {{page}}
+                        </button>
+                    {{/if}}
+                {{/each}}
             </div>
 
 
             {{! documents table }}
 
-                <div class="card-body bg-white mt-1 table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+            <div class="card-body bg-white mt-1 table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        {{#each label in fieldLabels}}
+                            <th {{cellAtts label.key true}}>
+                                {{! label could be disabled from being displayed }}
+                                {{#if label.value}}
+                                    {{i18n label.value}}
+                                {{/if}}
+                            </th>
+                        {{/each}}
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each row in list}}
                         <tr>
-                            <th scope="col">#</th>
-                            {{#each label in fieldLabels}}
-                                <th {{cellAtts label.key true}}>
-                                    {{! label could be disabled from being displayed }}
-                                    {{#if label.value}}
-                                        {{i18n label.value}}
-                                    {{/if}}
-                                </th>
-                            {{/each}}
-                            <th scope="col"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {{#each row in list}}
-                            <tr>
-                                <th {{row.trAtts}} scope="row">{{getIndex @index}}</th>
+                            <th {{row.trAtts}} scope="row">{{getIndex
+                                    @index}}</th>
 
-                                {{!-- resolve fields by given type def --}}
+                            {{!-- resolve fields by given type def --}}
 
-                                {{#each field in row.fields}}
+                            {{#each field in row.fields}}
 
-                                    {{#if field.isCollection}}
-                                    {{! isCollection --> resolve document}}
-                                        <td>
-                                            <a href
-                                               class="linked-document-preview-button"
-                                               data-target="{{field.doc.value}}"
-                                               data-context="{{field.context}}">
-                                                {{field.doc.label}}
-                                            </a>
-                                        </td>
-                                    {{else if field.isType}}
-                                        <td class="text-center">
-                                        <span class="p-1"
+                                {{#if field.isCollection}}
+                                {{! isCollection --> resolve document}}
+                                    <td>
+                                        <a href
+                                           class="linked-document-preview-button"
+                                           data-target="{{field.doc.value}}"
+                                           data-context="{{field.context}}">
+                                            {{field.doc.label}}
+                                        </a>
+                                    </td>
+                                {{else if field.isType}}
+                                    <td class="text-center">
+                                        <span class="p-1 text-{{field.type}}"
                                               title="{{i18n field.label}}">
-                                            <i class="fa fas fa-fw fa-{{field.icon}} text-{{field.type}}"></i>
+                                            {{> icon fw=true name=field.icon}}
                                         </span>
-                                        </td>
-                                    {{else if field.isBoolean}}
-                                        <td class="text-center">
+                                    </td>
+                                {{else if field.isBoolean}}
+                                    <td class="text-center">
                                         <span class="p-1"
                                               title="{{i18n field.label}}">
                                             {{#if field.value}}
-                                                <i class="fa fas fa-fw fa-square-full"></i>
+                                                {{> icon fw=true name="square-full"}}
                                             {{/if}}
                                         </span>
-                                        </td>
-                                    {{else if field.isDate}}
-                                        <td class="no-wrap text-monospace">
-                                            {{toDate field.value}}
-                                        </td>
+                                    </td>
+                                {{else if field.isDate}}
+                                    <td class="no-wrap text-monospace">
+                                        {{toDate field.value}}
+                                    </td>
+                                {{else}}
+                                {{! simple values }}
+                                    <td>
+                                        {{field.value}}
+                                    </td>
+                                {{/if}}
+                            {{/each}}
+                            <td class="text-right no-wrap">
+                                {{#if actionPreview}}
+                                    <button class="btn btn-sm btn-outline-secondary border-0 current-document-preview-button"
+                                            data-target="{{row.document._id}}">
+                                        {{> icon name="eye" fw=true}}
+                                    </button>
+                                {{/if}}
+                                {{#if actionUpdate}}
+                                    <button class="btn btn-sm btn-outline-primary border-0 edit-button"
+                                            data-target="{{row.document._id}}">
+                                        {{> icon name="edit" fw=true}}
+                                    </button>
+                                {{/if}}
+                                {{#if actionRemove}}
+                                    {{#unless removing row.document._id}}
+                                        <button class="btn btn-sm btn-outline-danger border-0 remove-button"
+                                                data-target="{{row.document._id}}">
+                                            {{> icon name="trash" fw=true}}
+                                        </button>
                                     {{else}}
-                                    {{! simple values }}
-                                        <td>
-                                            {{field.value}}
-                                        </td>
-                                    {{/if}}
-                                {{/each}}
-                                <td class="text-right no-wrap">
-                                    {{#if actionPreview}}
-                                        <button class="btn btn-sm btn-outline-secondary border-0 current-document-preview-button"
-                                                data-target="{{row.document._id}}">
-                                            <i class="fa fas fa-fw fa-eye"></i>
+                                        <button class="btn btn-sm btn-outline-danger border-0 disabled"
+                                                disabled>
+                                            {{> icon name="refresh" spinner=true fw=true}}
                                         </button>
-                                    {{/if}}
-                                    {{#if actionUpdate}}
-                                        <button class="btn btn-sm btn-outline-primary border-0 edit-button"
-                                                data-target="{{row.document._id}}">
-                                            <i class="fa fas fa-fw fa-edit"></i>
-                                        </button>
-                                    {{/if}}
-                                    {{#if actionRemove}}
-                                        {{#unless removing row.document._id}}
-                                            <button class="btn btn-sm btn-outline-danger border-0 remove-button"
-                                                    data-target="{{row.document._id}}">
-                                                <i class="fa fas fa-fw fa-trash"></i>
-                                            </button>
-                                        {{else}}
-                                            <button class="btn btn-sm btn-outline-danger border-0 disabled"
-                                                    disabled>
-                                                <i class="fa fas fa-fw fa-refresh fa-spinner"></i>
-                                            </button>
-                                        {{/unless}}
-                                    {{/if}}
-                                </td>
-                            </tr>
-                        {{/each}}
-                        </tbody>
-                    </table>
-                </div>
+                                    {{/unless}}
+                                {{/if}}
+                            </td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
 
             {{! pagination }}
             <div class="d-block w-100 text-center">
