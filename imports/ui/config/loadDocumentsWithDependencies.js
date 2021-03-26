@@ -19,6 +19,7 @@ export const loadDocumentsWithDependencies = function loadDocumentsWithDependenc
         defaultNotifications(error)
       },
       success: (allDocuments = {}) => {
+        console.info(allDocuments)
         // iterate through all documents and assign each to their contexts
         // to ensure we have loaded all dependencies, too
         Object.entries(allDocuments).forEach(([collectionName, documents]) => {
@@ -62,5 +63,7 @@ export const loadDocumentsWithDependencies = function loadDocumentsWithDependenc
         if (onSubscribed) onSubscribed()
       }
     })
+  } else {
+    defaultNotifications(new Error(`[${config.name}]: expected one of the following methods: [getAll, getOne, get], got none.`))
   }
 }

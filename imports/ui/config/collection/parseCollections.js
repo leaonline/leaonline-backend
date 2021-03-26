@@ -33,9 +33,12 @@ export const parseCollections = function parseCollections ({ instance, config, c
     const collectionName = collectionConfig.name
     const collection = getCollection(collectionName)
 
-    if (collection) {
+    // XXX: in order to allow to check for remote users we need to skip
+    // the special case of Meteor.users and force to create a local collection
+    if (collection && collectionName !== Meteor.users._name) {
       instance.collections.set(collectionName, collection)
     } else {
+      console.info(config.schema)
       const localCollection = createCollection({
         name: null,
         schema: Object.assign({}, config.schema, defaultSchema),

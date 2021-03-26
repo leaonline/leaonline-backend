@@ -158,7 +158,9 @@ export const wrapEvents = (obj) => {
 
       connection.call(method, { _id }, by300((err, res) => {
         templateInstance.state.set(StateVariables.removing, null)
-        defaultNotifications(err, res)
+        defaultNotifications(err, res).success(function () {
+          templateInstance.state.set(StateVariables.removed, _id)
+        })
       }))
     }
   }, obj)

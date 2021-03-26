@@ -26,6 +26,9 @@ import './list.html'
 
 const entryIsTrue = entry => entry === true
 const validateDocs = instance => function () {
+  // some contexts do not define an insert schema
+  if (!instance.actionInsertSchema) return
+
   const ctx = instance.actionInsertSchema.newContext()
   const validationErrors = {}
 
@@ -93,6 +96,20 @@ Template.genericList.onCreated(function () {
     }
 
     updateStateAction({ action, updateDoc, instance })
+  })
+
+  instance.autorun(() => {
+    const removed = instance.state.get(StateVariables.removed)
+    if (!removed) return
+
+    instance.mainCollection.remove(removed)
+
+    const query = instance.state.get('query') || {}
+    const transform = instance.state.get('transform') || {}
+    const list = instance.mainCollection.find(query, transform).fetch()
+    updateList(list, instance)
+
+    instance.state.set(StateVariables.removed, null)
   })
 })
 
@@ -266,7 +283,11 @@ Template.genericList.events(wrapEvents({
           updateDocumentState({
             context: templateInstance.data.config(),
             connection: connection,
-            docId: target._id
+            docId: target._id,
+            onComplete () {
+              const list = templateInstance.mainCollection.find().fetch()
+              updateList(list, templateInstance)
+            }
           })
           setQueryParam({ action: null })
         })
@@ -468,7 +489,18 @@ function getTableRowFields (document, fieldConfig, fields) {
     if (!resolver) {
       return value
     } else {
-      return resolver(value)
+      const resolvedValue = resolver(value)
+      const type = Object.prototype.toString.call(value)
+
+      if (type === '[object Boolean]') {
+        resolvedValue.isBoolean = true
+      }
+
+      if (type === '[object Date]') {
+        resolvedValue.isDate = true
+      }
+
+      return resolvedValue
     }
   })
 }

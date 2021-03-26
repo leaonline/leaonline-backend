@@ -13,6 +13,7 @@ export const StateVariables = {
   allSubsComplete: 'allSubsComplete',
   submitting: 'submitting',
   removing: 'removing',
+  removed: 'removed',
   formTypesLoaded: 'formTypesLoaded',
 
   /**
