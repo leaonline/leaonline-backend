@@ -238,7 +238,7 @@ Template.afLeaTaskContent.helpers({
 
     const previewData = instance.stateVars.get('previewData')
     const onInput = onItemInput.bind(Template.instance())
-    return Object.assign({}, previewData, previewContent, { onInput })
+    return Object.assign({}, previewContent, previewData ,{ onInput })
   },
   scoreContent () {
     return Template.instance().stateVars.get('scoreContent')
@@ -261,6 +261,7 @@ Template.afLeaTaskContent.events({
     const name = dataTarget(event, templateInstance, 'name')
     createTypeSchema(name, templateInstance)
     templateInstance.stateVars.set('currentTypeToAdd', name)
+    templateInstance.stateVars.set('isNewContent', true)
   },
   'click .modal-back-button' (event, templateInstance) {
     event.preventDefault()
@@ -297,7 +298,7 @@ Template.afLeaTaskContent.events({
   },
   'click .preview-content-button' (event, templateInstance) {
     event.preventDefault()
-
+    const isNewContent = templateInstance.stateVars.get('isNewContent')
     const type = templateInstance.stateVars.get('currentTypeToAdd')
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
     if (!insertDoc) return
@@ -324,17 +325,19 @@ Template.afLeaTaskContent.events({
         scores: Scoring.run(type, previewContent.value, [])
       }
 
+      if (isItemContent && isNewContent) {
+        const unitId = templateInstance.data.unitId || 'undefined'
+        const previewData = createItemData({ unitId, subtype: type, page: 0 })
+        templateInstance.stateVars.set({ previewData })
+      }
+
+
       templateInstance.stateVars.set({ previewContent, scoreContent, updatePreview: false })
     }, 300)
   },
   'hidden.bs.modal' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.stateVars.set({
-      currentTypeToAdd: null,
-      previewContent: null,
-      currentElement: null,
-      currentElementIndex: null
-    })
+    templateInstance.stateVars.destroy()
   },
   'mouseover .element-container' (event, templateInstance) {
     event.preventDefault()
@@ -366,6 +369,7 @@ Template.afLeaTaskContent.events({
 
     createTypeSchema(name, templateInstance)
     templateInstance.stateVars.set('currentTypeToAdd', name)
+    templateInstance.stateVars.set('isNewContent', false)
     templateInstance.stateVars.set('currentElement', currentElement)
     templateInstance.stateVars.set('previewContent', elementDoc)
     templateInstance.stateVars.set('currentElementIndex', index)
@@ -422,7 +426,7 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
   const instance = this
   const previewContent = instance.stateVars.get('previewContent')
   if (!previewContent) {
-    console.info('[TaskContent]: no content to submit onItemInput')
+    console.warn('[TaskContent]: no content to submit onItemInput')
     return
   }
 
