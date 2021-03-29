@@ -265,7 +265,7 @@ Template.afLeaTaskContent.events({
   },
   'click .modal-back-button' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.stateVars.set('currentTypeToAdd', null)
+    resetModalState(templateInstance)
   },
   'submit #afLeaTaskAddContenTypeForm' (event, templateInstance) {
     event.preventDefault()
@@ -273,7 +273,7 @@ Template.afLeaTaskContent.events({
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
     if (!insertDoc) return
 
-    const elements = templateInstance.stateVars.get('elements')
+    const elements = templateInstance.stateVars.get('elements') || []
     const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
 
     const contentElementDoc = (isItem(name))
@@ -337,7 +337,7 @@ Template.afLeaTaskContent.events({
   },
   'hidden.bs.modal' (event, templateInstance) {
     event.preventDefault()
-    templateInstance.stateVars.destroy()
+    resetModalState(templateInstance)
   },
   'mouseover .element-container' (event, templateInstance) {
     event.preventDefault()
@@ -408,9 +408,9 @@ function move (arr, oldIndex, newIndex) {
 }
 
 function updateElements (elements, templateInstance) {
-  templateInstance.stateVars.set('elements', elements)
   const val = EJSON.stringify(elements)
   templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
+  templateInstance.stateVars.set('elements', elements)
 }
 
 /**
@@ -438,4 +438,16 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
     scores: scoreResults
   }
   instance.stateVars.set({ scoreContent })
+}
+
+function resetModalState (templateInstance) {
+  templateInstance.state.set({
+    isNewContent: null,
+    currentTypeToAdd: null,
+    previewContent: null,
+    previewData: null,
+    currentElement: null,
+    currentElementIndex: null,
+    scoreContent: null
+  })
 }
