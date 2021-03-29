@@ -238,7 +238,7 @@ Template.afLeaTaskContent.helpers({
 
     const previewData = instance.stateVars.get('previewData')
     const onInput = onItemInput.bind(Template.instance())
-    return Object.assign({}, previewContent, previewData ,{ onInput })
+    return Object.assign({}, previewContent, previewData, { onInput })
   },
   scoreContent () {
     return Template.instance().stateVars.get('scoreContent')
@@ -330,7 +330,6 @@ Template.afLeaTaskContent.events({
         const previewData = createItemData({ unitId, subtype: type, page: 0 })
         templateInstance.stateVars.set({ previewData })
       }
-
 
       templateInstance.stateVars.set({ previewContent, scoreContent, updatePreview: false })
     }, 300)
