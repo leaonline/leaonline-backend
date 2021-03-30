@@ -271,6 +271,7 @@ Template.afLeaTaskContent.events({
   },
   'submit #afLeaTaskAddContenTypeForm' (event, templateInstance) {
     event.preventDefault()
+
     const name = templateInstance.stateVars.get('currentTypeToAdd')
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
     if (!insertDoc) return
