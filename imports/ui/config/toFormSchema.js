@@ -57,7 +57,7 @@ const toIndexedTokens = (token, index) => ({
   label: token
 })
 
-export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => {
+export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formId }) => {
   const { name } = config
 
   // first we define all the properties on the copy
@@ -127,6 +127,8 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance }) => 
       autoform.type = FormTypes.taskContent.template
       autoform.connection = app.connection
       autoform.app = app.name
+      autoform.load = { field: name => AutoForm.getFieldValue(name) }
+
       Object.assign(autoform, definitions.dependency)
       loadTargetForm({
         targetForm: FormTypes.taskContent,

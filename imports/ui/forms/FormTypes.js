@@ -1,5 +1,5 @@
 /**
- * @deprecated Use an interface in toFormSchema and automatically assign
+ * Use an interface in toFormSchema and automatically assign
  * autoform form based on flags instead of manual configuration (convention
  * over configuration)
  */

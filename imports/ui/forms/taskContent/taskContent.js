@@ -98,6 +98,7 @@ const loadDependencies = (config, appName) => {
         connection: connection,
         instance: instance
       })
+
       loadDocumentsWithDependencies({
         config: dependency,
         connection: connection,
@@ -147,6 +148,7 @@ const createTypeSchema = (name, templateInstance) => {
   const { app } = templateInstance.data.atts
   const { settingsDoc } = templateInstance.data.atts
   const uriBase = connection._stream.rawUrl
+
   _currentTypeSchema = currentTypeSchema({
     name,
     imagesCollection,
@@ -303,6 +305,8 @@ Template.afLeaTaskContent.events({
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
     if (!insertDoc) return
 
+    delete insertDoc.unitSet
+
     const isItemContent = isItem(type)
 
     templateInstance.stateVars.set({
@@ -440,7 +444,7 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
 }
 
 function resetModalState (templateInstance) {
-  templateInstance.state.set({
+  templateInstance.stateVars.set({
     isNewContent: null,
     currentTypeToAdd: null,
     previewContent: null,

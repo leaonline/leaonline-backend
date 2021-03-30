@@ -13,7 +13,9 @@ export const createAddFieldsToQuery = (fieldsResolver, { skipUndefined = true } 
       if (typeof fieldValue !== 'undefined' || !skipUndefined) {
         query[fieldDefinition] = fieldValue
       }
-    } else if (fieldType === 'object') {
+    }
+
+    else if (fieldType === 'object') {
       const { type } = fieldDefinition
 
       // we can resolve a linked document and use its field-values to set them
@@ -35,10 +37,14 @@ export const createAddFieldsToQuery = (fieldsResolver, { skipUndefined = true } 
             query[propertyName] = fieldValue
           }
         })
-      } else {
+      }
+
+      else {
         throw new TypeError(`[addFieldsToQuery]: fieldType object - subtype [${type}] not yet implemented!`)
       }
-    } else {
+    }
+
+    else {
       throw new TypeError(`[addFieldsToQuery]: fieldType ${fieldType} not yet implemented!`)
     }
   })
