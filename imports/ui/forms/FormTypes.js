@@ -60,7 +60,7 @@ export const FormTypes = {
     template: 'regexp',
     loaded: false,
     load: async function () {
-      const mod = await import('meteor/jkuester:autoform-regexp')
+      const mod = await import('meteor/leaonline:autoform-regexp')
       FormTypes.regExp.loaded = true
       return mod
     }
