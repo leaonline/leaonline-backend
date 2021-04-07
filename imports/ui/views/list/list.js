@@ -525,7 +525,7 @@ function updateList (list, templateInstance) {
   })
 }
 
-function resetFormState(templateInstance) {
+function resetFormState (templateInstance) {
   templateInstance.state.set({
     updateDoc: null,
     previewTarget: null,
