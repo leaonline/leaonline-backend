@@ -184,15 +184,18 @@ Template.genericList.events(wrapEvents({
   },
   'click .insert-button' (event, templateInstance) {
     event.preventDefault()
+    resetFormState(templateInstance)
     setQueryParam({ action: StateActions.insert })
   },
   'click .edit-button' (event, templateInstance) {
     event.preventDefault()
+    resetFormState(templateInstance)
     const target = dataTarget(event, templateInstance)
     setQueryParam({ action: StateActions.update, doc: target })
   },
   'click .cancel-form-button' (event, templateInstance) {
     event.preventDefault()
+    resetFormState(templateInstance)
     setQueryParam({ action: null })
   },
   'click .current-document-preview-button' (event, templateInstance) {
@@ -230,6 +233,7 @@ Template.genericList.events(wrapEvents({
               updateList(list, templateInstance)
             }
           })
+          resetFormState(templateInstance)
           setQueryParam({ action: null })
         })
     }))
@@ -289,6 +293,7 @@ Template.genericList.events(wrapEvents({
               updateList(list, templateInstance)
             }
           })
+          resetFormState(templateInstance)
           setQueryParam({ action: null })
         })
     }))
@@ -517,5 +522,14 @@ function updateList (list, templateInstance) {
     list: prepared,
     [StateVariables.currentPage]: 0,
     [StateVariables.pageCount]: pageCount
+  })
+}
+
+function resetFormState(templateInstance) {
+  templateInstance.state.set({
+    updateDoc: null,
+    previewTarget: null,
+    insertForm: false,
+    updateForm: false
   })
 }

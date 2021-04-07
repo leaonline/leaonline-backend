@@ -260,6 +260,9 @@ Template.afLeaTaskContent.events({
   },
   'click .select-content-type-button' (event, templateInstance) {
     event.preventDefault()
+
+    // XXX: we make sure this
+    resetModalState(templateInstance)
     const name = dataTarget(event, templateInstance, 'name')
     createTypeSchema(name, templateInstance)
     templateInstance.stateVars.set('currentTypeToAdd', name)
