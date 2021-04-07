@@ -2,21 +2,19 @@ import { Template } from 'meteor/templating'
 import { wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
 import { formIsValid } from '../../../utils/form'
 import { StateVariables } from '../../config/StateVariables'
-import '../../components/stringified/stringified'
-import './document.html'
 import { Router } from '../../../api/routes/Router'
 import { by300 } from '../../../utils/dely'
 import { defineUndefinedFields } from '../../../utils/defineUndefinedFields'
 import { defaultNotifications } from '../../../utils/defaultNotifications'
 import { updateDocumentState } from '../../../utils/updateDocumentState'
+import '../../components/stringified/stringified'
+import './document.html'
 
 Template.genericDocument.onCreated(function () {
   const instance = this
 
   const onSubscribed = () => {
     const updateDoc = instance.mainCollection.findOne() || {}
-    console.log('update doc', updateDoc)
-    delete updateDoc._id
     instance.state.set({ updateDoc })
   }
 
@@ -87,7 +85,6 @@ Template.genericDocument.events({
     const { connection } = app
 
     connection.call(actonUpdate.name, updateDoc, by300((err, res) => {
-      if (err) console.error(err)
       templateInstance.state.set(StateVariables.submitting, false)
       defaultNotifications(err, res)
         .success(function () {

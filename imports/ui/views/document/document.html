@@ -17,6 +17,7 @@
             {{! in view mode we use the defined renderer to display the fields}}
 
             {{#autoForm id="viewForm" type="readonly" schema=updateSchema
+                        validate="none"
                         doc=updateDoc}}
                 {{#each afFieldNames}}
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
@@ -38,6 +39,7 @@
 
             <div class="w-100 {{#if isUpdating}}d-unavailable{{/if}}">
                 {{#autoForm id="updateForm" type="normal" schema=updateSchema
+                            validate="none"
                             doc=updateDoc }}
                     {{#each afFieldNames}}
                         {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
