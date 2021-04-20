@@ -51,8 +51,8 @@ leaonline:publication-factory
 leaonline:ratelimit-factory
 
 # files
-ostrio:files@2.0.1
-ostrio:autoform-files@2.4.0
+ostrio:files@2.0.1!
+ostrio:autoform-files@2.4.0!
 
 ostrio:flow-router-extra
 ostrio:i18n
@@ -76,7 +76,7 @@ communitypackages:autoform-plain
 d3k4y:autoform-markdown
 leaonline:autoform-regexp
 jkuester:template-loader
-
+aldeed:autoform-select2
 # experimental
 qnipp:yaml
 

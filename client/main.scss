@@ -87,3 +87,9 @@ h1 {
 .trapezoid {
   transform: perspective(3px) rotateX(-1deg);
 }
+
+select[multiple] {
+  overflow-y: auto;
+  min-height: 25vh;
+  height: 100%;
+}

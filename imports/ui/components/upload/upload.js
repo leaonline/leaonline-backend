@@ -6,7 +6,6 @@ const defaultInsertOpts = {
   meta: {},
   isBase64: false,
   transport: 'ddp',
-  streams: 'dynamic',
   chunkSize: 'dynamic',
   allowWebWorkers: false
 }

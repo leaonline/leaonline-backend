@@ -17,8 +17,8 @@
 
             {{#with loginError}}
                 <div class="alert alert-danger">
-                    <span class="alert-heading">{{i18n this.error}}</span>
-                    <span>{{i18n this.reason}}</span>
+                    <h2 class="py-2">{{i18n this.name}}: {{i18n this.reason}}</h2>
+                    <pre>{{this.details}}</pre>
                 </div>
             {{/with}}
 

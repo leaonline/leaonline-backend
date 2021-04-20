@@ -37,9 +37,9 @@ export const getTokenizeValueResolver = mappedInput => {
     }
 
     if (pattern) {
-      console.info(fieldValue)
-      console.info(pattern)
-      console.info(fieldValue.match(pattern))
+      // console.info(fieldValue)
+      // console.info(pattern)
+      // console.info(fieldValue.match(pattern))
       return fieldValue.match(pattern)
     }
 

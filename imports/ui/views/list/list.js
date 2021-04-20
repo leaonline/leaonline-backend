@@ -233,8 +233,8 @@ Template.genericList.events(wrapEvents({
               updateList(list, templateInstance)
             }
           })
-          resetFormState(templateInstance)
-          setQueryParam({ action: null })
+          // resetFormState(templateInstance)
+          // setQueryParam({ action: null })
         })
     }))
   },
@@ -293,8 +293,8 @@ Template.genericList.events(wrapEvents({
               updateList(list, templateInstance)
             }
           })
-          resetFormState(templateInstance)
-          setQueryParam({ action: null })
+          // resetFormState(templateInstance)
+          // setQueryParam({ action: null })
         })
     }))
   },

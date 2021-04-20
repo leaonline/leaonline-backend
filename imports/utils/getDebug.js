@@ -4,7 +4,7 @@ export const getDebug = (instance, debug) => {
   if (debug) {
     return (...args) => {
       if (Meteor.isDevelopment) {
-        console.info(`[${instance.view.name}]`, ...args)
+        console.debug(`[${instance.view.name}]`, ...args)
       }
     }
   }

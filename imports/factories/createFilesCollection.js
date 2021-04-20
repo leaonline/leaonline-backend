@@ -3,4 +3,7 @@ import { i18n } from '../api/i18n/i18n'
 
 const i18nFactory = i18n.get
 
-export const createFilesCollection = createGridFilesFactory({ i18nFactory })
+export const createFilesCollection = createGridFilesFactory({
+  i18nFactory,
+  debug: true
+})

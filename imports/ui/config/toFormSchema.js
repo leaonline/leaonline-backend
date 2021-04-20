@@ -123,6 +123,11 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
       autoform.nullLabel = () => i18n.get('form.selectOne')
     }
 
+    if (isMultiple(definitions)) {
+      autoform.type = 'select2'
+      autoform.afFieldInput = { multiple: true, tags: true }
+    }
+
     if (isPageContent(definitions)) {
       autoform.type = FormTypes.taskContent.template
       autoform.connection = app.connection
@@ -153,7 +158,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
       autoform.settingsDoc = Object.assign({}, settingsDoc)
       Object.assign(autoform, definitions.dependency)
     }
-
+    console.debug(name, autoform)
     if (definitions.dependency) {
       const { dependency } = definitions
       const { requires, collection, filesCollection, context, field, isArray, filter } = dependency
@@ -387,4 +392,5 @@ const isMediaUrl = value => value.isMediaUrl === true
 const isTextArea = value => value.type === String && !isRichText(value) && typeof value.max === 'number' && value.max >= textAreaThreshold
 const isRegExp = ({ type }) => type === RegExp
 const isBoolean = ({ type }) => type === Boolean
+const isMultiple = ({ type, dependency }) => type === Array && dependency
 const isSettingsForm = ({ form }) => form && FormTypes[form]

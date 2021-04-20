@@ -38,7 +38,6 @@ export const parseCollections = function parseCollections ({ instance, config, c
     if (collection && collectionName !== Meteor.users._name) {
       instance.collections.set(collectionName, collection)
     } else {
-      console.info(config.schema)
       const localCollection = createCollection({
         name: null,
         schema: Object.assign({}, config.schema, defaultSchema),

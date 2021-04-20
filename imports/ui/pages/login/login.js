@@ -51,10 +51,15 @@ Template.login.events({
     event.preventDefault()
 
     templateInstance.state.set('loggingIn', true)
-    Users.login.call(by300((err, res) => {
+    Users.login.call(by300(err => {
       templateInstance.state.set('loggingIn', false)
       if (err) {
-        return templateInstance.state.set('loginError', err)
+        const code = String(err.error)
+        return templateInstance.state.set('loginError', {
+          name: code,
+          reason: err.reason,
+          details: JSON.stringify(err.details?.data)
+        })
       } else {
         const route = templateInstance.data.next()
         Router.go(route)

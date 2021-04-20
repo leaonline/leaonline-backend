@@ -1,4 +1,5 @@
 {
+  "404": "404 (nicht gefunden)",
   "actions": {
     "create": "Erstellen",
     "edit": "Bearbeiten",
@@ -159,5 +160,12 @@
     "success": "Aktion Erfolgreich!",
     "warningTitle": "Aktion teilweise Erfolgreich!",
     "warningDescription": "Es wurde weder ein Fehler noch ein Ergebnis zurückgemeldet."
+  },
+  "lea": {
+    "oauth": {
+      "getIdentity": {
+        "failed": "Identität konnte nicht abgerufen werden"
+      }
+    }
   }
 }
