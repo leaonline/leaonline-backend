@@ -460,4 +460,3 @@ function resetModalState (templateInstance) {
     scoreContent: null
   })
 }
-
