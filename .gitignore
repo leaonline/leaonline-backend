@@ -2,3 +2,4 @@ node_modules/
 .idea
 public/fonts/
 .deploy
+SemikolonPlus*
