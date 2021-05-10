@@ -196,7 +196,7 @@ Template.genericList.events(wrapEvents({
   'click .cancel-form-button' (event, templateInstance) {
     event.preventDefault()
     resetFormState(templateInstance)
-    setQueryParam({ action: null })
+    setQueryParam({ action: null, doc: null })
   },
   'click .current-document-preview-button' (event, templateInstance) {
     event.preventDefault()
