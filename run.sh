@@ -1,7 +1,7 @@
 #!/bin/sh
 meteor npm install
 
-PACKAGE_DIRS="../lib:../liboauth:../meteor-autoform-themes"
+PACKAGE_DIRS="../lib:../liboauth:../libext:../meteor-autoform-themes"
 AUTOFORM_DYNAMIC_IMPORTS=1 \
     AUTOFORM_DEBUG=1 \
     USE_DYNAMIC_IMPORTS=1 \

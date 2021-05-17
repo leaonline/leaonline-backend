@@ -431,7 +431,7 @@ function updateElements (elements, templateInstance) {
  * @param type
  * @param responses
  */
-function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
+function onItemInput ({ userId, sessionId, taskId, page, type, subtype, responses }) {
   const instance = this
   const previewContent = instance.stateVars.get('previewContent')
   if (!previewContent) {
@@ -440,7 +440,7 @@ function onItemInput ({ userId, sessionId, taskId, page, type, responses }) {
   }
 
   const itemDoc = previewContent.value // item docs are stored in value
-  const scoreResults = Scoring.run(type, itemDoc, { responses })
+  const scoreResults = Scoring.run(subtype, itemDoc, { responses })
   const scoreContent = {
     type: 'preview',
     subtype: Scoring.name,

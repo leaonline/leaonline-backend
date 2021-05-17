@@ -284,12 +284,18 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
             return entries.map((entry, index) => {
               let value = entry[valueField]
               let label = entry[labelField]
+
               if (valueField === '@index') {
                 value = index
               }
+
               if (labelField === '@index') {
                 label = index
               }
+
+              if (!label) label = index + 1
+              if (!value) value = index
+
               return { value, label }
             })
           }
