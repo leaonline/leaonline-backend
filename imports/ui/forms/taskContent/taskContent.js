@@ -214,7 +214,7 @@ Template.afLeaTaskContent.helpers({
   overElement (index) {
     return Template.instance().stateVars.get('overElement') === index
   },
-  currentElement () {
+  currentElement (){
     return Template.instance().stateVars.get('currentElement')
   },
   firstElement (index) {
@@ -276,7 +276,6 @@ Template.afLeaTaskContent.events({
   },
   'submit #afLeaTaskAddContenTypeForm' (event, templateInstance) {
     event.preventDefault()
-
     const name = templateInstance.stateVars.get('currentTypeToAdd')
     const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
     if (!insertDoc) return
@@ -284,7 +283,7 @@ Template.afLeaTaskContent.events({
     const elements = templateInstance.stateVars.get('elements') || []
     const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
 
-    const contentElementDoc = (isItem(name))
+    const contentElementDoc = isItem(name)
       ? contentFromItem(name, insertDoc)
       : insertDoc
 
@@ -450,8 +449,9 @@ function onItemInput ({ userId, sessionId, taskId, page, type, subtype, response
 }
 
 function resetModalState (templateInstance) {
+  _currentTypeSchema = null
   templateInstance.stateVars.set({
-    isNewContent: null,
+    isNewContent: true,
     currentTypeToAdd: null,
     previewContent: null,
     previewData: null,
