@@ -12,13 +12,11 @@ Template.afSortable.onCreated(function () {
   instance.autorun(() => {
     const data = Template.currentData()
     const { atts } = data
-
     const invalid = atts.class && atts.class.indexOf('invalid') > -1
     const disabled = Object.prototype.hasOwnProperty.call(atts, 'disabled')
     const dataSchemaKey = atts['data-schema-key']
-
-    const selectedOptions = getSelectedOptions(data.value, data.selectOptions)
-    const unselectedOptions = getUnselectedOptions(selectedOptions, data.selectOptions)
+    const selectedOptions = getSelectedOptions(data.value || [], data.selectOptions || [])
+    const unselectedOptions = getUnselectedOptions(selectedOptions || [], data.selectOptions || [])
 
     instance.state.set({
       invalid,
@@ -84,10 +82,10 @@ Template.afSortable.onRendered(function () {
 })
 
 function getSelectedOptions (value = [], allOptions = []) {
-  return allOptions.filter(document => value.includes(document.value))
+  return value.map(id => allOptions.find(opt => opt.value === id))
 }
 
-function getUnselectedOptions (options, allOptions) {
+function getUnselectedOptions (options = [], allOptions = []) {
   if (options.length === allOptions.length) return []
 
   return (allOptions || []).filter(doc => !options.find(search => search.value === doc.value))
@@ -101,6 +99,9 @@ function updateData (templateInstance) {
   const values = []
   const $destination = templateInstance.$('.afSortableHiddenInput')
   const $source = templateInstance.$('.afsortable-entry')
+  if (!$source || !$source.get(0)) {
+    return console.warn('[sortable]: cannot update target, .afsortable-entry is not defined')
+  }
   $source.map((index, node) => {
     const value = templateInstance.$(node).data('target')
     values.push(value)
