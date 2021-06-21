@@ -22,6 +22,7 @@ import { updateDocumentState } from '../../../utils/updateDocumentState'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
+import './list.scss'
 import './list.html'
 
 const entryIsTrue = entry => entry === true
@@ -191,6 +192,7 @@ Template.genericList.events(wrapEvents({
     event.preventDefault()
     resetFormState(templateInstance)
     const target = dataTarget(event, templateInstance)
+    console.debug(templateInstance.actionUpdateSchema)
     setQueryParam({ action: StateActions.update, doc: target })
   },
   'click .cancel-form-button' (event, templateInstance) {
@@ -214,6 +216,7 @@ Template.genericList.events(wrapEvents({
     const insertDoc = formIsValid('insertForm', schema)
     if (!insertDoc) return
 
+    const close = templateInstance.state.get('close')
     templateInstance.state.set(StateVariables.submitting, true)
     const actionInsert = templateInstance.state.get('actionInsert')
     const app = templateInstance.data.app()
@@ -233,8 +236,11 @@ Template.genericList.events(wrapEvents({
               updateList(list, templateInstance)
             }
           })
-          // resetFormState(templateInstance)
-          // setQueryParam({ action: null })
+
+          if (close) {
+            resetFormState(templateInstance)
+            setQueryParam({ action: null })
+          }
         })
     }))
   },
@@ -252,12 +258,25 @@ Template.genericList.events(wrapEvents({
     const template = 'stringified'
     previewDoc(templateInstance, { doc, compare, template })
   },
+  'click .submit-insert-close-btn' (event, templateInstance) {
+    event.preventDefault()
+
+    templateInstance.state.set('close', true)
+    templateInstance.$('#insertForm').submit()
+  },
+  'click .submit-update-close-btn' (event, templateInstance) {
+    event.preventDefault()
+
+    templateInstance.state.set('close', true)
+    templateInstance.$('#updateForm').submit()
+  },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
 
     const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema, { template: templateInstance })
     if (!updateDoc) return
 
+    const close = templateInstance.state.get('close')
     const target = templateInstance.state.get('updateDoc')
 
     // we need to clean both documents in case the schema is updated
@@ -293,8 +312,11 @@ Template.genericList.events(wrapEvents({
               updateList(list, templateInstance)
             }
           })
-          // resetFormState(templateInstance)
-          // setQueryParam({ action: null })
+
+          if (close) {
+            resetFormState(templateInstance)
+            setQueryParam({ action: null })
+          }
         })
     }))
   },
@@ -527,6 +549,7 @@ function updateList (list, templateInstance) {
 
 function resetFormState (templateInstance) {
   templateInstance.state.set({
+    close: false,
     updateDoc: null,
     previewTarget: null,
     insertForm: false,

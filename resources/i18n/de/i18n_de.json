@@ -2,6 +2,7 @@
   "404": "404 (nicht gefunden)",
   "actions": {
     "create": "Erstellen",
+    "createAndClose": "Erstellen und schließen",
     "edit": "Bearbeiten",
     "cancel": "Abbrechen",
     "delete": "Löschen",
@@ -9,6 +10,7 @@
     "back": "Zurück",
     "submit": "Absenden",
     "update": "Aktualisieren",
+    "updateAndClose": "Aktualisieren und schließen",
     "preview": "Vorschau zeigen",
     "close": "Schließen",
     "insertDoc": "Ein neues Dokument anlegen",

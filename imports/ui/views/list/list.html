@@ -24,8 +24,10 @@
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
                 {{/each}}
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-success" type="submit">{{i18n
-                            "actions.create"}}</button>
+                    <span>
+                        <button class="btn btn-success" type="submit">{{i18n "actions.create"}}</button>
+                        <button class="btn btn-outline-success submit-insert-close-btn" type="button">{{i18n "actions.createAndClose"}}</button>
+                    </span>
                     <button class="btn btn-outline-secondary cancel-form-button">{{i18n
                             "actions.cancel"}}</button>
                 </div>
@@ -60,8 +62,10 @@
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
                 {{/each}}
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-secondary" type="submit">{{i18n
-                            "actions.update"}}</button>
+                    <span>
+                        <button class="btn btn-secondary" type="submit">{{i18n "actions.update"}}</button>
+                        <button class="btn btn-outline-secondary submit-update-close-btn" type="button">{{i18n "actions.updateAndClose"}}</button>
+                    </span>
                     <button class="btn btn-outline-secondary cancel-form-button">{{i18n
                             "actions.cancel"}}</button>
                 </div>
@@ -191,7 +195,7 @@
                                 {{/if}}
                             </th>
                         {{/each}}
-                        <th scope="col"></th>
+                        <th scope="col actions-col"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -241,7 +245,7 @@
                                     </td>
                                 {{/if}}
                             {{/each}}
-                            <td class="text-right no-wrap">
+                            <td class="text-right no-wrap actions-col">
                                 {{#if actionPreview}}
                                     <button class="btn btn-sm btn-outline-secondary border-0 current-document-preview-button"
                                             data-target="{{row.document._id}}">

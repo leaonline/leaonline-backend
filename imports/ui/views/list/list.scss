@@ -1,0 +1,12 @@
+.actions-col {
+  position: absolute;
+  width: 5em;
+  right: 0;
+  top: auto;
+  border-top-width: 1px;
+  /*only relevant for first row*/
+  margin-top: -1px;
+  /*compensate for top border*/
+  background: #fff;
+  border: none;
+}
