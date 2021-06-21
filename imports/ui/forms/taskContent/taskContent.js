@@ -214,7 +214,7 @@ Template.afLeaTaskContent.helpers({
   overElement (index) {
     return Template.instance().stateVars.get('overElement') === index
   },
-  currentElement (){
+  currentElement () {
     return Template.instance().stateVars.get('currentElement')
   },
   firstElement (index) {

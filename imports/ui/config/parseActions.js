@@ -27,9 +27,7 @@ export const parseActions = function parseActions ({ instance, config, app, logD
     renderer.load()
       .then(() => instance.state.set(StateVariables.actionPreview, renderer))
       .catch(e => logDebug(`failed loading renderer <${previewName}>`, e))
-  }
-
-  else {
+  } else {
     logDebug(new Error(`no renderer found for ${previewName}`))
   }
 
