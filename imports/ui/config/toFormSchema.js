@@ -158,7 +158,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
       autoform.settingsDoc = Object.assign({}, settingsDoc)
       Object.assign(autoform, definitions.dependency)
     }
-    console.debug(name, autoform)
+
     if (definitions.dependency) {
       const { dependency } = definitions
       const { requires, collection, filesCollection, context, field, isArray, filter } = dependency

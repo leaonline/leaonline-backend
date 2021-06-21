@@ -20,29 +20,41 @@ export const parseActions = function parseActions ({ instance, config, app, logD
     instance.state.set(StateVariables.actionRemove, actions.remove)
   }
 
-  if (settingsDoc.previewType) {
-    const renderer = TaskRenderers.get(settingsDoc.previewType)
-    if (renderer) {
-      renderer.load()
-        .then(() => {
-          instance.state.set(StateVariables.actionPreview, renderer)
-        })
-        .catch(e => logDebug(`failed loading renderer <${settingsDoc.previewType}>`, e))
-    } else {
-      logDebug(new Error(`no renderer found for ${settingsDoc.previewType}`))
-    }
+  const previewName = settingsDoc.previewType || TaskRenderers.fallbackRenderer
+  const renderer = TaskRenderers.get(previewName)
+
+  if (renderer) {
+    renderer.load()
+      .then(() => instance.state.set(StateVariables.actionPreview, renderer))
+      .catch(e => logDebug(`failed loading renderer <${previewName}>`, e))
+  }
+
+  else {
+    logDebug(new Error(`no renderer found for ${previewName}`))
   }
 
   if (actions.insert) {
     const insertFormSchemaDef = actions.insert.schema || schema
-    const insertFormSchema = toFormSchema({ schema: insertFormSchemaDef, config, settingsDoc, app, instance })
+    const insertFormSchema = toFormSchema({
+      schema: insertFormSchemaDef,
+      config,
+      settingsDoc,
+      app,
+      instance
+    })
     instance.actionInsertSchema = Schema.create(insertFormSchema, { clean: cleanOptions })
     instance.state.set(StateVariables.actionInsert, actions.insert)
   }
 
   if (actions.update) {
     const updateFormSchemaDef = actions.update.schema || schema
-    const updateFormSchema = toFormSchema({ schema: updateFormSchemaDef, config, settingsDoc, app, instance })
+    const updateFormSchema = toFormSchema({
+      schema: updateFormSchemaDef,
+      config,
+      settingsDoc,
+      app,
+      instance
+    })
     instance.actionUpdateSchema = Schema.create(updateFormSchema, { clean: cleanOptions })
     instance.state.set(StateVariables.actionUpdate, actions.update)
   }
