@@ -59,12 +59,12 @@ lai:collection-extensions@0.2.1_1
 launch-screen@1.2.1
 leaonline:accounts-lea@1.0.1
 leaonline:autoform-regexp@1.1.0
-leaonline:collection-factory@1.0.3
+leaonline:collection-factory@1.0.4
 leaonline:corelib@1.0.0
 leaonline:ddp-login@1.0.4
 leaonline:ejson-regexp@1.1.0
 leaonline:grid-factory@1.1.0
-leaonline:method-factory@1.0.0
+leaonline:method-factory@1.1.0
 leaonline:oauth-lea@1.0.2
 leaonline:publication-factory@1.0.0
 leaonline:ratelimit-factory@1.0.0
