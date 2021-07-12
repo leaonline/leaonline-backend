@@ -541,7 +541,7 @@ function updateList (list, templateInstance) {
 
   templateInstance.state.set({
     list: prepared,
-    //[StateVariables.currentPage]: 0,
+    // [StateVariables.currentPage]: 0,
     [StateVariables.pageCount]: pageCount
   })
 }
