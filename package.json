@@ -17,6 +17,7 @@
   "dependencies": {
     "@babel/runtime": "^7.13.10",
     "@fortawesome/fontawesome-free": "^5.15.3",
+    "@shopify/draggable": "^1.0.0-beta.12",
     "bcrypt": "^5.0.1",
     "bootstrap": "^4.6.0",
     "dely": "^1.0.2",

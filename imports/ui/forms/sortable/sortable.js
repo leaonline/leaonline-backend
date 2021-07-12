@@ -82,13 +82,20 @@ Template.afSortable.onRendered(function () {
 })
 
 function getSelectedOptions (value = [], allOptions = []) {
-  return value.map(id => allOptions.find(opt => opt.value === id))
+  return value.map(id => allOptions.find(opt => {
+    if (!opt) {
+      console.warn('opt is undefined', id, allOptions)
+      return false
+    }
+
+    return opt.value === id
+  }))
 }
 
 function getUnselectedOptions (options = [], allOptions = []) {
   if (options.length === allOptions.length) return []
 
-  return (allOptions || []).filter(doc => !options.find(search => search.value === doc.value))
+  return (allOptions || []).filter(doc => !options.find(search => search?.value === doc?.value))
 }
 
 function createSortable (target, options) {
@@ -99,13 +106,15 @@ function updateData (templateInstance) {
   const values = []
   const $destination = templateInstance.$('.afSortableHiddenInput')
   const $source = templateInstance.$('.afsortable-entry')
-  if (!$source || !$source.get(0)) {
-    return console.warn('[sortable]: cannot update target, .afsortable-entry is not defined')
-  }
-  $source.map((index, node) => {
+  const iteratable = $source.get(0)
+    ? $source
+    : []
+
+  iteratable.map((index, node) => {
     const value = templateInstance.$(node).data('target')
     values.push(value)
     return undefined
   })
+
   $destination.val(JSON.stringify(values))
 }

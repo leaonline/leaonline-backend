@@ -192,7 +192,6 @@ Template.genericList.events(wrapEvents({
     event.preventDefault()
     resetFormState(templateInstance)
     const target = dataTarget(event, templateInstance)
-    console.debug(templateInstance.actionUpdateSchema)
     setQueryParam({ action: StateActions.update, doc: target })
   },
   'click .cancel-form-button' (event, templateInstance) {
@@ -542,7 +541,7 @@ function updateList (list, templateInstance) {
 
   templateInstance.state.set({
     list: prepared,
-    [StateVariables.currentPage]: 0,
+    //[StateVariables.currentPage]: 0,
     [StateVariables.pageCount]: pageCount
   })
 }
