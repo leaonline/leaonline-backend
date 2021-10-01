@@ -386,7 +386,6 @@ Template.genericList.events(wrapEvents({
 }))
 
 function getSearchIndices ({ value, originalValue, templateInstance }) {
-
   return templateInstance.mainCollection
     .find()
     .map(doc => {
