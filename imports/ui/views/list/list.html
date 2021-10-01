@@ -183,19 +183,19 @@
             {{! documents table }}
 
             <div class="card-body bg-white mt-1 table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover table-sm">
                     <thead>
                     <tr>
                         <th scope="col">#</th>
                         {{#each label in fieldLabels}}
-                            <th {{cellAtts label.key true}}>
+                            <th {{cellAtts label.key true}} scope="col">
                                 {{! label could be disabled from being displayed }}
                                 {{#if label.value}}
                                     {{i18n label.value}}
                                 {{/if}}
                             </th>
                         {{/each}}
-                        <th scope="col" class="actions-col"></th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -245,7 +245,7 @@
                                     </td>
                                 {{/if}}
                             {{/each}}
-                            <td class="text-right no-wrap actions-col">
+                            <td class="text-right no-wrap">
                                 {{#if actionPreview}}
                                     <button class="btn btn-sm btn-outline-secondary border-0 current-document-preview-button"
                                             data-target="{{row.document._id}}">
