@@ -24,9 +24,13 @@ import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.scss'
 import './list.html'
+import { getSearchIds } from './helpers/getSearchIds'
+import { getCollection } from '../../../utils/collection'
+import { i18n } from '../../../api/i18n/i18n'
 
 const entryIsTrue = entry => entry === true
-const validateDocs = instance => function () {
+
+const validateDocs = instance => {
   // some contexts do not define an insert schema
   if (!instance.actionInsertSchema) return
 
@@ -38,9 +42,47 @@ const validateDocs = instance => function () {
   instance.mainCollection.find().forEach(doc => {
     const { _id, meta, ...rest } = doc
     ctx.validate(rest)
+
     if (!ctx.isValid()) {
       validationErrors[_id] = ctx.validationErrors()
     }
+
+    // validate dependency referencing
+    instance.fieldLabels.some(({ key}) => {
+      const config = instance.fieldConfig[key]
+      if (!config) return false
+
+      const resolver = config?.resolver
+      let fieldValue = resolver ? resolver(doc[key]) : doc[key]
+
+      if (fieldValue === undefined || fieldValue === null) {
+        return false
+      }
+
+
+      // however, if we get config, we want to search through dependencies 1st
+      if (config.dependency?.collection) {
+        const collection = getCollection(config.dependency.collection)
+        const dependencyDoc = fieldValue.doc
+        if (!dependencyDoc) return false
+
+        const depList = Array.isArray(dependencyDoc)
+          ? dependencyDoc
+          : [dependencyDoc]
+
+        depList.forEach(depDoc => {
+          const id = depDoc._id || depDoc.value
+          if (collection.find(id).count() === 0) {
+            const field = i18n.get(config.label)
+            validationErrors[_id] = validationErrors[_id] || []
+            validationErrors[_id].push({
+              name: i18n.get('list.validationError'),
+              type: i18n.get('document.dependencyNotFound', { field, id })
+            })
+          }
+        })
+      }
+    })
   })
 
   instance.state.set({ validationErrors })
@@ -50,6 +92,8 @@ Template.genericList.onCreated(function () {
   const instance = this
   instance.state.set(StateVariables.docsPerPage, 15)
   instance.state.set(StateVariables.currentPage, 0)
+
+  // 1. setup backend config / service config
 
   instance.autorun(() => {
     const data = Template.currentData()
@@ -72,11 +116,11 @@ Template.genericList.onCreated(function () {
     }
   })
 
+  // 2. create handler to display already opened docs on refresh
+
   instance.autorun(() => {
     const allSubsComplete = instance.state.get(StateVariables.allSubsComplete)
     if (!allSubsComplete) return
-
-    Tracker.nonreactive(validateDocs(instance))
 
     // since we may need to dynamically load special form types
     // we need to wait until they are loaded or the form will run into errors
@@ -98,6 +142,16 @@ Template.genericList.onCreated(function () {
 
     updateStateAction({ action, updateDoc, instance })
   })
+
+  // 3. reactive validation on collection change
+
+  instance.autorun(() => {
+    const insert = instance.state.get('insertForm')
+    const update = instance.state.get('updateForm')
+    if (!insert && !update) validateDocs(instance)
+  })
+
+  // 4. setup on removed handler to update list
 
   instance.autorun(() => {
     const removed = instance.state.get(StateVariables.removed)
@@ -174,6 +228,13 @@ Template.genericList.helpers(wrapHelpers({
   },
   searchFailed () {
     return Template.getState('searchFailed')
+  },
+  validationErrors () {
+    const errors = Template.getState('validationErrors')
+    return errors && Object.values(errors)
+  },
+  filterErrors () {
+    return Template.getState('filterErrors')
   }
 }))
 
@@ -335,6 +396,24 @@ Template.genericList.events(wrapEvents({
       templateInstance.$('.list-search-input').focus()
     }, 100)
   },
+  'click .filter-validation-errors' (event, templateInstance) {
+    event.preventDefault()
+    const filterErrors = templateInstance.state.get('filterErrors')
+
+    if (filterErrors) {
+      const fullList = templateInstance.mainCollection.find({}, { reactive: false }).fetch()
+      updateList(fullList, templateInstance)
+      templateInstance.state.set('filterErrors', false)
+    }
+
+    else {
+      const validationErrors = templateInstance.state.get('validationErrors')
+      const ids = Object.keys(validationErrors)
+      const list = templateInstance.mainCollection.find({ _id: { $in: ids } }, { reactive: false }).fetch()
+      updateList(list, templateInstance)
+      templateInstance.state.set('filterErrors', true)
+    }
+  },
   'click .close-search-button' (event, templateInstance) {
     event.preventDefault()
     const fullList = templateInstance.mainCollection.find({}, { reactive: false }).fetch()
@@ -346,8 +425,7 @@ Template.genericList.events(wrapEvents({
   },
   'input .list-search-input': debounce((event, templateInstance) => {
     event.preventDefault()
-    const originalValue = templateInstance.$(event.currentTarget).val().trim()
-    const value = originalValue.toLowerCase()
+    const value = templateInstance.$(event.currentTarget).val()
     const transform = templateInstance.state.get('transform')
 
     // reset search if input is too short
@@ -362,7 +440,12 @@ Template.genericList.events(wrapEvents({
     let indices
 
     try {
-      indices = getSearchIndices({ value, originalValue, templateInstance })
+      indices = getSearchIds({
+        value,
+        collection: templateInstance.mainCollection,
+        fieldConfig: templateInstance.fieldConfig,
+        fieldLabels: templateInstance.fieldLabels
+      })
     } catch (e) {
       console.error(e)
       indices = []
@@ -385,74 +468,6 @@ Template.genericList.events(wrapEvents({
   }, 500)
 }))
 
-function getSearchIndices ({ value, originalValue, templateInstance }) {
-  return templateInstance.mainCollection
-    .find()
-    .map(doc => {
-      const found = templateInstance.fieldLabels.some(({ key }) => {
-        const config = templateInstance.fieldConfig[key]
-
-        // if we can't find a config for the the given key we can skip early
-        if (!config) {
-          return false
-        }
-
-        // if we haven't found something, let's try to resolve some field values
-        // and see if their resolved values contain the search value
-        const resolver = config?.resolver
-        let fieldValue = resolver ? resolver(doc[key]) : doc[key]
-
-        if (fieldValue === undefined || fieldValue === null) {
-          return false
-        }
-
-        // however, if we get config, we want to search through dependencies 1st
-        if (config.dependency) {
-          const dependencyDoc = fieldValue.doc
-          if (!dependencyDoc) return false
-
-          const docList = Array.isArray(dependencyDoc)
-            ? dependencyDoc
-            : [dependencyDoc]
-
-          // if we search for an _id and the dependency may have this _id
-          // we want to add the parent doc to the list as well
-          const dependencyIdFound = docList.some(depDoc => {
-            return (depDoc._id || depDoc.value) === originalValue
-          })
-
-          if (dependencyIdFound) {
-            return true
-          }
-
-          // For non-ids we search in the label for the term
-          return dependencyDoc.label
-            ? String(dependencyDoc.label).toLowerCase().includes(value)
-            : false
-        }
-
-        // some simple fields are split into { type, value }
-        // so we need to extract their value
-        fieldValue = Object.hasOwnProperty.call(fieldValue, 'value')
-          ? fieldValue.value
-          : fieldValue
-
-        if (config.type === String) {
-          return fieldValue && fieldValue.toLowerCase().includes(value)
-        }
-
-        if (config.type === Number) {
-          fieldValue.toString().includes(value)
-        }
-
-        // nothing found at all :(
-        return false
-      })
-
-      return found && doc._id
-    })
-    .filter(entry => !!entry)
-}
 
 function onClosed () {
   this.state.set('previewTarget', null)

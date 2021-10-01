@@ -2,6 +2,9 @@
   "404": "404 (nicht gefunden)",
   "actions": {
     "create": "Erstellen",
+    "show": "Anzeigen",
+    "filter": "Filtern",
+    "reset": "Zurücksetzen",
     "createAndClose": "Erstellen und schließen",
     "edit": "Bearbeiten",
     "cancel": "Abbrechen",
@@ -21,7 +24,8 @@
   },
   "document": {
     "viewMode": "Vorschau",
-    "editMode": "In Bearbeitung"
+    "editMode": "In Bearbeitung",
+    "dependencyNotFound": "Verlinktes Dokument (Feld '{{field}}') wurde nicht gefunden"
   },
   "search": {
     "placeholder": "Suchtext eingeben",
@@ -143,12 +147,19 @@
     },
     "mediaLib": {
       "title": "Medien-Bibliothek"
+    },
+    "list": {
+      "title": "Listenansicht",
+      "validationErrors": "Es ist/sind {{length}} Validierungsfehler aufgetreten!"
     }
   },
   "errors": {
     "permissionDenied": {
       "title": "Kein Zugriffsrecht",
       "noUser": "Nicht als Benutzer angemeldet"
+    },
+    "validation": {
+      "title": "Validierung fehlgeschlagen"
     }
   },
   "alignment": {

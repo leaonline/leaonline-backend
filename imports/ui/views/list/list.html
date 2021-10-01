@@ -1,5 +1,4 @@
 <template name="genericList">
-
     {{#if insertForm}}
         <div class="card-body d-flex justify-content-between">
             <h4>{{i18n config.label}} - {{i18n "actions.insertDoc"}}</h4>
@@ -25,8 +24,11 @@
                 {{/each}}
                 <div class="d-flex justify-content-between">
                     <span>
-                        <button class="btn btn-success" type="submit">{{i18n "actions.create"}}</button>
-                        <button class="btn btn-outline-success submit-insert-close-btn" type="button">{{i18n "actions.createAndClose"}}</button>
+                        <button class="btn btn-success" type="submit">{{i18n
+                                "actions.create"}}</button>
+                        <button class="btn btn-outline-success submit-insert-close-btn"
+                                type="button">{{i18n
+                                "actions.createAndClose"}}</button>
                     </span>
                     <button class="btn btn-outline-secondary cancel-form-button">{{i18n
                             "actions.cancel"}}</button>
@@ -63,8 +65,11 @@
                 {{/each}}
                 <div class="d-flex justify-content-between">
                     <span>
-                        <button class="btn btn-secondary" type="submit">{{i18n "actions.update"}}</button>
-                        <button class="btn btn-outline-secondary submit-update-close-btn" type="button">{{i18n "actions.updateAndClose"}}</button>
+                        <button class="btn btn-secondary" type="submit">{{i18n
+                                "actions.update"}}</button>
+                        <button class="btn btn-outline-secondary submit-update-close-btn"
+                                type="button">{{i18n
+                                "actions.updateAndClose"}}</button>
                     </span>
                     <button class="btn btn-outline-secondary cancel-form-button">{{i18n
                             "actions.cancel"}}</button>
@@ -152,6 +157,24 @@
                 </div>
             </span>
         </div>
+
+        {{#with validationErrors}}
+            <div class="alert alert-warning d-flex justify-content-between">
+                <span>{{i18n "errors.validation.title"}} / {{i18n "pages.list.validationErrors" length=this.length}}</span>
+                <span>
+                    <button class="btn btn-warning filter-validation-errors">
+                        {{#unless filterErrors}}
+                            {{i18n "actions.filter"}}
+                        {{else}}
+                            {{i18n "actions.reset"}}
+                        {{/unless}}
+                    </button>
+                </span>
+            </div>
+
+            {{! list validation errors modal}}
+
+        {{/with}}
 
         {{#unless loadComplete}}
             <div class="card-body">
