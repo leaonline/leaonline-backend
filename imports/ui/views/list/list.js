@@ -48,17 +48,16 @@ const validateDocs = instance => {
     }
 
     // validate dependency referencing
-    instance.fieldLabels.some(({ key}) => {
+    instance.fieldLabels.forEach(({ key }) => {
       const config = instance.fieldConfig[key]
       if (!config) return false
 
       const resolver = config?.resolver
-      let fieldValue = resolver ? resolver(doc[key]) : doc[key]
+      const fieldValue = resolver ? resolver(doc[key]) : doc[key]
 
       if (fieldValue === undefined || fieldValue === null) {
         return false
       }
-
 
       // however, if we get config, we want to search through dependencies 1st
       if (config.dependency?.collection) {
@@ -404,9 +403,7 @@ Template.genericList.events(wrapEvents({
       const fullList = templateInstance.mainCollection.find({}, { reactive: false }).fetch()
       updateList(fullList, templateInstance)
       templateInstance.state.set('filterErrors', false)
-    }
-
-    else {
+    } else {
       const validationErrors = templateInstance.state.get('validationErrors')
       const ids = Object.keys(validationErrors)
       const list = templateInstance.mainCollection.find({ _id: { $in: ids } }, { reactive: false }).fetch()
@@ -451,9 +448,8 @@ Template.genericList.events(wrapEvents({
       indices = []
     }
 
-    indices.push(originalValue) // in case we enter an Id
+    indices.push(value)
     const query = { _id: { $in: indices } }
-
     const filteredDocs = templateInstance.mainCollection.find(query, transform).fetch()
 
     if (filteredDocs.length === 0) {
@@ -467,7 +463,6 @@ Template.genericList.events(wrapEvents({
     updateList(filteredDocs, templateInstance)
   }, 500)
 }))
-
 
 function onClosed () {
   this.state.set('previewTarget', null)
