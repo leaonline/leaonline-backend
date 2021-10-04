@@ -111,6 +111,7 @@ Template.genericList.onCreated(function () {
           updateList(list, instance)
         }
       }))
+
       instance.state.set('lastPath', pathname)
     }
   })
@@ -120,6 +121,9 @@ Template.genericList.onCreated(function () {
   instance.autorun(() => {
     const allSubsComplete = instance.state.get(StateVariables.allSubsComplete)
     if (!allSubsComplete) return
+
+    // first validation attempt
+    Tracker.nonreactive(() => validateDocs(instance))
 
     // since we may need to dynamically load special form types
     // we need to wait until they are loaded or the form will run into errors
@@ -142,15 +146,7 @@ Template.genericList.onCreated(function () {
     updateStateAction({ action, updateDoc, instance })
   })
 
-  // 3. reactive validation on collection change
-
-  instance.autorun(() => {
-    const insert = instance.state.get('insertForm')
-    const update = instance.state.get('updateForm')
-    if (!insert && !update) validateDocs(instance)
-  })
-
-  // 4. setup on removed handler to update list
+  // 3. setup on removed handler to update list
 
   instance.autorun(() => {
     const removed = instance.state.get(StateVariables.removed)
@@ -161,8 +157,8 @@ Template.genericList.onCreated(function () {
     const query = instance.state.get('query') || {}
     const transform = instance.state.get('transform') || {}
     const list = instance.mainCollection.find(query, transform).fetch()
+    Tracker.nonreactive(() => validateDocs(instance))
     updateList(list, instance)
-
     instance.state.set(StateVariables.removed, null)
   })
 })
@@ -227,6 +223,9 @@ Template.genericList.helpers(wrapHelpers({
   },
   searchFailed () {
     return Template.getState('searchFailed')
+  },
+  searchOngoing () {
+    return Template.getState('searchOngoing')
   },
   validationErrors () {
     const errors = Template.getState('validationErrors')
@@ -422,6 +421,10 @@ Template.genericList.events(wrapEvents({
   },
   'input .list-search-input': debounce((event, templateInstance) => {
     event.preventDefault()
+
+    // set search indicator
+    templateInstance.state.set('searchOngoing', true)
+
     const value = templateInstance.$(event.currentTarget).val()
     const transform = templateInstance.state.get('transform')
 
@@ -431,7 +434,10 @@ Template.genericList.events(wrapEvents({
       templateInstance.state.set({
         searchFailed: false
       })
-      return updateList(fullList, templateInstance)
+
+      templateInstance.state.set('searchOngoing', false)
+      updateList(fullList, templateInstance)
+      return
     }
 
     let indices
@@ -453,7 +459,9 @@ Template.genericList.events(wrapEvents({
     const filteredDocs = templateInstance.mainCollection.find(query, transform).fetch()
 
     if (filteredDocs.length === 0) {
-      return templateInstance.state.set({ searchFailed: true })
+      templateInstance.state.set('searchOngoing', false)
+      templateInstance.state.set({ searchFailed: true })
+      return
     }
 
     templateInstance.state.set({
@@ -461,7 +469,8 @@ Template.genericList.events(wrapEvents({
     })
 
     updateList(filteredDocs, templateInstance)
-  }, 500)
+    templateInstance.state.set('searchOngoing', false)
+  }, 750)
 }))
 
 function onClosed () {

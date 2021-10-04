@@ -1,40 +1,64 @@
+import { check, Match } from 'meteor/check'
+import { Mongo } from 'meteor/mongo'
+
+const exists = x => typeof x !== 'undefined' && x !== null
+
 /**
- * Iterates all documents for a search term.
- * @param value {String} the raw search value
- * @param collection {Mongo.Collection}
- * @param fieldLabels {Object} resolver object
- * @param fieldConfig {Object} config for fields
+ * Iterates all documents and their dependencies for a search term.
+ *
+ * @param options {Object} options for this method
+ * @param options.value {String} the raw search value
+ * @param options.collection {Mongo.Collection}
+ * @param options.fieldLabels {Array} resolver object
+ * @param options.fieldConfig {Object} config for fields
  * @return {[String]} array of ids of documents that matches the search criteria
  */
-export const getSearchIds = ({ value, collection, fieldLabels, fieldConfig }) => {
+export const getSearchIds = options => {
+  check(options, Match.ObjectIncluding({
+    value: String,
+    collection: Mongo.Collection,
+    fieldLabels: [Object],
+    fieldConfig: Object
+  }))
+
+  const { value = '', collection, fieldLabels, fieldConfig } = options
   const originalValue = value.trim()
   const lowerCaseValue = value.trim().toLocaleLowerCase()
 
   return collection
     .find()
     .map(doc => {
-      const found = fieldLabels.some(({ key }) => {
+      const resolveFieldVales = key => {
         const config = fieldConfig[key]
 
         // if we can't find a config for the the given key we can skip early
-        if (!config) {
+        if (!exists(config)) {
           return false
         }
 
+        // get config definitions
+        const { resolver, dependency, type } = config
+
         // if we haven't found something, let's try to resolve some field values
         // and see if their resolved values contain the search value
-        const resolver = config?.resolver
         let fieldValue = resolver ? resolver(doc[key]) : doc[key]
 
-        if (fieldValue === undefined || fieldValue === null) {
+        // if we have no value definitions, skip
+        if (!exists(fieldValue)) {
           return false
         }
 
         // however, if we get config, we want to search through dependencies 1st
-        if (config.dependency) {
+        // if such dependencies exist (not every field is defined as dependency)
+        if (exists(dependency)) {
           const dependencyDoc = fieldValue.doc
-          if (!dependencyDoc) return false
 
+          // if we have a dependency but no resolved doc we must skip
+          if (!exists(dependencyDoc)) {
+            return false
+          }
+
+          // deps can be multiple or single so we need to unify them to Array
           const docList = Array.isArray(dependencyDoc)
             ? dependencyDoc
             : [dependencyDoc]
@@ -45,6 +69,7 @@ export const getSearchIds = ({ value, collection, fieldLabels, fieldConfig }) =>
             return (depDoc._id || depDoc.value) === originalValue
           })
 
+          // if the search is a direct _id match we can return true :-)
           if (dependencyIdFound) {
             return true
           }
@@ -61,18 +86,28 @@ export const getSearchIds = ({ value, collection, fieldLabels, fieldConfig }) =>
           ? fieldValue.value
           : fieldValue
 
-        if (config.type === String) {
+        if (type === String) {
           return fieldValue && fieldValue.toLowerCase().includes(lowerCaseValue)
         }
 
-        if (config.type === Number) {
-          fieldValue.toString().includes(lowerCaseValue)
+        if (type === Number) {
+          fieldValue.toString(10).includes(lowerCaseValue)
         }
 
         // nothing found at all :(
         return false
-      })
+      }
 
+      const found = fieldLabels.some(({ key }) => {
+        try {
+          return resolveFieldVales(key)
+        }
+
+        catch (e) {
+          console.error(e)
+          return false
+        }
+      })
       return found && doc._id
     })
     .filter(entry => !!entry)
