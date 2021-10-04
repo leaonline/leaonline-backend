@@ -101,9 +101,7 @@ export const getSearchIds = options => {
       const found = fieldLabels.some(({ key }) => {
         try {
           return resolveFieldVales(key)
-        }
-
-        catch (e) {
+        } catch (e) {
           console.error(e)
           return false
         }
