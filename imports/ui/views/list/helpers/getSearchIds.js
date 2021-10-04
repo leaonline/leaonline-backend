@@ -41,7 +41,7 @@ export const getSearchIds = options => {
 
         // if we haven't found something, let's try to resolve some field values
         // and see if their resolved values contain the search value
-        let fieldValue = resolver ? resolver(doc[key]) : doc[key]
+        const fieldValue = resolver ? resolver(doc[key]) : doc[key]
 
         // if we have no value definitions, skip
         if (!exists(fieldValue)) {
@@ -82,16 +82,29 @@ export const getSearchIds = options => {
 
         // some simple fields are split into { type, value }
         // so we need to extract their value
-        fieldValue = Object.hasOwnProperty.call(fieldValue, 'value')
+        const resolvedValue = Object.hasOwnProperty.call(fieldValue, 'value')
           ? fieldValue.value
           : fieldValue
 
-        if (type === String) {
-          return fieldValue && fieldValue.toLowerCase().includes(lowerCaseValue)
+        // skip early in case we could not resolve the value
+        if (!exists(resolvedValue)) {
+          return false
+        }
+
+        const resolvedType = typeof resolvedValue
+
+        if (type === String && resolvedType === 'string') {
+          return resolvedValue.toLowerCase().includes(lowerCaseValue)
         }
 
         if (type === Number) {
-          fieldValue.toString(10).includes(lowerCaseValue)
+          if (resolvedType === 'number') {
+            return Number(resolvedValue).toString(10).includes(lowerCaseValue)
+          } else if (resolvedType === 'string') {
+            return resolvedValue.includes(lowerCaseValue)
+          } else {
+            console.warn(`Mismatch: expected ${resolvedType} to be Number or String`)
+          }
         }
 
         // nothing found at all :(
