@@ -9,7 +9,7 @@ import { Apps } from '../../../api/apps/Apps'
 import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { Schema } from '../../../api/schema/Schema'
 import { FormTypes } from '../FormTypes'
-import { formIsValid } from '../../../utils/form'
+import { formIsValid, formReset } from '../../../utils/form'
 import { dataTarget } from '../../../utils/event'
 import { getCollection } from '../../../utils/collection'
 import { i18n } from '../../../api/i18n/i18n'
@@ -24,6 +24,7 @@ import '../imageSelect/imageSelect'
 import './taskContent.css'
 import './taskContent.html'
 import './autoform'
+
 
 Scoring.init()
 const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init())
@@ -159,6 +160,7 @@ const createTypeSchema = (name, templateInstance) => {
     app,
     settingsDoc
   })
+  setTimeout(() => templateInstance.stateVars.set('hasSchema', true), 300)
 }
 
 Template.afLeaTaskContent.onCreated(function () {
@@ -208,6 +210,9 @@ Template.afLeaTaskContent.helpers({
     const name = Template.instance().stateVars.get('currentTypeToAdd')
     return TaskRenderers.get(name)
   },
+  hasSchema () {
+    return Template.instance().stateVars.get('hasSchema')
+  },
   currentTypeSchema () {
     return _currentTypeSchema
   },
@@ -215,7 +220,9 @@ Template.afLeaTaskContent.helpers({
     return Template.instance().stateVars.get('overElement') === index
   },
   currentElement () {
-    return Template.instance().stateVars.get('currentElement')
+
+    return !Template.instance().stateVars.get('isNewContent') &&
+      Template.instance().stateVars.get('currentElement')
   },
   firstElement (index) {
     return index < 1
@@ -252,6 +259,10 @@ Template.afLeaTaskContent.helpers({
   },
   isUpdateContentForm () {
     return Template.instance().data.value
+  },
+  // modal
+  modalIsNewContent () {
+    return Template.instance().stateVars.get('isNewContent')
   }
 })
 
@@ -263,45 +274,23 @@ Template.afLeaTaskContent.events({
   'click .select-content-type-button' (event, templateInstance) {
     event.preventDefault()
 
-    // XXX: we make sure this
     resetModalState(templateInstance)
     const name = dataTarget(event, templateInstance, 'name')
-    createTypeSchema(name, templateInstance)
     templateInstance.stateVars.set('currentTypeToAdd', name)
     templateInstance.stateVars.set('isNewContent', true)
+    createTypeSchema(name, templateInstance)
   },
   'click .modal-back-button' (event, templateInstance) {
     event.preventDefault()
     resetModalState(templateInstance)
   },
-  'submit #afLeaTaskAddContenTypeForm' (event, templateInstance) {
+  'submit #afLeaTaskAddContenTypeFormInsert' (event, templateInstance) {
     event.preventDefault()
-    const name = templateInstance.stateVars.get('currentTypeToAdd')
-    const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
-    if (!insertDoc) return
-
-    const elements = templateInstance.stateVars.get('elements') || []
-    const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
-
-    const contentElementDoc = isItem(name)
-      ? contentFromItem(name, insertDoc)
-      : insertDoc
-
-    if (typeof currentElementIndex === 'number') {
-      const currentElementDoc = elements[currentElementIndex]
-      if (currentElementDoc.contentId) {
-        contentElementDoc.contentId = currentElementDoc.contentId
-      } else {
-        contentElementDoc.contentId = Random.id()
-      }
-      elements.splice(currentElementIndex, 1, contentElementDoc)
-    } else {
-      contentElementDoc.contentId = Random.id()
-      elements.push(contentElementDoc)
-    }
-
-    updateElements(elements, templateInstance)
-    templateInstance.$('#taskContentModel').modal('hide')
+    submitForms('afLeaTaskAddContenTypeFormInsert', templateInstance)
+  },
+  'submit #afLeaTaskAddContenTypeFormUpdate' (event, templateInstance) {
+    event.preventDefault()
+    submitForms('afLeaTaskAddContenTypeFormUpdate', templateInstance)
   },
   'click .preview-content-button' (event, templateInstance) {
     event.preventDefault()
@@ -410,6 +399,35 @@ Template.afLeaTaskContent.events({
   }
 })
 
+function submitForms (formId, templateInstance) {
+  const name = templateInstance.stateVars.get('currentTypeToAdd')
+  const insertDoc = formIsValid(formId, _currentTypeSchema)
+  if (!insertDoc) return
+
+  const elements = templateInstance.stateVars.get('elements') || []
+  const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
+
+  const contentElementDoc = isItem(name)
+    ? contentFromItem(name, insertDoc)
+    : insertDoc
+
+  if (typeof currentElementIndex === 'number') {
+    const currentElementDoc = elements[currentElementIndex]
+    if (currentElementDoc.contentId) {
+      contentElementDoc.contentId = currentElementDoc.contentId
+    } else {
+      contentElementDoc.contentId = Random.id()
+    }
+    elements.splice(currentElementIndex, 1, contentElementDoc)
+  } else {
+    contentElementDoc.contentId = Random.id()
+    elements.push(contentElementDoc)
+  }
+
+  updateElements(elements, templateInstance)
+  templateInstance.$('#taskContentModel').modal('hide')
+}
+
 function move (arr, oldIndex, newIndex) {
   arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0])
   return arr
@@ -451,7 +469,8 @@ function onItemInput ({ userId, sessionId, taskId, page, type, subtype, response
 function resetModalState (templateInstance) {
   _currentTypeSchema = null
   templateInstance.stateVars.set({
-    isNewContent: true,
+    isNewContent: false,
+    hasSchema: false,
     currentTypeToAdd: null,
     previewContent: null,
     previewData: null,

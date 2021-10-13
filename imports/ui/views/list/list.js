@@ -19,14 +19,14 @@ import {
 } from '../../../api/routes/utils/queryParams'
 import { debounce } from '../../../utils/debounce'
 import { updateDocumentState } from '../../../utils/updateDocumentState'
+import { getSearchIds } from './helpers/getSearchIds'
+import { getCollection } from '../../../utils/collection'
+import { i18n } from '../../../api/i18n/i18n'
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.scss'
 import './list.html'
-import { getSearchIds } from './helpers/getSearchIds'
-import { getCollection } from '../../../utils/collection'
-import { i18n } from '../../../api/i18n/i18n'
 
 const entryIsTrue = entry => entry === true
 
