@@ -1,3 +1,4 @@
+/* global AutoForm */
 import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
 import { EJSON } from 'meteor/ejson'
@@ -9,7 +10,7 @@ import { Apps } from '../../../api/apps/Apps'
 import { ContextRegistry } from '../../../api/config/ContextRegistry'
 import { Schema } from '../../../api/schema/Schema'
 import { FormTypes } from '../FormTypes'
-import { formIsValid, formReset } from '../../../utils/form'
+import { formIsValid } from '../../../utils/form'
 import { dataTarget } from '../../../utils/event'
 import { getCollection } from '../../../utils/collection'
 import { i18n } from '../../../api/i18n/i18n'
@@ -25,10 +26,8 @@ import './taskContent.css'
 import './taskContent.html'
 import './autoform'
 
-
 Scoring.init()
 const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init())
-/* global AutoForm */
 
 AutoForm.addInputType('leaTaskContent', {
   template: 'afLeaTaskContent',
@@ -220,7 +219,6 @@ Template.afLeaTaskContent.helpers({
     return Template.instance().stateVars.get('overElement') === index
   },
   currentElement () {
-
     return !Template.instance().stateVars.get('isNewContent') &&
       Template.instance().stateVars.get('currentElement')
   },
@@ -329,7 +327,11 @@ Template.afLeaTaskContent.events({
         templateInstance.stateVars.set({ previewData })
       }
 
-      templateInstance.stateVars.set({ previewContent, scoreContent, updatePreview: false })
+      templateInstance.stateVars.set({
+        previewContent,
+        scoreContent,
+        updatePreview: false
+      })
     }, 300)
   },
   'hidden.bs.modal' (event, templateInstance) {
