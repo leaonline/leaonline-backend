@@ -88,6 +88,7 @@
                                                     id="afLeaTaskAddContenTypeFormInsert"
                                                     type="normal"
                                                     schema=currentTypeSchema
+                                                    buttonClasses="d-none"
                                                     validation="none"}}
                                         {{else}}
                                             {{> quickForm
@@ -95,6 +96,7 @@
                                                     type="normal"
                                                     schema=currentTypeSchema
                                                     doc=currentElement
+                                                    buttonClasses="d-none"
                                                     validation="none"}}
                                         {{/if}}
                                     {{else}}
@@ -108,16 +110,24 @@
                                             "common.preview"}}</h4>
                                     {{#with previewContent}}
                                         {{>TaskRendererFactory content=this}}
-
                                         {{!-- additionally, if the preview content is an item
                                               we also render the scoring results as preview --}}
                                         {{#if isItemContent this}}
                                             <h4 class="text-center my-4">
                                                 {{i18n "scoring.title"}}
                                             </h4>
+
+                                            {{#if allScoresTrue}}
+                                                <div class="alert alert-success my-4">
+                                                    {{> icon name="check"}}
+                                                    {{i18n "taskContent.allTrue"}}
+                                                </div>
+                                            {{/if}}
+
                                             {{#with scoreContent}}
                                                 {{>TaskRendererFactory content=this}}
                                             {{/with}}
+
                                         {{/if}}
                                     {{else}}
                                         {{#if updatePreview}}

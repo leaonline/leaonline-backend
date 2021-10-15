@@ -5,6 +5,7 @@ export const resolveFieldFromCollection = ({ value, fieldConfig, path, isArray }
   const collection = getCollection(fieldConfig.dependency.collection)
   const context = ContextRegistry.get(fieldConfig.dependency.collection)
   const depField = fieldConfig.dependency.field
+  const { display } = fieldConfig
 
   const toDocumentField = entry => {
     const currentDoc = collection.findOne(entry)
@@ -14,6 +15,7 @@ export const resolveFieldFromCollection = ({ value, fieldConfig, path, isArray }
 
     return {
       value: currentDoc._id,
+      display,
       label: (Array.isArray(depField)
         ? depField.map(entry => currentDoc[entry]).join(' ')
         : currentDoc[depField])

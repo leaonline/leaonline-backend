@@ -133,7 +133,14 @@ export const wrapHelpers = function (obj) {
     },
     removing (id) {
       return Template.instance().state.get(StateVariables.removing) === id
-    }
+    },
+    // /////////////////////////////////////////////////
+    //  CUSTOM ACTIONS
+    // /////////////////////////////////////////////////
+    customActions () {
+      console.debug('get custom actions', Template.instance().state.get(StateVariables.customActions))
+      return Template.instance().state.get(StateVariables.customActions)
+    },
   }, obj)
 }
 

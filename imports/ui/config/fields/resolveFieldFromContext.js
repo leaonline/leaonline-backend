@@ -1,6 +1,7 @@
 import { ContextRegistry } from '../../../api/config/ContextRegistry'
 
 export const resolveFieldFromContext = ({ fieldConfig, value }) => {
+  const { display } = fieldConfig
   const context = ContextRegistry.get(fieldConfig.dependency.context)
   if (context.isType) {
     const { representative } = context
@@ -9,5 +10,5 @@ export const resolveFieldFromContext = ({ fieldConfig, value }) => {
     })
     return Object.assign({}, type, { isType: true })
   }
-  return { value }
+  return { value, display }
 }

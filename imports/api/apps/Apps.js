@@ -120,6 +120,20 @@ Apps.schema = {
       options: getAlignmentOptions
     }
   },
+  'fields.$.display': {
+    type: String,
+    label: 'apps.fields.display.title',
+    optional: true,
+    autoform: {
+      firstOption: firstOption,
+      options: function () {
+        return [
+          { value: 'default', label: 'apps.fields.display.default' },
+          { value: 'code', label: 'apps.fields.display.code' },
+        ]
+      }
+    }
+  },
   'fields.$.form': {
     type: String,
     label: 'apps.fields.form',

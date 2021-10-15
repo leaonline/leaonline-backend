@@ -27,6 +27,7 @@ import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.scss'
 import './list.html'
+import { updateAllDocuments } from '../../../utils/updateAllDocuments'
 
 const entryIsTrue = entry => entry === true
 
@@ -233,6 +234,9 @@ Template.genericList.helpers(wrapHelpers({
   },
   filterErrors () {
     return Template.getState('filterErrors')
+  },
+  customActions () {
+    return Template.getState(StateVariables.customActions)
   }
 }))
 
@@ -310,10 +314,20 @@ Template.genericList.events(wrapEvents({
   },
   'click .show-source-button' (event, templateInstance) {
     event.preventDefault()
-    const doc = getUnsavedFormDoc(templateInstance)
-    if (!doc) return
-    const compare = getCompare(templateInstance)
+    const targetId = dataTarget(event, templateInstance)
     const template = 'stringified'
+    let doc
+    let compare
+
+    if (targetId) {
+      doc = templateInstance.mainCollection.findOne(targetId)
+      compare = doc
+    }
+
+    else {
+      doc = getUnsavedFormDoc(templateInstance)
+      compare = getCompare(templateInstance)
+    }
     previewDoc(templateInstance, { doc, compare, template })
   },
   'click .submit-insert-close-btn' (event, templateInstance) {
@@ -419,6 +433,60 @@ Template.genericList.events(wrapEvents({
       searchFailed: false
     })
   },
+  'click .custom-action-button' (event, templateInstance) {
+    event.preventDefault()
+    const actionKey = dataTarget(event, templateInstance, 'action')
+    const targetId = dataTarget(event, templateInstance)
+
+    const config = templateInstance.data.config()
+    const action = config.actions[actionKey]
+    const actionArgs = {}
+
+    if (!targetId) {
+      // get action args from prompt
+    }
+
+    else {
+      const doc = templateInstance.mainCollection.findOne(targetId)
+      Object.entries(action.args).forEach(([key, value]) => {
+        console.debug(key, doc[key])
+        console.debug(value, doc[value])
+        actionArgs[key] = doc[value]
+      })
+    }
+
+    const app = templateInstance.data.app()
+    const { connection } = app
+    const transform = templateInstance.state.get('transform')
+
+    connection.call(action.name, actionArgs, by300((err, actionResult) => {
+      console.debug(err, actionResult)
+      defaultNotifications(err, actionResult)
+        .success(function () {
+          if (targetId) {
+            updateDocumentState({
+              context: config,
+              connection: connection,
+              docId: targetId,
+              onComplete () {
+                const list = templateInstance.mainCollection.find({}, transform).fetch()
+                updateList(list, templateInstance)
+              }
+            })
+          }
+          else {
+            updateAllDocuments({
+              context: config,
+              connection: connection,
+              onComplete () {
+                const list = templateInstance.mainCollection.find({}, transform).fetch()
+                updateList(list, templateInstance)
+              }
+            })
+          }
+        })
+    }))
+  },
   'input .list-search-input': debounce((event, templateInstance) => {
     event.preventDefault()
 
@@ -426,11 +494,12 @@ Template.genericList.events(wrapEvents({
     templateInstance.state.set('searchOngoing', true)
 
     const value = templateInstance.$(event.currentTarget).val()
-    const transform = templateInstance.state.get('transform')
+    const transform = templateInstance.state.get('transform') || {}
+    transform.reactive = false
 
     // reset search if input is too short
     if (value.length < 2) {
-      const fullList = templateInstance.mainCollection.find({}, { reactive: false }).fetch()
+      const fullList = templateInstance.mainCollection.find({}, transform).fetch()
       templateInstance.state.set({
         searchFailed: false
       })
@@ -565,8 +634,11 @@ function getTableRowFields (document, fieldConfig, fields) {
     const resolver = config?.resolver
 
     if (!resolver) {
+      console.warn('no resolver found for key', key)
       return value
-    } else {
+    }
+
+    else {
       const resolvedValue = resolver(value)
       const type = Object.prototype.toString.call(value)
 
@@ -576,6 +648,16 @@ function getTableRowFields (document, fieldConfig, fields) {
 
       if (type === '[object Date]') {
         resolvedValue.isDate = true
+      }
+
+      if (resolvedValue.display) {
+        switch (resolvedValue.display) {
+          case 'code':
+            resolvedValue.isCode = true
+            break
+          default:
+            break
+        }
       }
 
       return resolvedValue

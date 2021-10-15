@@ -7,6 +7,7 @@ export const StateVariables = {
   actionUpdate: 'actionUpdate',
   actionUpload: 'actionUpload',
   actionPreview: 'actionPreview',
+  customActions: 'customActions',
   updateDoc: 'updateDoc',
   documentFields: 'documentFields',
   documentsCount: 'documentsCount',

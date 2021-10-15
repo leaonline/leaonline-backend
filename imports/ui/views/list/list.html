@@ -148,6 +148,18 @@
                             {{> icon name="search" fw=true}}
                         </button>
                     {{/unless}}
+
+                    {{! custom actions }}
+
+                    {{#each customAction in customActions}}
+                        {{#if customAction.isAll}}
+                        <button class="btn btn-outline-{{customAction.color}} custom-action-button" title="{{i18n customAction.label}}"
+                                data-action="{{customAction.key}}">
+                            {{> icon name=customAction.icon fw=true}}
+                        </button>
+                        {{/if}}
+                    {{/each}}
+
                     <a href="{{route "settings" app config.name}}"
                        class="btn btn-outline-secondary"
                        title="{{i18n "actions.settings"}}">
@@ -238,7 +250,6 @@
                             {{!-- resolve fields by given type def --}}
 
                             {{#each field in row.fields}}
-
                                 {{#if field.isCollection}}
                                 {{! isCollection --> resolve document}}
                                     <td>
@@ -269,6 +280,10 @@
                                     <td class="no-wrap text-monospace">
                                         {{toDate field.value}}
                                     </td>
+                                {{else if field.isCode}}
+                                    <td class="no-wrap text-monospace">
+                                        <code>{{field.value}}</code>
+                                    </td>
                                 {{else}}
                                 {{! simple values }}
                                     <td>
@@ -283,6 +298,23 @@
                                         {{> icon name="eye" fw=true}}
                                     </button>
                                 {{/if}}
+
+                                {{#each customAction in customActions}}
+                                    {{#if customAction.isSingle}}
+                                        <button class="btn btn-sm btn-outline-{{customAction.color}} border-0 custom-action-button"
+                                                title="{{i18n customAction.label}}"
+                                                data-action="{{customAction.key}}"
+                                                data-target="{{row.document._id}}">
+                                            {{> icon name=customAction.icon fw=true}}
+                                        </button>
+                                    {{/if}}
+                                {{/each}}
+
+                                <button class="btn btn-sm btn-outline-dark border-0 show-source-button"
+                                        data-target="{{row.document._id}}">
+                                    {{> icon name="code" fw=true}}
+                                </button>
+
                                 {{#if actionUpdate}}
                                     <button class="btn btn-sm btn-outline-primary border-0 edit-button"
                                             data-target="{{row.document._id}}">

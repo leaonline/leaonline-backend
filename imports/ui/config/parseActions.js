@@ -61,6 +61,12 @@ export const parseActions = function parseActions ({ instance, config, app, logD
     const uploadAction = getUploadAction(config)
     instance.state.set(StateVariables.actionUpload, uploadAction)
   }
+
+  // custom context-specific actions
+
+  if (config.actions) {
+    instance.state.set(StateVariables.customActions, Object.values(config.actions))
+  }
 }
 
 function getUploadAction (context) {

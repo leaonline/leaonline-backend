@@ -16,7 +16,6 @@ import { resolveFieldFromCollection } from './resolveFieldFromCollection'
  */
 function getFieldConfig (config, key, field, fieldSettings) {
   const fieldConfig = Object.assign({}, field, fieldSettings)
-
   fieldConfig.label = getLabel({ key, context: config, field: fieldConfig })
 
   if (field.dependency) {
@@ -46,7 +45,7 @@ function getFieldConfig (config, key, field, fieldSettings) {
  * @return {Function}
  */
 function getFieldResolver (fieldConfig) {
-  const { type } = fieldConfig
+  const { type, display } = fieldConfig
   return (value) => {
     const isArray = Array.isArray(value)
     switch (fieldConfig.type) {
@@ -55,7 +54,7 @@ function getFieldResolver (fieldConfig) {
       case ServiceRegistry.fieldTypes.context:
         return resolveFieldFromContext({ fieldConfig, value })
       default:
-        return { value, type }
+        return { value, type, display }
     }
   }
 }
@@ -84,13 +83,18 @@ export const parseFields = function parseFields ({ instance, config, settingsDoc
     return excludeFromList.has(split[0])
   }
 
+  const transform = { sort: {} }
+
   // create fields from schema
   Object.entries(schema).forEach(([key, value]) => {
     // skip if a key is a child-key of a key in the exclude-from-list-set
     if (parentKeyInSet(key)) return
-
     const fieldSettings = settingsDoc.fields && settingsDoc.fields.find(entry => entry.name === key)
     const fieldConfig = getFieldConfig(config, key, value, fieldSettings)
+
+    if (fieldConfig.sort) {
+      transform.sort[key] = fieldConfig.sort
+    }
 
     if (fieldConfig.exclude) {
       excludeFromList.add(key)
@@ -112,4 +116,8 @@ export const parseFields = function parseFields ({ instance, config, settingsDoc
 
   // however to ensure reactivity we still assign the updated values to state
   instance.state.set(StateVariables.documentFields, Object.keys(fields))
+
+  // if fields define a sort property, we actually add it to the transform var
+  // by default we sort by date and by
+  instance.state.set({ transform })
 }

@@ -71,6 +71,10 @@ const isItem = name => {
   return context && context.isItem
 }
 
+const getFormId = isNewContent => isNewContent
+  ? 'afLeaTaskAddContenTypeFormInsert'
+  : 'afLeaTaskAddContenTypeFormUpdate'
+
 const contentFromItem = (name, value) => ({
   type: 'item',
   subtype: name,
@@ -261,6 +265,10 @@ Template.afLeaTaskContent.helpers({
   // modal
   modalIsNewContent () {
     return Template.instance().stateVars.get('isNewContent')
+  },
+  // score
+  allScoresTrue() {
+    return Template.instance().stateVars.get('allScoresTrue')
   }
 })
 
@@ -284,17 +292,18 @@ Template.afLeaTaskContent.events({
   },
   'submit #afLeaTaskAddContenTypeFormInsert' (event, templateInstance) {
     event.preventDefault()
-    submitForms('afLeaTaskAddContenTypeFormInsert', templateInstance)
+    submitForms(getFormId(true), templateInstance)
   },
   'submit #afLeaTaskAddContenTypeFormUpdate' (event, templateInstance) {
     event.preventDefault()
-    submitForms('afLeaTaskAddContenTypeFormUpdate', templateInstance)
+    submitForms(getFormId(false), templateInstance)
   },
   'click .preview-content-button' (event, templateInstance) {
     event.preventDefault()
     const isNewContent = templateInstance.stateVars.get('isNewContent')
     const type = templateInstance.stateVars.get('currentTypeToAdd')
-    const insertDoc = formIsValid('afLeaTaskAddContenTypeForm', _currentTypeSchema)
+    const formId =  getFormId(isNewContent)
+    const insertDoc = formIsValid(formId, _currentTypeSchema)
     if (!insertDoc) return
 
     delete insertDoc.unitSet
@@ -398,6 +407,21 @@ Template.afLeaTaskContent.events({
     const elements = templateInstance.stateVars.get('elements')
     move(elements, index, index + 1)
     updateElements(elements, templateInstance)
+  },
+  'click .save-responses' (event, templateInstance) {
+    event.preventDefault()
+
+    const responses = templateInstance.stateVars.get('responses')
+    const currentElement = templateInstance.stateVars.get('currentElement')
+    const elementDoc = templateInstance.stateVars.get('previewContent')
+    const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
+    const elements = templateInstance.stateVars.get('elements') || []
+
+    debugger
+  },
+  'click .generate-responses' (event, templateInstance) {
+    event.preventDefault()
+
   }
 })
 
@@ -459,13 +483,17 @@ function onItemInput ({ userId, sessionId, taskId, page, type, subtype, response
   }
 
   const itemDoc = previewContent.value // item docs are stored in value
-  const scoreResults = Scoring.run(subtype, itemDoc, { responses })
+  const responseDoc = { responses }
+  const scoreResults = Scoring.run(subtype, itemDoc, responseDoc)
   const scoreContent = {
     type: 'preview',
     subtype: Scoring.name,
     scores: scoreResults
   }
-  instance.stateVars.set({ scoreContent })
+
+  const allScoresTrue = scoreResults.every(entry => entry.score)
+
+  instance.stateVars.set({ scoreContent, responses, allScoresTrue })
 }
 
 function resetModalState (templateInstance) {
@@ -478,6 +506,8 @@ function resetModalState (templateInstance) {
     previewData: null,
     currentElement: null,
     currentElementIndex: null,
-    scoreContent: null
+    scoreContent: null,
+    responses: null,
+    allScoresTrue: null
   })
 }

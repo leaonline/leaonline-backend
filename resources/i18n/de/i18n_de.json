@@ -79,6 +79,9 @@
     "taskContent": "Aufgaben-Inhalt",
     "regExp": "Regulärer Ausdruck"
   },
+  "taskContent": {
+    "allTrue": "Alle scores korrekt"
+  },
   "common": {
     "ok": "OK",
     "title": "Titel",
