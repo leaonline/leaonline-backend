@@ -129,7 +129,7 @@ Apps.schema = {
       options: function () {
         return [
           { value: 'default', label: 'apps.fields.display.default' },
-          { value: 'code', label: 'apps.fields.display.code' },
+          { value: 'code', label: 'apps.fields.display.code' }
         ]
       }
     }

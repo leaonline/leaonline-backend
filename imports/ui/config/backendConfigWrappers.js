@@ -140,7 +140,7 @@ export const wrapHelpers = function (obj) {
     customActions () {
       console.debug('get custom actions', Template.instance().state.get(StateVariables.customActions))
       return Template.instance().state.get(StateVariables.customActions)
-    },
+    }
   }, obj)
 }
 

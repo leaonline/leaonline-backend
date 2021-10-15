@@ -267,7 +267,7 @@ Template.afLeaTaskContent.helpers({
     return Template.instance().stateVars.get('isNewContent')
   },
   // score
-  allScoresTrue() {
+  allScoresTrue () {
     return Template.instance().stateVars.get('allScoresTrue')
   }
 })
@@ -302,7 +302,7 @@ Template.afLeaTaskContent.events({
     event.preventDefault()
     const isNewContent = templateInstance.stateVars.get('isNewContent')
     const type = templateInstance.stateVars.get('currentTypeToAdd')
-    const formId =  getFormId(isNewContent)
+    const formId = getFormId(isNewContent)
     const insertDoc = formIsValid(formId, _currentTypeSchema)
     if (!insertDoc) return
 
@@ -408,20 +408,8 @@ Template.afLeaTaskContent.events({
     move(elements, index, index + 1)
     updateElements(elements, templateInstance)
   },
-  'click .save-responses' (event, templateInstance) {
-    event.preventDefault()
-
-    const responses = templateInstance.stateVars.get('responses')
-    const currentElement = templateInstance.stateVars.get('currentElement')
-    const elementDoc = templateInstance.stateVars.get('previewContent')
-    const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
-    const elements = templateInstance.stateVars.get('elements') || []
-
-    debugger
-  },
   'click .generate-responses' (event, templateInstance) {
     event.preventDefault()
-
   }
 })
 

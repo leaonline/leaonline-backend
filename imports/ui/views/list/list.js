@@ -322,9 +322,7 @@ Template.genericList.events(wrapEvents({
     if (targetId) {
       doc = templateInstance.mainCollection.findOne(targetId)
       compare = doc
-    }
-
-    else {
+    } else {
       doc = getUnsavedFormDoc(templateInstance)
       compare = getCompare(templateInstance)
     }
@@ -444,9 +442,7 @@ Template.genericList.events(wrapEvents({
 
     if (!targetId) {
       // get action args from prompt
-    }
-
-    else {
+    } else {
       const doc = templateInstance.mainCollection.findOne(targetId)
       Object.entries(action.args).forEach(([key, value]) => {
         console.debug(key, doc[key])
@@ -473,8 +469,7 @@ Template.genericList.events(wrapEvents({
                 updateList(list, templateInstance)
               }
             })
-          }
-          else {
+          } else {
             updateAllDocuments({
               context: config,
               connection: connection,
@@ -636,9 +631,7 @@ function getTableRowFields (document, fieldConfig, fields) {
     if (!resolver) {
       console.warn('no resolver found for key', key)
       return value
-    }
-
-    else {
+    } else {
       const resolvedValue = resolver(value)
       const type = Object.prototype.toString.call(value)
 

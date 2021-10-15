@@ -54,7 +54,7 @@ const loadTargetForm = ({ targetForm, instance, fieldSettings }) => {
 // use to map tokens to AutoForm options
 const toIndexedTokens = (token, index) => ({
   value: index,
-  label: `${index + 1 } - ${token}`
+  label: `${index + 1} - ${token}`
 })
 
 export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formId }) => {
