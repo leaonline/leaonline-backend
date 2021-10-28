@@ -6,4 +6,4 @@ AUTOFORM_DYNAMIC_IMPORTS=1 \
     AUTOFORM_DEBUG=1 \
     USE_DYNAMIC_IMPORTS=1 \
     METEOR_PACKAGE_DIRS=${PACKAGE_DIRS}  \
-    meteor --port=5050 --settings=settings.json
+    meteor --port=5050 --settings=settings.json --allow-incompatible-update --exclude-archs "web.browser.legacy, web.cordova"
