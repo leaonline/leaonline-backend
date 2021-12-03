@@ -49,10 +49,33 @@ body, wrapper {
   opacity: 0.5;
 }
 
+@media (min-width: 240px) {
+  .lea-text {
+    font-family: Semikolon, Arial !important;
+    font-size: 12px;
+  }
+}
+@media (min-width: 576px) {
+  .lea-text {
+    font-family: Semikolon, Arial !important;
+    font-size: 16px;
+  }
+}
 
-.lea-text {
-  font-family: Semikolon, Arial !important;
-  font-size: 24px;
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+  .lea-text {
+    font-family: Semikolon, Arial !important;
+    font-size: 20px;
+  }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+  .lea-text {
+    font-family: Semikolon, Arial !important;
+    font-size: 24px;
+  }
 }
 
 .lea-text-bold {

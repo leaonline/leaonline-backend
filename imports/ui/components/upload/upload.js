@@ -15,8 +15,6 @@ Template.upload.onCreated(function () {
 
   if (!instance.data.filesCollection) {
     throw new Error('Upload impossible without FilesCollection')
-  } else {
-    console.info(instance.data.filesCollection)
   }
 
   instance.currentUpload = new ReactiveVar()
@@ -24,7 +22,6 @@ Template.upload.onCreated(function () {
 
 Template.upload.helpers({
   currentUpload () {
-    console.log(Template.instance().currentUpload.get())
     return Template.instance().currentUpload.get()
   },
   uploadError () {
@@ -38,10 +35,29 @@ Template.upload.helpers({
     return !instance.state.get('uploadError') &&
       !instance.state.get('uploadedFile') &&
       !instance.currentUpload.get()
+  },
+  selectedFile () {
+    return Template.instance().state.get('selectedFile')
+  },
+  progress () {
+    return Template.instance().state.get('progress')
   }
 })
 
 Template.upload.events({
+  'input .custom-file-input' (event, templateInstance) {
+    event.preventDefault()
+    const files = event.target.files
+    if (!files?.length) return
+
+    const file = files[0]
+    const selectedFile = {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    }
+    templateInstance.state.set({ selectedFile })
+  },
   'click .upload-button' (event, templateInstance) {
     event.preventDefault()
 
@@ -58,25 +74,43 @@ Template.upload.events({
     })
 
     const upload = templateInstance.data.filesCollection.insert(opts, false)
+    templateInstance.currentUpload.set(true)
+    templateInstance.state.set({ progress: 0 })
 
-    upload.on('start', function () {
-      templateInstance.currentUpload.set(this)
-    })
+    // upload.on('start', function () {})
 
     upload.on('error', function (error) {
       console.log(error)
       templateInstance.state.set('uploadError', error)
     })
 
+    upload.on('progress', function (progress) {
+      templateInstance.state.set({ progress })
+    })
+
     upload.on('end', function (error, fileObj) {
-      if (!error) {
-        templateInstance.state.set('uploadedFile', fileObj)
-        templateInstance.state.set('uploadError', null)
-      } else {
-        templateInstance.state.set('uploadError', error)
-        templateInstance.state.set('uploadedFile', null)
-      }
-      templateInstance.currentUpload.set(false)
+      setTimeout(() => {
+        if (!error) {
+          templateInstance.state.set({
+            selectedFile: null,
+            uploadedFile: fileObj,
+            uploadErr: null
+          })
+
+        }
+        else {
+          templateInstance.state.set({
+            selectedFile: null,
+            uploadedFile: null,
+            uploadErr: error
+          })
+        }
+        templateInstance.currentUpload.set(false)
+
+        if (templateInstance.data.onComplete) {
+          templateInstance.data.onComplete(error, fileObj)
+        }
+      }, 1000)
     })
 
     upload.start()

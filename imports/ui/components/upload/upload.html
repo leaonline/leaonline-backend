@@ -1,34 +1,61 @@
 <template name="upload">
 	<span class="upload {{class}}">
 		{{#if uploadForm}}
-				<input type="file" id="list-file-upload" accept="{{accept}}">
-				<button class="btn btn-success upload-button" type="button">
-					<i class="fa fa-fw fa-upload"></i>
-				</button>
-		{{/if}}
-		{{#with currentUpload}}
-			<div class="progress">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button class="btn btn-success upload-button {{#unless
+                            selectedFile}}disabled{{/unless}}" type="button"
+                            disabled="{{#unless
+                                    selectedFile}}disabled{{/unless}}">
+                        {{#if currentUpload}}
+                            <i class="fa fa-fw fa-spinner fa-pulse"></i>
+                        {{else}}
+                            <i class="fa fa-fw fa-upload"></i>
+                        {{/if}}
+                    </button>
+                </div>
+                <div class="custom-file">
+				<input type="file" id="list-file-upload" accept="{{accept}}"
+                       class="custom-file-input">
+                <label class="custom-file-label" for="custom-file-input">
+                    {{#with selectedFile}}
+                        <span>{{this.name}}</span>
+                    {{else}}
+                        {{i18n "upload.chooseFile"}}
+                    {{/with}}
+                </label>
+                </div>
+            </div>
+        {{/if}}
+        {{#if currentUpload}}
+            <div class="uploading-info card-body">
+                <div class="card-title">{{i18n "upload.inProgress"}}: {{progress}}%</div>
+                <div class="progress">
   				<div class="progress-bar progress-bar-striped progress-bar-animated text-center"
-					 role="progressbar" aria-valuenow="100"
-					 aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                     role="progressbar" aria-valuenow="{{progress}}"
+                     aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
 				</div>
 			</div>
-		{{/with}}
-		{{#with uploadError}}
-			<div class="alert alert-success">
-				<span>{{i18n "upload.failed"}}</span>
+            </div>
+        {{/if}}
+        {{#with uploadError}}
+            <div class="alert alert-danger">
+				<span class="alert-heading">{{i18n "upload.failed"}}</span>
+                <span>
+                    {{i18n this.message}}
+                </span>
 				<button class="btn btn-danger btn-sm reset-button">
-					{{i18n "common.ok"}}
-				</button>
+                    {{i18n "common.ok"}}
+                </button>
 			</div>
-		{{/with}}
-		{{#with uploadedFile}}
-			<div class="alert alert-success">
+        {{/with}}
+        {{#with uploadedFile}}
+            <div class="alert alert-success">
 				<span>{{i18n "upload.successful"}}</span>
 				<button class="btn btn-success btn-sm reset-button">
-					{{i18n "common.ok"}}
-				</button>
+                    {{i18n "common.ok"}}
+                </button>
 			</div>
-		{{/with}}
+        {{/with}}
 		</span>
 </template>

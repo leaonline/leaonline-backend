@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import { TTSEngine } from '../../api/core/TTSEngine'
 import { setShuffle } from 'meteor/leaonline:corelib/utils/shuffle'
 import { Components } from '../../api/core/Components'
-import { HTTP } from 'meteor/jkuester:http'
+import { HTTP } from 'meteor/http'
 import shuffle from 'fast-shuffle'
 
 setShuffle(shuffle)

@@ -109,7 +109,13 @@
     "loadDocs": "Lade Dokumente"
   },
   "upload": {
-    "successful": "Upload erfolgreich!"
+    "failed": "Upload gescheitert!",
+    "successful": "Upload erfolgreich!",
+    "chooseFile": "Datei auswählen"
+  },
+  "filesCollection": {
+    "maxSizeExceed": "Datei zu groß",
+    "invalidExtension": "Format nicht unterstützt"
   },
   "contexts": {
     "users": {

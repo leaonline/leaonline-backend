@@ -5,6 +5,9 @@
 			<div class="modal-content">
 				<div class="modal-header d-flex justify-content-between">
 					<span>
+                        <button type="button" data-target="full" class="size-button btn {{#if size 'full'}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
+							<i class="fa fas fa-fw fa-expand"></i>
+						</button>
 						<button type="button" data-target="xl" class="size-button btn {{#if size 'xl'}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
 							<i class="fa fas fa-fw fa-desktop"></i> +
 						</button>
@@ -35,8 +38,8 @@
                             {{i18n "preview.noUnsaved"}}
                         </span>
                     {{/if}}
-					<hr>
-					{{> Template.dynamic template=templateTarget data=templateData}}
+                <hr>
+                {{> Template.dynamic template=templateTarget data=templateData}}
 				</div>
 				<div class="modal-footer d-flex">
                     {{!-- #if unsaved}}

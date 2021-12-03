@@ -4,6 +4,7 @@ import { Components } from '../../../api/core/Components'
 import { wrapEvents, wrapHelpers, wrapOnCreated } from '../../config/backendConfigWrappers'
 import '../../components/upload/upload'
 import './gallery.html'
+import { debounce } from '../../../utils/debounce'
 
 const coreComponentsLoaded = Components.load([Components.template.image])
 
@@ -14,10 +15,12 @@ Template.genericGallery.onCreated(function () {
     const data = Template.currentData()
     const { pathname } = window.location
     const lastPath = instance.state.get('lastPath')
+
     if (lastPath !== pathname) {
       instance.state.clear()
     }
-    wrapOnCreated(instance, { data, debug: true })
+
+    wrapOnCreated(instance, { data })
     instance.state.set('lastPath', pathname)
   })
 })
@@ -36,10 +39,14 @@ Template.genericGallery.helpers(wrapHelpers({
   },
   files () {
     const instance = Template.instance()
-    return coreComponentsLoaded.get() && instance.mainCollection.find()
+    const search = instance.state.get('search')
+    const query = {}
+    if (search?.length) {
+      query.name = { $regex: search }
+    }
+    return instance.mainCollection.find(query)
   },
   link (file) {
-    console.log(file)
     const instance = Template.instance()
     const remoteUrl = instance.state.get('remoteUrl')
     const config = Template.instance().data.config()
@@ -47,6 +54,14 @@ Template.genericGallery.helpers(wrapHelpers({
   },
   kilobytes (bytes) {
     return Number(bytes / 1000).toFixed(1)
+  },
+  getIcon (file) {
+    if (file.isPDF) return 'file-pdf'
+    if (file.isAudio) return 'file-audio'
+    if (file.isVideo) return 'file-video'
+    if (file.mime.includes('text/')) return 'file-text'
+    if (file.mime.includes('zip')) return 'file-archive'
+    return 'file'
   },
   // /////////////////////////////////////////////////
   //  Upload
@@ -56,6 +71,12 @@ Template.genericGallery.helpers(wrapHelpers({
   },
   uploadFilesCollection () {
     return Template.instance().mainCollection.filesCollection
+  },
+  onUploadComplete () {
+    const instance = Template.instance()
+    return function onUploadComplete (error, fileObj) {
+      instance.state.clear()
+    }
   },
   // /////////////////////////////////////////////////
   //  Remove
@@ -75,6 +96,20 @@ Template.genericGallery.helpers(wrapHelpers({
 }))
 
 Template.genericGallery.events(wrapEvents({
+  'input .search-input': debounce((event, templateInstance) => {
+    const searchValue = event.target.value
+
+    if (searchValue.length >=2) {
+      templateInstance.state.set({ search: searchValue })
+    }
+
+    else {
+      const hasSearch = templateInstance.state.get('search')
+      if (hasSearch?.length) {
+        templateInstance.state.set({ search: null })
+      }
+    }
+  }, 750),
   'mouseenter .figure-img' (event, templateInstance) {
     const currentFile = dataTarget(event, templateInstance)
     templateInstance.state.set({ currentFile })
