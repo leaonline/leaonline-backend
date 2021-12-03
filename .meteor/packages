@@ -70,7 +70,7 @@ communitypackages:autoform-bootstrap4
 communitypackages:autoform-bootstrap3
 communitypackages:autoform-plain
 
-# d3k4y:autoform-markdown
+d3k4y:autoform-markdown
 leaonline:autoform-regexp
 jkuester:template-loader
 aldeed:autoform-select2

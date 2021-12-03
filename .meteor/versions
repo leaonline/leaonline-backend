@@ -22,6 +22,7 @@ check@1.3.1
 communitypackages:autoform-bootstrap3@1.0.1
 communitypackages:autoform-bootstrap4@1.0.5
 communitypackages:autoform-plain@1.0.1
+d3k4y:autoform-markdown@1.1.0
 dburles:mongo-collection-instances@0.3.6
 ddp@1.4.0
 ddp-client@2.5.0
@@ -97,6 +98,7 @@ ostrio:cstorage@2.2.2
 ostrio:files@2.0.1
 ostrio:flow-router-extra@3.7.5
 ostrio:i18n@3.1.0
+perak:markdown@1.0.5
 promise@0.12.0
 qnipp:yaml@0.1.0
 raix:eventemitter@1.0.0
