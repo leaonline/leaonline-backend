@@ -74,7 +74,7 @@ Template.genericGallery.helpers(wrapHelpers({
   },
   onUploadComplete () {
     const instance = Template.instance()
-    return function onUploadComplete (error, fileObj) {
+    return function onUploadComplete (/* error, fileObj */) {
       instance.state.clear()
     }
   },
@@ -99,11 +99,9 @@ Template.genericGallery.events(wrapEvents({
   'input .search-input': debounce((event, templateInstance) => {
     const searchValue = event.target.value
 
-    if (searchValue.length >=2) {
+    if (searchValue.length >= 2) {
       templateInstance.state.set({ search: searchValue })
-    }
-
-    else {
+    } else {
       const hasSearch = templateInstance.state.get('search')
       if (hasSearch?.length) {
         templateInstance.state.set({ search: null })

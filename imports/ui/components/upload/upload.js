@@ -96,9 +96,7 @@ Template.upload.events({
             uploadedFile: fileObj,
             uploadErr: null
           })
-
-        }
-        else {
+        } else {
           templateInstance.state.set({
             selectedFile: null,
             uploadedFile: null,
