@@ -39,6 +39,7 @@ Template.registerHelper('next', function (...args) {
 })
 
 Template.registerHelper('route', function (name, ...args) {
+  console.debug('args', args)
   args.pop()
   const route = Routes[name]
   if (!route) return

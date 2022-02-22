@@ -36,7 +36,7 @@
 					<div class="card-body d-flex justify-content-between">
 						<span>{{i18n "pages.status.loggedIn"}}</span>
 						{{#if app.ddpLogin}}
-							{{#with app.login}}
+							{{#with app.loginMeteor}}
 								{{#if this.successful}}
                                     {{> icon fw=true name="check" class="text-success"}}
 								{{else}}
