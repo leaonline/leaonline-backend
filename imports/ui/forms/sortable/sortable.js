@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating'
+import { EJSON } from 'meteor/ejson'
 import { ReactiveDict } from 'meteor/reactive-dict'
 import Sortable from 'sortablejs'
 import './autoform'
@@ -116,5 +117,5 @@ function updateData (templateInstance) {
     return undefined
   })
 
-  $destination.val(JSON.stringify(values))
+  $destination.val(EJSON.stringify(values))
 }

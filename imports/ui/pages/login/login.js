@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating'
+import { EJSON } from 'meteor/ejson'
 import { Schema } from '../../../api/schema/Schema'
 import { Users } from '../../../api/accounts/Users'
 import { loggedIn } from '../../../utils/accounts'
@@ -58,7 +59,7 @@ Template.login.events({
         return templateInstance.state.set('loginError', {
           name: code,
           reason: err.reason,
-          details: JSON.stringify(err.details?.data)
+          details: EJSON.stringify(err.details?.data)
         })
       } else {
         const route = templateInstance.data.next()
