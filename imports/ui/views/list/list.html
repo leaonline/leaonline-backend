@@ -271,8 +271,11 @@
                                     <td class="text-center">
                                         <span class="p-1"
                                               title="{{i18n field.label}}">
-                                            {{#if field.value}}
-                                                {{> icon fw=true name="square-full"}}
+                                            {{#if eq field.value true}}
+                                                {{> icon fw=true name="check"}}
+                                            {{/if}}
+                                            {{#if eq field.value false}}
+                                                {{> icon fw=true name="times"}}
                                             {{/if}}
                                         </span>
                                     </td>

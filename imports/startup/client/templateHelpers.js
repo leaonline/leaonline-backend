@@ -6,3 +6,7 @@ Template.registerHelper('toDate', function (date) {
   const locale = i18n.getLocale()
   return date && new Date(date).toLocaleDateString(locale, options)
 })
+
+Template.registerHelper('eq', function (a, b) {
+  return a === b
+})
