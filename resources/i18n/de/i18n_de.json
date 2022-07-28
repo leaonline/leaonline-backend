@@ -1,4 +1,5 @@
 {
+  "too-many-requests":"Zu viele Anfragen",
   "404": "404 (nicht gefunden)",
   "actions": {
     "create": "Erstellen",
@@ -163,6 +164,7 @@
     }
   },
   "errors": {
+    "slowDown": "Bitte warten Sie",
     "permissionDenied": {
       "title": "Kein Zugriffsrecht",
       "noUser": "Nicht als Benutzer angemeldet"

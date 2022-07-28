@@ -20,7 +20,7 @@
     "@shopify/draggable": "^1.0.0-beta.12",
     "bootstrap": "^4.6.1",
     "dely": "^1.0.2",
-    "easy-speech": "^1.1.0",
+    "easy-speech": "^1.2.0",
     "fast-shuffle": "^4.5.1",
     "highlight.js": "^10.7.3",
     "jquery": "^3.6.0",
