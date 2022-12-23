@@ -106,9 +106,13 @@ function track (name, connection, ddpLogin) {
         connection._loggingIn = false
         if (err) {
           Meteor.logout()
+          // TODO
+          //   add error to app, so we can display this issue
+          //   in the overview template
           return console.error(err)
         } else {
           log(name, 'logged in with token', !!res)
+          updateLogin(name, connection.userId())
           computation.stop()
           configure(name)
         }
@@ -117,8 +121,12 @@ function track (name, connection, ddpLogin) {
   })
 }
 
-Apps.loadConfig = function (cb) {
-  _loadConfigHandler = cb
+/**
+ *
+ * @param callback {function(name:string, done:function):void} callback to call after parsing is done
+ */
+Apps.loadConfig = function (callback) {
+  _loadConfigHandler = callback
 }
 
 let _loadConfigHandler = () => {

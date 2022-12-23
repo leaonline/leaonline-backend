@@ -27,7 +27,7 @@ Object
  */
 ;[
   Routes.statusOverview,
-  Routes.settings
+  // Routes.settings
 ].forEach(route => RoutesTree.topLevel(route.path(), route))
 
 Template.registerHelper('next', function (...args) {

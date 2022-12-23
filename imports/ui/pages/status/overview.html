@@ -17,38 +17,25 @@
 							</a>
 						</small>
 					</div>
-					<div class="card-body d-flex justify-content-between">
-						<span>{{i18n "pages.status.connection"}}</span>
-						{{#if app.ddpConnect}}
-							{{#with app.status}}
-								{{#if this.connected}}
-                                    {{> icon fw=true name="check" class="text-success"}}
-								{{else}}
-                                    {{> icon fw=true name="ban" class="text-danger"}}
-								{{/if}}
-							{{else}}
-                                {{> icon fw=true pulse=true name="spinner"}}
-							{{/with}}
-						{{else}}
-							{{>icon fw=true name="power-off"}}
-						{{/if}}
-					</div>
-					<div class="card-body d-flex justify-content-between">
-						<span>{{i18n "pages.status.loggedIn"}}</span>
-						{{#if app.ddpLogin}}
-							{{#with app.loginMeteor}}
-								{{#if this.successful}}
-                                    {{> icon fw=true name="check" class="text-success"}}
-								{{else}}
-                                    {{> icon fw=true name="ban" class="text-danger" title=this.reason}}
-								{{/if}}
-							{{else}}
-                                {{> icon fw=true pulse=true name="spinner"}}
-							{{/with}}
-						{{else}}
+                    {{#if isConnected app}}
+                        <div class="card-body d-flex justify-content-between">
+                            <span>{{i18n "pages.status.connection"}}</span>
+                            {{> icon fw=true name="check" class="text-success"}}
+                        </div>
+                        <div class="card-body d-flex justify-content-between">
+                            <span>{{i18n "pages.status.loggedIn"}}</span>
+                            {{#if isLoggedIn app}}
+                                {{> icon fw=true name="check" class="text-success"}}
+                            {{else}}
+                                {{> icon fw=true name="lock" class="text-danger"}}
+                            {{/if}}
+                        </div>
+                    {{else}}
+                        <div class="card-body d-flex justify-content-between">
+                            <span>{{i18n "pages.status.connection"}}</span>
                             {{>icon fw=true name="power-off"}}
-						{{/if}}
-					</div>
+                        </div>
+                    {{/if}}
 				</div>
 			</div>
             {{else}}

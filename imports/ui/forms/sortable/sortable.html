@@ -1,8 +1,9 @@
 <template name="afSortable">
 
     <div class="row">
-        <div class="card col">
-            <div class="card-header bg-transparent">{{includeLabel}}</div>
+        <div class="col-6 p-0">
+        <div class="card">
+            <div class="card-header bg-transparent">{{i18n "sortable.include"}}</div>
             <div class="card-body">
                 <ul class="list-group afsortable-sort-target afsortable-list">
                     {{#each option in selectedOptions}}
@@ -14,9 +15,11 @@
                 </ul>
             </div>
         </div>
+        </div>
 
-        <div class="card col">
-            <div class="card-header bg-transparent">{{excludeLabel}}</div>
+        <div class="col-6 p-0">
+        <div class="card">
+            <div class="card-header bg-transparent">{{i18n "sortable.exclude"}}</div>
             <div class="card-body">
                 <ul class="list-group afsortable-unused-target afsortable-list mt-3">
                     {{#each option in unselectedOptions}}
@@ -27,6 +30,7 @@
                     {{/each}}
                 </ul>
             </div>
+        </div>
         </div>
     </div>
 

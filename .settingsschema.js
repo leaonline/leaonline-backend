@@ -28,7 +28,8 @@ const settingsSchema = schema({
   }),
   public: schema({
     app: schema({
-      title: String
+      title: String,
+      version: String
     }),
     editor: schema({
       textAreaThreshold: SimpleSchema.Integer
@@ -36,7 +37,8 @@ const settingsSchema = schema({
     hosts: schema({
       otulea: schema(remoteApp),
       content: schema(remoteApp),
-      teacher: schema(remoteApp)
+      teacher: schema(remoteApp),
+      app: schema(remoteApp)
     }),
     tts: schema({
       url: urlField

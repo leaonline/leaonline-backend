@@ -7,7 +7,7 @@ import { defaultNotifications } from '../../utils/defaultNotifications'
 
 const defaultLog = () => {}
 
-export const loadDocumentsWithDependencies = function loadDocumentsWithDependencies ({ instance, config, logDebug = defaultLog, onSubscribed, settingsDoc, connection }) {
+export const loadDocumentsWithDependencies = ({ instance, config, logDebug = defaultLog, onSubscribed, settingsDoc, connection }) => {
   const dependencies = getDependenciesForContext(config).filter(dep => !dep.isType).map(dep => ({ name: dep.name }))
 
   if (config.methods.getAll) {
@@ -19,11 +19,13 @@ export const loadDocumentsWithDependencies = function loadDocumentsWithDependenc
         defaultNotifications(error)
       },
       success: (allDocuments = {}) => {
-        console.info(allDocuments)
         // iterate through all documents and assign each to their contexts
         // to ensure we have loaded all dependencies, too
         Object.entries(allDocuments).forEach(([collectionName, documents]) => {
           const collection = getCollection(collectionName)
+          if (!collection) {
+            throw new Error('Collection name is required to upsert docs. Did you only returned docs without collection name?')
+          }
           upsertIntoCollection(collection, documents)
           logDebug('loaded docs for', collection)
         })

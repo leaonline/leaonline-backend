@@ -6,8 +6,8 @@ import { Schema } from '../../../api/schema/Schema'
 import { by300 } from '../../../utils/dely'
 import { formIsValid } from '../../../utils/form'
 import { parseSettings } from '../../config/parseSettings'
-import './contextSettings.html'
 import { defaultNotifications } from '../../../utils/defaultNotifications'
+import './contextSettings.html'
 
 Template.contextSettings.onCreated(function () {
   const instance = this

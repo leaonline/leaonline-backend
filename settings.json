@@ -10,7 +10,8 @@
   },
   "public": {
     "app": {
-      "title": "lea.online Backend"
+      "title": "lea.online Backend",
+      "version": "1.0.0"
     },
     "editor": {
       "textAreaThreshold": 500
@@ -37,6 +38,14 @@
         "label": "lea.teacher",
         "url": "http://localhost:5555",
         "icon": "chart-line",
+        "ddpConnect": true,
+        "ddpLogin": true
+      },
+      "app": {
+        "name": "app",
+        "label": "lea.app",
+        "url": "http://localhost:8080",
+        "icon": "mobile",
         "ddpConnect": true,
         "ddpLogin": true
       }

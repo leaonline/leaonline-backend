@@ -28,6 +28,9 @@
     "editMode": "In Bearbeitung",
     "dependencyNotFound": "Verlinktes Dokument (Feld '{{field}}') wurde nicht gefunden"
   },
+  "previewTypes": {
+    "title": "Vorschau-Typen"
+  },
   "search": {
     "placeholder": "Suchtext eingeben",
     "failed": "Keine Ergebnisse"
@@ -45,7 +48,10 @@
   "taskRenderers": {
     "text": "Text",
     "image": "Bild",
-    "h5p": "H5P Format"
+    "h5p": "H5P Format",
+    "factory": "Automatisch",
+    "page": "Aufgaben-Seite",
+    "document": "Dokument"
   },
   "form": {
     "selectOne": "(Bitte wählen)",
@@ -78,10 +84,15 @@
   "formTypes": {
     "imageSelect": "Bild aus Gallerie auswählen",
     "taskContent": "Aufgaben-Inhalt",
-    "regExp": "Regulärer Ausdruck"
+    "regExp": "Regulärer Ausdruck",
+    "sortable": "Sortierbare Liste"
   },
   "taskContent": {
     "allTrue": "Alle scores korrekt"
+  },
+  "sortable": {
+    "include": "Hinzugefügt",
+    "exclude": "Verfügbar"
   },
   "common": {
     "ok": "OK",

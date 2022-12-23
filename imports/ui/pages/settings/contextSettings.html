@@ -13,7 +13,9 @@
         </div>
 
         {{#autoForm id="settingsForm" type="normal" schema=settingsSchema doc=settingsDoc}}
-1
+            {{#each afFieldNames}}
+                {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
+            {{/each}}
             <div class="d-flex justify-content-between">
                 <button class="btn btn-primary" type="submit">{{i18n "actions.update"}}</button>
                 <button class="btn btn-outline-secondary cancel-form-button">{{i18n "actions.cancel"}}</button>

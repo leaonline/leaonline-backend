@@ -16,7 +16,7 @@ Meteor.subscribe(Apps.publications.all.name)
 // the following registers a config loader callback and runs a
 // parsing mechanism and adds the respective routes to the navigation
 
-Apps.loadConfig(function (name, done) {
+Apps.loadConfig((name, done) => {
   const app = Apps.get(name)
   const { connection } = app
   const lang = i18n.getLocale()
