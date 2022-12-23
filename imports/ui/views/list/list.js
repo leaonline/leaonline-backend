@@ -22,14 +22,11 @@ import { updateDocumentState } from '../../../utils/updateDocumentState'
 import { getSearchIds } from './helpers/getSearchIds'
 import { updateAllDocuments } from '../../../utils/updateAllDocuments'
 import { validateDocs } from './helpers/validateDocs'
-import { getCollection } from '../../../utils/collection'
-
 import { by300 } from '../../../utils/dely'
 import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.scss'
 import './list.html'
-
 
 Template.genericList.onCreated(function () {
   const instance = this
@@ -627,5 +624,3 @@ function resetFormState (templateInstance) {
 }
 
 const entryIsTrue = entry => entry === true
-
-
