@@ -27,7 +27,7 @@ Template.contextSettings.onCreated(function () {
 
     instance.state.set({
       loadComplete: true,
-      contextName: contextName
+      contextName
     })
   })
 })

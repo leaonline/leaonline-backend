@@ -66,7 +66,7 @@ Apps.schema = {
     type: String,
     label: 'viewTypes.title',
     autoform: {
-      firstOption: firstOption,
+      firstOption,
       options: getConfigTypeOptions
     }
   },
@@ -77,7 +77,7 @@ Apps.schema = {
     optional: true,
     label: 'previewTypes.title',
     autoform: {
-      firstOption: firstOption,
+      firstOption,
       options: getPrewiewRenderers()
     }
   },
@@ -116,7 +116,7 @@ Apps.schema = {
     label: 'alignment.title',
     optional: true,
     autoform: {
-      firstOption: firstOption,
+      firstOption,
       options: getAlignmentOptions
     }
   },
@@ -125,7 +125,7 @@ Apps.schema = {
     label: 'apps.fields.display.title',
     optional: true,
     autoform: {
-      firstOption: firstOption,
+      firstOption,
       options: function () {
         return [
           { value: 'default', label: 'apps.fields.display.default' },
@@ -139,7 +139,7 @@ Apps.schema = {
     label: 'apps.fields.form',
     optional: true,
     autoform: {
-      firstOption: firstOption,
+      firstOption,
       options: getFormTypeOptions
     }
   }
@@ -151,7 +151,7 @@ Apps.getSchemaForContext = (context) => {
   transformLabelsToTranslation(schema)
   Object.assign(schema['fields.$.name'], {
     autoform: {
-      firstOption: firstOption,
+      firstOption,
       options: fields
     }
   })

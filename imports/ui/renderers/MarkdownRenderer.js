@@ -1,10 +1,6 @@
-import { Renderer } from 'marked'
+import { marked, Renderer } from 'marked'
 
 class DefaultRenderer extends Renderer {
-  constructor (options) {
-    super(options)
-  }
-
   heading (text) {
     return `<span class="lea-text-bold">${text}</span>`
   }
@@ -26,8 +22,6 @@ const defaultOptions = {
   async: true,
   headerIds: false
 }
-
-
 
 export const MarkdownRenderer = {}
 

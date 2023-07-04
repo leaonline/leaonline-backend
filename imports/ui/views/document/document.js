@@ -90,7 +90,7 @@ Template.genericDocument.events({
         .success(function () {
           updateDocumentState({
             docId: target._id,
-            connection: connection,
+            connection,
             context: config,
             onComplete: doc => templateInstance.state.set('updateDoc', doc)
           })

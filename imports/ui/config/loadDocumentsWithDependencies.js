@@ -12,7 +12,7 @@ export const loadDocumentsWithDependencies = ({ instance, config, logDebug = def
 
   if (config.methods.getAll) {
     callMethod({
-      connection: connection,
+      connection,
       name: config.methods.getAll,
       args: { dependencies },
       failure: error => {
@@ -44,7 +44,7 @@ export const loadDocumentsWithDependencies = ({ instance, config, logDebug = def
   } else if (config.methods.get) {
     // single-doc contexts have only .get method
     callMethod({
-      connection: connection,
+      connection,
       name: config.methods.get,
       args: {},
       failure: error => {

@@ -18,7 +18,7 @@ export const updateStateAction = function updateStateAction ({ action = 'reset',
       return instance.state.set({
         insertForm: null,
         updateForm: true,
-        updateDoc: updateDoc
+        updateDoc
       })
     case 'reset':
       return instance.state.set({

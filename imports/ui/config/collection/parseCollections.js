@@ -42,7 +42,7 @@ export const parseCollections = function parseCollections ({ instance, config, c
       const localCollection = createCollection({
         name: null,
         schema: Object.assign({}, config.schema, defaultSchema),
-        connection: connection,
+        connection,
         attachSchema: false
       }, collectionName)
 
@@ -53,12 +53,12 @@ export const parseCollections = function parseCollections ({ instance, config, c
       // additionally create files collection
       if (isFilesCollection) {
         createFilesCollection({
-          collectionName: collectionName,
+          collectionName,
           collection: localCollection,
           ddp: connection,
           maxSize: config.maxSize,
           extension: config.extensions,
-          validateUser: validateUser
+          validateUser
         })
       }
     }

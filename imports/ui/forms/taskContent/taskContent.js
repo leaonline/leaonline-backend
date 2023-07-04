@@ -89,10 +89,10 @@ const contentFromItem = (name, value) => ({
 
 const getImageForm = ({ imagesCollection, save = 'url', uriBase, version }) => ({
   type: FormTypes.imageSelect.template,
-  imagesCollection: imagesCollection,
-  save: save,
-  uriBase: uriBase,
-  version: version
+  imagesCollection,
+  save,
+  uriBase,
+  version
 })
 
 const loadDependencies = (config, appName) => {
@@ -106,13 +106,13 @@ const loadDependencies = (config, appName) => {
       const instance = {}
       parseCollections({
         config: dependency,
-        connection: connection,
-        instance: instance
+        connection,
+        instance
       })
 
       loadDocumentsWithDependencies({
         config: dependency,
-        connection: connection,
+        connection,
         instance: null,
         logDebug: (...args) => console.log(...args),
         onSubscribed: () => console.log('subscribed', config.name)

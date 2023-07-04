@@ -137,8 +137,8 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
       Object.assign(autoform, definitions.dependency)
       loadTargetForm({
         targetForm: FormTypes.taskContent,
-        instance: instance,
-        fieldSettings: fieldSettings
+        instance,
+        fieldSettings
       })
     }
 

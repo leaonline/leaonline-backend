@@ -230,7 +230,7 @@ Template.genericList.events(wrapEvents({
       defaultNotifications(err, insertDocId)
         .success(function () {
           updateDocumentState({
-            connection: connection,
+            connection,
             context: config,
             docId: insertDocId,
             onComplete () {
@@ -315,7 +315,7 @@ Template.genericList.events(wrapEvents({
         .success(function () {
           updateDocumentState({
             context: templateInstance.data.config(),
-            connection: connection,
+            connection,
             docId: target._id,
             onComplete () {
               const list = templateInstance.mainCollection.find().fetch()
@@ -402,7 +402,7 @@ Template.genericList.events(wrapEvents({
           if (targetId) {
             updateDocumentState({
               context: config,
-              connection: connection,
+              connection,
               docId: targetId,
               onComplete () {
                 const list = templateInstance.mainCollection.find({}, transform).fetch()
@@ -412,7 +412,7 @@ Template.genericList.events(wrapEvents({
           } else {
             updateAllDocuments({
               context: config,
-              connection: connection,
+              connection,
               onComplete () {
                 const list = templateInstance.mainCollection.find({}, transform).fetch()
                 updateList(list, templateInstance)
@@ -536,7 +536,7 @@ function prepareList (list, instance) {
     return {
       trAtts: getTableRowAttributes(document, validationErrors),
       fields: getTableRowFields(document, fieldConfig, fields),
-      document: document
+      document
     }
   })
 }
