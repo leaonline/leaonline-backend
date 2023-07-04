@@ -26,7 +26,8 @@ export const parseCollections = function parseCollections ({ instance, config, c
   // so we can easily create everything in a row
   const allCollections = dependencies.length > 0
     ? [config].concat(dependencies)
-    : [config].filter(({ isType }) => isType === false)
+    : [config].filter(({ isType }) => !isType)
+  console.debug('parse collections', { instance, config, dependencies, allCollections })
 
   allCollections.forEach(collectionConfig => {
     const isFilesCollection = collectionConfig.isFilesCollection

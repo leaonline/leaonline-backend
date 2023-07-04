@@ -18,6 +18,7 @@ import { toFormSchema } from '../../config/toFormSchema'
 import { parseCollections } from '../../config/collection/parseCollections'
 import { loadDocumentsWithDependencies } from '../../config/loadDocumentsWithDependencies'
 import { reactiveAsyncLoader } from '../../../utils/reactiveAsyncLoader'
+import { MarkdownRenderer } from '../../renderers/MarkdownRenderer'
 import 'select2'
 import 'select2/select2.css'
 import 'select2/select2-bootstrap.css'
@@ -27,7 +28,11 @@ import './taskContent.html'
 import './autoform'
 
 Scoring.init()
-const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init())
+const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init({
+  markdown: {
+    renderer: MarkdownRenderer.render
+  }
+}))
 
 AutoForm.addInputType('leaTaskContent', {
   template: 'afLeaTaskContent',
