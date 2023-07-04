@@ -1,3 +1,14 @@
+@font-face {
+  font-family: 'Semikolon';
+  src: url('SemikolonPlus-Regular.otf') format('opentype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SemikolonBold';
+  src: url('SemikolonPlus-Bold.otf') format('opentype');
+  font-display: swap;
+}
+
 body, wrapper {
   background-color: #FFF !important;
   min-height:100vh;
@@ -51,13 +62,13 @@ body, wrapper {
 
 @media (min-width: 240px) {
   .lea-text {
-    font-family: Semikolon, Arial !important;
+    font-family: Semikolon !important;
     font-size: 12px;
   }
 }
 @media (min-width: 576px) {
   .lea-text {
-    font-family: Semikolon, Arial !important;
+    font-family: Semikolon !important;
     font-size: 16px;
   }
 }
@@ -65,7 +76,7 @@ body, wrapper {
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {
   .lea-text {
-    font-family: Semikolon, Arial !important;
+    font-family: Semikolon !important;
     font-size: 20px;
   }
 }
@@ -73,18 +84,18 @@ body, wrapper {
 // Large devices (desktops, 992px and up)
 @media (min-width: 992px) {
   .lea-text {
-    font-family: Semikolon, Arial !important;
+    font-family: Semikolon !important;
     font-size: 24px;
   }
 }
 
 .lea-text-bold {
-  font-family: SemikolonBold, Semikolon, sans-serif;
+  font-family: SemikolonBold !important;
   font-size: 24px;
 }
 
 h1 {
-  font-family: Semikolon, Arial !important;
+  font-family: Semikolon !important;
   font-size: 30px;
 }
 
