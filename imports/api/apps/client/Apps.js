@@ -5,7 +5,6 @@ import { check, Match } from 'meteor/check'
 import { Tracker } from 'meteor/tracker'
 import { DDP } from 'meteor/ddp-client'
 import { ReactiveDict } from 'meteor/reactive-dict'
-import { loginWithLea } from 'meteor/leaonline:ddp-login'
 
 const _apps = new ReactiveDict()
 const _connections = {}
@@ -103,7 +102,6 @@ function track (name, connection, ddpLogin) {
       }
       log(name, 'init login')
       const options = { accessToken: credentials.accessToken, debug: Apps.debug }
-      debugger
       DDP.loginWithLea(connection, options, (err, res) => {
         connection._loggingIn = false
         if (err) {
