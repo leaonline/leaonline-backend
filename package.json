@@ -17,8 +17,9 @@
   "dependencies": {
     "@babel/runtime": "^7.13.10",
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "@popperjs/core": "^2.11.8",
     "@shopify/draggable": "^1.0.0-beta.12",
-    "bootstrap": "^4.6.1",
+    "bootstrap": "^5.3.3",
     "dely": "^1.0.2",
     "easy-speech": "^2.1.0",
     "fast-shuffle": "^4.5.1",
@@ -27,9 +28,8 @@
     "lozad": "^1.16.0",
     "marked": "^5.1.0",
     "meteor-node-stubs": "^1.1.0",
-    "popper.js": "^1.16.1",
     "select2": "^3.5.1",
-    "simpl-schema": "^1.12.0",
+    "simpl-schema": "^1.13.1",
     "sortablejs": "^1.14.0"
   },
   "meteor": {

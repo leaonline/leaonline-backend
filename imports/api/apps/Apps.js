@@ -165,9 +165,9 @@ Apps.methods.getServiceCredentials = {
   schema: {},
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(function () {
-    const user = Meteor.users.findOne(this.userId)
-    return user.services.lea
+  run: onServer(async function () {
+    const user = await Meteor.users.findOneAsync(this.userId)
+    return user?.services?.lea
   }),
   call: function (cb) {
     Meteor.call(Apps.methods.getServiceCredentials.name, cb)
@@ -179,12 +179,12 @@ Apps.methods.updateSettings = {
   schema: Apps.schema,
   numRequests: 1,
   timeInterval: 1000,
-  run: onServer(function (settingsDoc) {
-    const existingDocId = Apps.collection().findOne({ name: settingsDoc.name, context: settingsDoc.context })
+  run: onServer(async function (settingsDoc) {
+    const existingDocId = await Apps.collection().findOneAsync({ name: settingsDoc.name, context: settingsDoc.context })
     if (existingDocId) {
-      return Apps.collection().update(existingDocId, { $set: settingsDoc })
+      return await Apps.collection().updateAsync(existingDocId, { $set: settingsDoc })
     } else {
-      return Apps.collection().insert(settingsDoc)
+      return await Apps.collection().insertAsync(settingsDoc)
     }
   })
 }
@@ -199,7 +199,7 @@ Apps.publications.getByNames = {
   },
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(function ({ appName, contextName }) {
+  run: onServer(async function ({ appName, contextName }) {
     return Apps.collection().find({ name: appName, context: contextName })
   })
 }
@@ -212,7 +212,7 @@ Apps.publications.all = {
   },
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(function () {
+  run: onServer(async function () {
     return Apps.collection().find()
   })
 }

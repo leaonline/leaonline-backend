@@ -2,6 +2,10 @@ import { Mongo } from 'meteor/mongo'
 
 const NotificationsCollection = new Mongo.Collection(null)
 
+/**
+ * Client-side notifications manager
+ * @client
+ */
 export const Notifications = {}
 
 Notifications.add = function ({ title, type, content, details, visible = true, timeout = 2500 }) {
