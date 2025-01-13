@@ -20,6 +20,10 @@ body, wrapper {
   cursor: not-allowed;
 }
 
+label {
+  font-weight: bold;
+}
+
 [data-required] label:after {content: ' *'}
 
 * {

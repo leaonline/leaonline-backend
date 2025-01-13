@@ -1,7 +1,7 @@
 accounts-base@3.0.1
 accounts-oauth@1.4.5
-aldeed:autoform@8.0.0-rc.4
-aldeed:collection2@4.0.3
+aldeed:autoform@8.0.0
+aldeed:collection2@4.0.4
 aldeed:simple-schema@2.0.0
 allow-deny@2.0.0
 audit-argument-checks@1.0.8
@@ -49,7 +49,7 @@ http@1.4.4
 id-map@1.2.0
 inter-process-messaging@0.1.2
 jkuester:template-loader@1.0.0
-jkuester:template-states@0.3.0
+jkuester:template-states@1.0.0
 jquery@3.0.0
 lai:collection-extensions@1.0.0
 launch-screen@2.0.1
