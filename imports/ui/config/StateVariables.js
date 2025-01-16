@@ -6,6 +6,7 @@ export const StateVariables = {
   actionInsert: 'actionInsert',
   actionUpdate: 'actionUpdate',
   actionUpload: 'actionUpload',
+  actionExport: 'actionExport',
   actionPreview: 'actionPreview',
   customActions: 'customActions',
   updateDoc: 'updateDoc',

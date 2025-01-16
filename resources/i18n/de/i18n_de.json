@@ -21,7 +21,8 @@
     "updateDoc": "Ein Dokument bearbeiten",
     "confirmRemove": "Möchten Sie wirklich das Dokument \"{{title}}\" löschen?",
     "settings": "Einstellungen bearbeiten",
-    "submitting": "Sende Daten"
+    "submitting": "Sende Daten",
+    "export": "Nach {{format}} exportieren"
   },
   "document": {
     "viewMode": "Vorschau",

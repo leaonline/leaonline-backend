@@ -23,6 +23,7 @@
     "dely": "^1.0.2",
     "easy-speech": "^2.1.0",
     "fast-shuffle": "^4.5.1",
+    "file-saver": "^2.0.5",
     "highlight.js": "^10.7.3",
     "jquery": "^3.6.0",
     "lozad": "^1.16.0",

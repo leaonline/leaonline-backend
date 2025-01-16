@@ -27,6 +27,8 @@ import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.scss'
 import './list.html'
+import { exportData } from './exporter/exportData'
+import { saveTextFile } from '../../../utils/saveTextFile'
 
 Template.genericList.onCreated(function () {
   const instance = this
@@ -474,7 +476,24 @@ Template.genericList.events(wrapEvents({
 
     updateList(filteredDocs, templateInstance)
     templateInstance.state.set('searchOngoing', false)
-  }, 750)
+  }, 750),
+  'click .export-btn' (event, templateInstance) {
+    event.preventDefault()
+
+    const data = templateInstance.mainCollection.find().fetch()
+    const schema = templateInstance.actionInsertSchema._schema
+    const type = dataTarget(event, 'format')
+    const output = exportData({ data, type, schema })
+    const app = 'content'
+    const collection = templateInstance.mainCollection._name
+    const date = new Date().toLocaleString()
+    saveTextFile({
+      type: 'text/csv',
+      name: `${app}-${collection}-${date}`,
+      text: output
+    })
+    console.debug(output)
+  }
 }))
 
 function onClosed () {
