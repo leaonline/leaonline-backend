@@ -481,9 +481,12 @@ Template.genericList.events(wrapEvents({
     event.preventDefault()
 
     const data = templateInstance.mainCollection.find().fetch()
-    const schema = templateInstance.actionInsertSchema._schema
+    const schema = templateInstance.actionInsertSchema
+        ? templateInstance.actionInsertSchema._schema
+        : templateInstance.mainCollection.schema._schema
     const type = dataTarget(event, 'format')
-    const output = exportData({ data, type, schema })
+    const fieldConfig = templateInstance.fieldConfig
+    const output = exportData({ data, type, schema, fieldConfig })
     const app = 'content'
     const collection = templateInstance.mainCollection._name
     const date = new Date().toLocaleString()
