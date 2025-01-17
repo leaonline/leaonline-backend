@@ -482,20 +482,20 @@ Template.genericList.events(wrapEvents({
 
     const data = templateInstance.mainCollection.find().fetch()
     const schema = templateInstance.actionInsertSchema
-        ? templateInstance.actionInsertSchema._schema
-        : templateInstance.mainCollection.schema._schema
+      ? templateInstance.actionInsertSchema._schema
+      : templateInstance.mainCollection.schema._schema
     const type = dataTarget(event, 'format')
+    const mime = dataTarget(event, 'mime')
     const fieldConfig = templateInstance.fieldConfig
     const output = exportData({ data, type, schema, fieldConfig })
     const app = 'content'
     const collection = templateInstance.mainCollection._name
     const date = new Date().toLocaleString()
     saveTextFile({
-      type: 'text/csv',
+      type: mime,
       name: `${app}-${collection}-${date}`,
       text: output
     })
-    console.debug(output)
   }
 }))
 

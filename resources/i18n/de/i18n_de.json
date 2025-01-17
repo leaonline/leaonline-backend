@@ -22,7 +22,7 @@
     "confirmRemove": "Möchten Sie wirklich das Dokument \"{{title}}\" löschen?",
     "settings": "Einstellungen bearbeiten",
     "submitting": "Sende Daten",
-    "export": "Nach {{format}} exportieren"
+    "export": "Exportieren"
   },
   "document": {
     "viewMode": "Vorschau",

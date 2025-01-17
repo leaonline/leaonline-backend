@@ -143,7 +143,7 @@
                     </div>
                 {{/if}}
 
-                <div class="col-auto">
+                <div class="col-auto d-flex gap-2">
                     {{#unless showSearch}}
                         <button class="btn btn-outline-secondary search-button">
                             {{> icon name="search" fw=true}}
@@ -172,12 +172,25 @@
                     {{#with actionExport}}
                         {{!-- todo custom export method --}}
                     {{else}}
-                        <button
-                            class="btn btn-outline-secondary export-btn"
-                            data-format="csv"
-                            title="{{i18n "actions.export" format="csv"}}">
-                            {{> icon name="table"}}
-                        </button>
+                        <div class="dropdown">
+                          <button class="btn btn-outline-secondary dropdown-toggle"
+                                  title="{{i18n "actions.export"}}"
+                                  type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              {{> icon name="file-export" fw=true}}
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item export-btn" href data-format="csv" data-mime="text/csv">
+                                    {{> icon name="table" fw=true}} <span class="ms-1">CSV</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item export-btn" href data-format="json" data-mime="application/json">
+                                    {{> icon name="code" fw=true}} <span class="ms-1">JSON</span>
+                                </a>
+                            </li>
+                          </ul>
+                        </div>
                     {{/with}}
                     {{#with actionInsert}}
                         <button class="btn btn-success insert-button">
