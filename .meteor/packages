@@ -43,6 +43,7 @@ leaonline:grid-factory
 leaonline:method-factory
 leaonline:publication-factory
 leaonline:ratelimit-factory
+leaonline:blaze-exceptions
 ddp-rate-limiter
 
 # files

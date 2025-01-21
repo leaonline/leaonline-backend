@@ -4,11 +4,11 @@
 			<div class="container-fluid">
 				{{#each logo in logos}}
 					<a class="navbar-brand" href="{{logo.href}}">
-						{{> image src=logo.src title=logo.title alt=logo.alt class="mr-4" height="30"}}
+						{{> image src=logo.src title=logo.title alt=logo.alt class="me-4" height="30"}}
 					</a>
 				{{/each}}
 				<div class="collapse navbar-collapse" id="navbarNavDropdown">
-					<ul class="navbar-nav ml-auto">
+					<ul class="navbar-nav ms-auto">
 						<li class="nav-item active">
 							<a class="nav-link" href="#">v{{appVersion}}</a>
 						</li>

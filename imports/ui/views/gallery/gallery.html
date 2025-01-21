@@ -6,13 +6,13 @@
 	<div class="card">
 	<div class="card-body d-flex">
 		<div>
-            <span class="no-wrap mr-auto">
+            <span class="no-wrap me-auto">
 			<i class="fa fa-fw fa-file"></i>
 			<span>{{count}}</span>
             <span>{{i18n "common.files"}}</span>
 		</span>
             <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2 search-input"
+                <input class="form-control me-sm-2 search-input"
                        type="search"
                        placeholder="{{i18n "search.placeholder"}}"
                        aria-label="Search">
@@ -25,7 +25,7 @@
                     filesCollection=uploadFilesCollection
                     accept=this.accept
                     onComplete=onUploadComplete
-                    class="ml-auto"}}
+                    class="ms-auto"}}
 		{{/with}}
 	</div>
 	</div>
@@ -55,7 +55,7 @@
                 {{#if selected file._id}}
                     <div class="row w-100 p-1 bg-dark mb-4">
                         <div class="col-12 d-flex">
-                            <button class="btn btn-outline-light border-0 close-preview-button ml-auto">
+                            <button class="btn btn-outline-light border-0 close-preview-button ms-auto">
                                 <i class="fa fas fa-fw fa-times"></i>
                             </button>
                         </div>

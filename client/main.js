@@ -1,4 +1,5 @@
 // app configuration
+import '../imports/startup/client/errors'
 import '../imports/startup/client/schema'
 import '../imports/startup/client/schemaConfigReviver'
 import '../imports/startup/client/language'

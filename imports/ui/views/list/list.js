@@ -39,6 +39,7 @@ Template.genericList.onCreated(function () {
 
   instance.autorun(() => {
     const data = Template.currentData()
+    console.debug({ data })
     const { pathname } = window.location
     const lastPath = instance.state.get('lastPath')
 

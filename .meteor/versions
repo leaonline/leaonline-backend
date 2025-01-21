@@ -55,6 +55,7 @@ lai:collection-extensions@1.0.0
 launch-screen@2.0.1
 leaonline:accounts-lea@2.0.0
 leaonline:autoform-regexp@2.0.0
+leaonline:blaze-exceptions@0.0.1
 leaonline:collection-factory@2.0.0
 leaonline:corelib@2.0.0
 leaonline:ddp-login@3.0.0
