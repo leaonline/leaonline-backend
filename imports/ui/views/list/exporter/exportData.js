@@ -2,6 +2,7 @@ import { csvExporter } from './csvExporter'
 import { resolveFieldFromCollection } from '../../../config/fields/resolveFieldFromCollection'
 import { resolveFieldFromContext } from '../../../config/fields/resolveFieldFromContext'
 import { jsonExporter } from './jsonExporter'
+import { safeStringify } from '../../../../utils/safeStringify'
 
 export const exportData = ({ data, type, schema, fieldConfig, exporterConfig }) => {
   const exporter = exporters[type]
@@ -84,7 +85,11 @@ const createMapping = ({ schema, fieldConfig }) => {
     }
 
     if (type === 'object' && value !== null) {
-      value = value.toString()
+      try {
+        value = safeStringify(value)
+      } catch (e) {
+        value = value.toString()
+      }
     }
 
     if (type === 'undefined' || value === null) {
