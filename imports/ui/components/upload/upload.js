@@ -58,7 +58,7 @@ Template.upload.events({
     }
     templateInstance.state.set({ selectedFile })
   },
-  'click .upload-button' (event, templateInstance) {
+  'click .upload-button': async function (event, templateInstance) {
     event.preventDefault()
 
     const insertConfig = templateInstance.state.get('insertConfig')
@@ -73,14 +73,15 @@ Template.upload.events({
       file: files[0]
     })
 
-    const upload = templateInstance.data.filesCollection.insert(opts, false)
+    debugger
+    const upload = await templateInstance.data.filesCollection.insertAsync(opts, false)
     templateInstance.currentUpload.set(true)
     templateInstance.state.set({ progress: 0 })
 
-    // upload.on('start', function () {})
+    upload.on('start', function () {})
 
     upload.on('error', function (error) {
-      console.log(error)
+      console.error(error)
       templateInstance.state.set('uploadError', error)
     })
 

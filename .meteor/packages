@@ -47,7 +47,7 @@ leaonline:blaze-exceptions
 ddp-rate-limiter
 
 # files
-ostrio:files
+ostrio:files@3.0.0-rc.3
 ostrio:autoform-files
 
 ostrio:flow-router-extra@3.11.0-rc300.1

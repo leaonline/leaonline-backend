@@ -8,6 +8,7 @@ import shuffle from 'fast-shuffle'
 setShuffle(shuffle)
 
 Components.autoLoad()
+Components.contentPath(Meteor.settings.public.hosts.content.url)
 
 Meteor.startup(() => {
   TTSEngine.configure({
