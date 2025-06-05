@@ -52,15 +52,17 @@
                 <button class="btn btn-sm btn-outline-secondary show-source-button">
                     {{> icon name="code" fw=true}}
                 </button>
-				<button class="btn btn-sm btn-outline-secondary cancel-form-button">
+				        <button class="btn btn-sm btn-outline-secondary cancel-form-button">
                     {{> icon name="times" fw=true}}
                 </button>
-			</span>
+			      </span>
         </div>
-
         <div class="card-body {{#if submitting}}d-unavailable{{/if}}">
-            {{#autoForm id="updateForm" type="normal" schema=updateSchema
-                        doc=updateDoc validate="none"}}
+            {{#autoForm id="updateForm"
+                        type="normal"
+                        schema=updateSchema
+                        doc=updateDoc
+                        validate="none"}}
                 {{#each afFieldNames}}
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
                 {{/each}}
@@ -81,6 +83,7 @@
                 <span>{{i18n "actions.submitting"}}</span>
             {{/if}}
         </div>
+
     {{else}}
         <div class="card-body d-flex justify-content-between">
             <span class="no-wrap">
@@ -318,7 +321,7 @@
                                     </td>
                                 {{/if}}
                             {{/each}}
-                            <td class="text-right no-wrap">
+                            <td class="text-end no-wrap">
                                 {{#if actionPreview}}
                                     <button class="btn btn-sm btn-outline-secondary border-0 current-document-preview-button"
                                             data-target="{{row.document._id}}">

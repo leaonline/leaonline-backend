@@ -30,19 +30,20 @@ import './list.html'
 import { exportData } from './exporter/exportData'
 import { saveTextFile } from '../../../utils/saveTextFile'
 
+const PAGE_COUNT = 30
+
 Template.genericList.onCreated(function () {
   const instance = this
-  instance.state.set(StateVariables.docsPerPage, 15)
+  instance.state.set(StateVariables.docsPerPage, PAGE_COUNT)
   instance.state.set(StateVariables.currentPage, 0)
 
   // 1. setup backend config / service config
 
   instance.autorun(() => {
+    debugger
     const data = Template.currentData()
-    console.debug({ data })
     const { pathname } = window.location
     const lastPath = instance.state.get('lastPath')
-
     if (lastPath !== pathname) {
       instance.state.clear()
       Tracker.nonreactive(() => wrapOnCreated(instance, {
@@ -115,7 +116,7 @@ Template.genericList.helpers(wrapHelpers({
     const instance = Template.instance()
     const list = instance.state.get('list')
     const currentPage = instance.state.get(StateVariables.currentPage) || 0
-    const docsPerPage = 15
+    const docsPerPage = PAGE_COUNT
     const start = currentPage * docsPerPage
     const end = start + docsPerPage
     return list.slice(start, end)
@@ -126,7 +127,7 @@ Template.genericList.helpers(wrapHelpers({
   getIndex (index) {
     const instance = Template.instance()
     const currentPage = instance.state.get(StateVariables.currentPage) || 0
-    const docsPerPage = 15
+    const docsPerPage = PAGE_COUNT
     return (currentPage * docsPerPage) + (index + 1)
   },
   pages () {
@@ -196,6 +197,7 @@ Template.genericList.events(wrapEvents({
   },
   'click .edit-button' (event, templateInstance) {
     event.preventDefault()
+    debugger
     resetFormState(templateInstance)
     const target = dataTarget(event, templateInstance)
     setQueryParam({ action: StateActions.update, doc: target })
@@ -623,7 +625,7 @@ function getTableRowFields (document, fieldConfig, fields) {
 
 function updateList (list, templateInstance) {
   const prepared = prepareList(list, templateInstance)
-  const docsPerPage = 15
+  const docsPerPage = PAGE_COUNT
   const count = list.length
   const numberOfPages = Math.ceil(count / docsPerPage)
   const pageCount = []
