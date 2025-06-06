@@ -64,7 +64,7 @@ fourseven:scss@4.17.0-rc.0
 leaonline:theme
 
 # autoform
-aldeed:autoform
+aldeed:autoform@8.0.0
 communitypackages:autoform-bootstrap5
 
 # d3k4y:autoform-markdown

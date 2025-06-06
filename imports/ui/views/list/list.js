@@ -40,7 +40,6 @@ Template.genericList.onCreated(function () {
   // 1. setup backend config / service config
 
   instance.autorun(() => {
-    debugger
     const data = Template.currentData()
     const { pathname } = window.location
     const lastPath = instance.state.get('lastPath')

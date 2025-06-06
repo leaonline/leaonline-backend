@@ -176,21 +176,28 @@ Template.afLeaTaskContent.onCreated(function () {
   instance.stateVars = new ReactiveDict()
 
   const { data } = instance
-  const { atts } = data
-
-  instance.stateVars.set('elements', data.value || [])
-  instance.stateVars.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
-  instance.stateVars.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
-  instance.stateVars.set('dataSchemaKey', atts['data-schema-key'])
+  const { atts, value } = data
+  let elements
+  if (value?.content) {
+    elements = value.content
+  } else {
+    elements = Array.isArray(value) ? value : []
+  }
+  instance.stateVars.set({
+    elements,
+    invalid: atts.class && atts.class.indexOf('invalid') > -1,
+    disabled: Object.prototype.hasOwnProperty.call(atts, 'disabled'),
+    dataSchemaKey: atts['data-schema-key']
+  })
 })
 
 Template.afLeaTaskContent.onRendered(function () {
   const instance = this
-  const { data } = instance
+  const elements = instance.state.get('elements') ?? []
 
   // update initial value to underlying hidden input
-  if (data.value && data.value.length > 0) {
-    updateElements(data.value || [], instance)
+  if (elements.length > 0) {
+    updateElements(elements, instance)
   }
 })
 
@@ -225,7 +232,7 @@ Template.afLeaTaskContent.helpers({
     return _currentTypeSchema
   },
   overElement (index) {
-    return Template.instance().stateVars.get('overElement') === index
+    return Template.instance().stateVars.get('overElement') == index
   },
   currentElement () {
     return !Template.instance().stateVars.get('isNewContent') &&
@@ -235,7 +242,7 @@ Template.afLeaTaskContent.helpers({
     return index < 1
   },
   lastElement (index) {
-    const elements = Template.instance().stateVars.get('elements')
+    const elements = Template.instance().stateVars.get('elements') ?? []
     return index > (elements.length - 2)
   },
   getContent (element) {
@@ -352,12 +359,12 @@ Template.afLeaTaskContent.events({
     event.preventDefault()
     resetModalState(templateInstance)
   },
-  'mouseover .element-container' (event, templateInstance) {
+  'mouseenter .element-container' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     templateInstance.stateVars.set('overElement', index)
   },
-  'mouseout .element-container' (event, templateInstance) {
+  'mouseleave .element-container' (event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const currentIndex = templateInstance.stateVars.get('overElement')

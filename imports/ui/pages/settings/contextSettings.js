@@ -27,7 +27,6 @@ Template.contextSettings.onCreated(function () {
     })
 
     instance.schema = Schema.create(schema)
-
     instance.state.set({
       loadComplete: true,
       contextName
