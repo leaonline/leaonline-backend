@@ -18,7 +18,7 @@
     "@babel/runtime": "^7.13.10",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@shopify/draggable": "^1.0.0-beta.12",
-    "bootstrap": "^4.6.1",
+    "bootstrap": "^5.0.0",
     "dely": "^1.0.2",
     "easy-speech": "^2.1.0",
     "fast-shuffle": "^4.5.1",
