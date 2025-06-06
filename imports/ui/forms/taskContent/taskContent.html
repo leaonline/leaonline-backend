@@ -53,8 +53,7 @@
          role="dialog"
          aria-labelledby="taskContentModelTitle"
          aria-hidden="true">
-      <div class="modal-dialog modal-dialog-scrollable modal-xxl"
-           role="document">
+      <div class="modal-dialog modal-dialog-scrollable modal-xxl" role="document">
         <div class="modal-content">
           <div class="modal-header">
                         <span class="d-flex justify-content-between">
@@ -68,9 +67,8 @@
                               id="taskContentModelTitle">{{i18n
                               "taskRenderers.taskContent"}}</h5>
                         </span>
-            <button type="button" class="close modal-close-button"
-                    aria-label="{{i18n 'actions.close'}}">
-              <span aria-hidden="true">&times;</span>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+              <i class="fa fas fa-fw fa-times"></i>
             </button>
           </div>
 
@@ -78,7 +76,7 @@
             <div class="modal-body">
               <div class="row">
                 <div class="col">
-                  <h4 class="text-center mb-4">{{i18n
+                  <h4 class="mb-4">{{i18n
                       "item.title"}}: {{i18n
                       this.label}}</h4>
                   {{#if hasSchema}}
@@ -105,14 +103,14 @@
                 <div class="col">
 
                   {{!-- RENDERING THE PREVIEW CONTENT HERE --}}
-                  <h4 class="text-center mb-4">{{i18n
+                  <h4 class="mb-4">{{i18n
                       "common.preview"}}</h4>
                   {{#with previewContent}}
                     {{>TaskRendererFactory content=this}}
                     {{!-- additionally, if the preview content is an item
                           we also render the scoring results as preview --}}
                     {{#if isItemContent this}}
-                      <h4 class="text-center my-4">
+                      <h4 class="my-4">
                         {{i18n "scoring.title"}}
                       </h4>
 
@@ -139,16 +137,15 @@
               </div>
             </div>
           {{else}}
-            <div class="modal-body text-center">
+            <div class="modal-body">
               {{#each group in contentGroups}}
                 <h4 class="my-4">{{i18n group.label}}</h4>
-                <div class="row my-4 d-flex justify-content-center text-center">
+                <div class="row my-4 d-flex">
                   {{#each type in (contentTypes group.name)}}
                     <div class="col-md-4 col-lg-3 col-xl-2">
                       <button class="btn btn-outline-primary btn-lg select-content-type-button w-100 h-100"
                               data-name="{{type.name}}">
-                                                <span><i
-                                                    class="fa fas fa-fw fa-{{type.icon}}"></i></span>
+                        <span><i class="fa fas fa-fw fa-{{type.icon}}"></i></span>
                         <span>{{i18n type.label}}</span>
                       </button>
                     </div>
