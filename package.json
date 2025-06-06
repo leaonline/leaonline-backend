@@ -5,8 +5,10 @@
     "start": "meteor run",
     "test:once": "meteor test --once --driver-package meteortesting:mocha",
     "test:app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
-    "lint:code": "standard | snazzy",
-    "lint:code-fix": "standard --fix | snazzy",
+    "lint:code": "npx @biomejs/biome lint ./",
+    "lint:code-fix": "npx @biomejs/biome lint --write ./",
+    "format:code": "npx @biomejs/biome format ./",
+    "format:code-fix": "npx @biomejs/biome format --write ./",
     "lint:style": "stylelint \"**/*.scss\"",
     "lint:style-fix": "stylelint --fix \"**/*.scss\"",
     "lint:markdown": "markdownlint \"**/*.md\" --config ./.markdownlint.json",
@@ -15,20 +17,20 @@
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
-    "@babel/runtime": "^7.13.10",
+    "@babel/runtime": "^7.27.6",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@popperjs/core": "^2.11.8",
     "@shopify/draggable": "^1.0.0-beta.12",
-    "bootstrap": "^5.3.3",
+    "bootstrap": "^5.3.6",
     "dely": "^1.0.2",
-    "easy-speech": "^2.1.0",
+    "easy-speech": "^2.4.0",
     "fast-shuffle": "^4.5.1",
     "file-saver": "^2.0.5",
     "highlight.js": "^10.7.3",
-    "jquery": "^3.6.0",
+    "jquery": "^3.7.1",
     "lozad": "^1.16.0",
     "marked": "^5.1.0",
-    "meteor-node-stubs": "^1.1.0",
+    "meteor-node-stubs": "^1.2.19",
     "select2": "^3.5.1",
     "simpl-schema": "^1.13.1",
     "sortablejs": "^1.14.0"
@@ -41,7 +43,9 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "snazzy": "^9.0.0",
-    "standard": "^17.0.0"
+    "@biomejs/biome": "1.9.4",
+    "chai": "^5.2.0",
+    "puppeteer": "^24.10.0",
+    "sinon": "^20.0.0"
   }
 }
