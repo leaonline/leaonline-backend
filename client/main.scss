@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'Semikolon';
-  src: url('SemikolonPlus-Regular.otf') format('opentype');
+  src: url('/SemikolonPlus-Regular.otf') format('opentype');
   font-display: swap;
 }
 @font-face {
   font-family: 'SemikolonBold';
-  src: url('SemikolonPlus-Bold.otf') format('opentype');
+  src: url('/SemikolonPlus-Bold.otf') format('opentype');
   font-display: swap;
 }
 
@@ -18,6 +18,10 @@ body, wrapper {
   pointer-events: none;
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+label {
+  font-weight: bold;
 }
 
 [data-required] label:after {content: ' *'}

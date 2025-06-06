@@ -98,6 +98,9 @@ export const wrapHelpers = function (obj) {
     actionUpload () {
       return Template.instance().state.get(StateVariables.actionUpload)
     },
+    actionExport () {
+      return Template.instance().state.get(StateVariables.actionExport)
+    },
     uploadFilesCollection () {
       const instance = Template.instance()
       return instance.mainCollection && instance.mainCollection.filesCollection

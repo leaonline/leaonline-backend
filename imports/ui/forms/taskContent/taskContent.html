@@ -1,205 +1,201 @@
 <template name="afLeaTaskContent">
-    {{#unless loadComplete}}
-        <div class="w-100 p-1">
-            {{> loading }}
-        </div>
-    {{else}}
-        <div class="card">
-            {{#with elements}}
-                <div class="card-body row">
-                    {{#each element in this}}
-                        <div class="col-12 col-md-{{element.width}} p-0 border border-{{#if
-                                overElement
-                                @index}}dark{{else}}white{{/if}} element-container"
-                             data-index="{{@index}}">
-                            {{>TaskRendererFactory content=element}}
-                            {{#if overElement @index}}
-                                <span class="element-action-buttons bg-white">
-						<button class="btn btn-sm btn-primary edit-element"
-                                data-index="{{@index}}">
-							<i class="fa fas fa-fw fa-edit"></i>
-						</button>
-						<button class="btn btn-sm btn-secondary up-element"
-                                data-index="{{@index}}"
-                                disabled="{{#if firstElement
-                                                @index}}disabled{{/if}}">
-							<i class="fa fas fa-fw fa-caret-up"></i>
-						</button>
-						<button class="btn btn-sm btn-secondary down-element"
-                                data-index="{{@index}}"
-                                disabled="{{#if lastElement
-                                                @index}}disabled{{/if}}">
-							<i class="fa fas fa-fw fa-caret-down"></i>
-						</button>
-						<button class="btn btn-sm btn-danger remove-element"
-                                data-index="{{@index}}">
-							<i class="fa fas fa-fw fa-times"></i>
-						</button>
-					</span>
-                            {{/if}}
-                        </div>
-                    {{/each}}
+  {{#unless loadComplete}}
+    <div class="w-100 p-1">
+      {{> loading }}
+    </div>
+  {{else}}
+    <div class="card bg-white">
+      {{#with elements}}
+        <div class="card-body row">
+          {{#each element in this}}
+            <div class="col-12 col-md-{{element.width}} p-0 border border-{{#if overElement @index}}dark{{else}}white{{/if}} element-container d-flex"
+                 data-index="{{@index}}">
+              <div class="flex-grow w-100">
+                {{> TaskRendererFactory content=element}}
+              </div>
+              {{#if overElement @index}}
+                <div class="bg-transparent no-wrap">
+						      <button class="btn btn-sm btn-primary edit-element"
+                          data-index="{{@index}}">
+							      <i class="fa fas fa-fw fa-edit"></i>
+						      </button>
+                  <button class="btn btn-sm btn-secondary up-element"
+                          data-index="{{@index}}"
+                          disabled="{{#if firstElement @index}}disabled{{/if}}">
+                    <i class="fa fas fa-fw fa-caret-up"></i>
+                  </button>
+                  <button class="btn btn-sm btn-secondary down-element"
+                          data-index="{{@index}}"
+                          disabled="{{#if lastElement
+                                          @index}}disabled{{/if}}">
+                    <i class="fa fas fa-fw fa-caret-down"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger remove-element"
+                          data-index="{{@index}}">
+                    <i class="fa fas fa-fw fa-times"></i>
+                  </button>
                 </div>
-            {{/with}}
-            <div class="card-{{#if
-                    elements}}footer{{else}}body{{/if}} bg-white">
-                <button class="btn btn-primary add-content-button">
-                    <i class="fa fas fa-plus"></i>
-                </button>
+              {{/if}}
             </div>
+          {{/each}}
         </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="taskContentModel" tabindex="-1"
-             role="dialog"
-             aria-labelledby="taskContentModelTitle"
-             aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-xxl"
-                 role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <span class="d-flex justify-content-between">
-                        {{#if modalIsNewContent}}
-                            <button class="btn btn-outline-secondary modal-back-button">
-                                <i class="fa fas fa-fw fa-caret-left"></i> {{i18n
-                                    "actions.back"}}
-                            </button>
-                        {{/if}}
-                            <h5 class="modal-title"
-                                id="taskContentModelTitle">{{i18n
-                                    "taskRenderers.taskContent"}}</h5>
-                        </span>
-                        <button type="button" class="close modal-close-button"
-                                aria-label="{{i18n 'actions.close'}}">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    {{#with currentTypeToAdd}}
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col">
-                                    <h4 class="text-center mb-4">{{i18n
-                                            "item.title"}}: {{i18n
-                                            this.label}}</h4>
-                                    {{#if hasSchema}}
-                                        {{#if modalIsNewContent}}
-                                            {{> quickForm
-                                                    id="afLeaTaskAddContenTypeFormInsert"
-                                                    type="normal"
-                                                    schema=currentTypeSchema
-                                                    buttonClasses="d-none"
-                                                    validation="none"}}
-                                        {{else}}
-                                            {{> quickForm
-                                                    id="afLeaTaskAddContenTypeFormUpdate"
-                                                    type="normal"
-                                                    schema=currentTypeSchema
-                                                    doc=currentElement
-                                                    buttonClasses="d-none"
-                                                    validation="none"}}
-                                        {{/if}}
-                                    {{else}}
-                                        {{> loading}}
-                                    {{/if}}
-                                </div>
-                                <div class="col">
-
-                                    {{!-- RENDERING THE PREVIEW CONTENT HERE --}}
-                                    <h4 class="text-center mb-4">{{i18n
-                                            "common.preview"}}</h4>
-                                    {{#with previewContent}}
-                                        {{>TaskRendererFactory content=this}}
-                                        {{!-- additionally, if the preview content is an item
-                                              we also render the scoring results as preview --}}
-                                        {{#if isItemContent this}}
-                                            <h4 class="text-center my-4">
-                                                {{i18n "scoring.title"}}
-                                            </h4>
-
-                                            {{#if allScoresTrue}}
-                                                <div class="alert alert-success my-4">
-                                                    {{> icon name="check"}}
-                                                    {{i18n "taskContent.allTrue"}}
-                                                </div>
-                                            {{/if}}
-
-                                            {{#with scoreContent}}
-                                                {{>TaskRendererFactory content=this}}
-                                            {{/with}}
-
-                                        {{/if}}
-                                    {{else}}
-                                        {{#if updatePreview}}
-                                            <div class="text-center">{{> loading }}</div>
-                                        {{else}}
-                                            <p>{{i18n "common.noPreview"}}</p>
-                                        {{/if}}
-                                    {{/with}}
-                                </div>
-                            </div>
-                        </div>
-                    {{else}}
-                        <div class="modal-body text-center">
-                            {{#each group in contentGroups}}
-                                <h4 class="my-4">{{i18n group.label}}</h4>
-                                <div class="row my-4 d-flex justify-content-center text-center">
-                                    {{#each type in (contentTypes group.name)}}
-                                        <div class="col-md-4 col-lg-3 col-xl-2">
-                                            <button class="btn btn-outline-primary btn-lg select-content-type-button w-100 h-100"
-                                                    data-name="{{type.name}}">
-                                                <span><i
-                                                        class="fa fas fa-fw fa-{{type.icon}}"></i></span>
-                                                <span>{{i18n type.label}}</span>
-                                            </button>
-                                        </div>
-                                    {{/each}}
-                                </div>
-                            {{/each}}
-                        </div>
-                    {{/with}}
-                    <div class="modal-footer d-flex">
-                        {{#if currentTypeToAdd}}
-                            <span class="mr-auto">
-                                {{#if modalIsNewContent}}
-                                    <button class="btn btn-success" type="submit"
-                                            form="afLeaTaskAddContenTypeFormInsert">
-                                        {{i18n "actions.create"}}
-                                    </button>
-                                {{else}}
-                                    <button class="btn btn-primary" type="submit"
-                                            form="afLeaTaskAddContenTypeFormUpdate">
-                                        {{i18n "actions.update"}}
-                                    </button>
-                                {{/if}}
-                                {{#unless updatePreview}}
-                                    <button class="btn btn-outline-secondary preview-content-button">
-                                        {{>icon name="sync" }} {{i18n "actions.preview"}}
-                                    </button>
-                                {{else}}
-                                    <button class="btn btn-secondary preview-content-button disabled" disabled>
-                                            {{>icon name="sync" spin=true }} {{i18n "actions.preview"}}
-                                    </button>
-                                {{/unless}}
-                            </span>
-                        {{/if}}
-                        <button type="button" class="btn btn-secondary ml-auto"
-                                data-dismiss="modal">
-                            {{i18n 'actions.close'}}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {{/unless}}
-
-    {{!-- ERRORS, VALIDATION ETC, --}}
-    <div class="{{#unless
-            invalid}}d-block{{else}}d-block{{/unless}} help-block text-danger">
-        <small>{{afFieldMessage name=name}}</small>
+      {{/with}}
+      <div class="card-{{#if
+          elements}}footer{{else}}body{{/if}} bg-white">
+        <button class="btn btn-primary add-content-button">
+          <i class="fa fas fa-plus"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- autoform related -->
-    <input type="hidden" class="afLeaTaskContentHiddenInput"
-           data-schema-key="{{dataSchemaKey}}"/>
+    <!-- Modal -->
+    <div class="modal fade" id="taskContentModel" tabindex="-1"
+         role="dialog"
+         aria-labelledby="taskContentModelTitle"
+         aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-xxl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+                        <span class="d-flex justify-content-between">
+                        {{#if modalIsNewContent}}
+                          <button class="btn btn-outline-secondary modal-back-button">
+                                <i class="fa fas fa-fw fa-caret-left"></i> {{i18n
+                              "actions.back"}}
+                            </button>
+                        {{/if}}
+                          <h5 class="modal-title"
+                              id="taskContentModelTitle">{{i18n
+                              "taskRenderers.taskContent"}}</h5>
+                        </span>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+              <i class="fa fas fa-fw fa-times"></i>
+            </button>
+          </div>
+
+          {{#with currentTypeToAdd}}
+            <div class="modal-body">
+              <div class="row">
+                <div class="col">
+                  <h4 class="mb-4">{{i18n
+                      "item.title"}}: {{i18n
+                      this.label}}</h4>
+                  {{#if hasSchema}}
+                    {{#if modalIsNewContent}}
+                      {{> quickForm
+                          id="afLeaTaskAddContenTypeFormInsert"
+                          type="normal"
+                          schema=currentTypeSchema
+                          buttonClasses="d-none"
+                          validation="none"}}
+                    {{else}}
+                      {{> quickForm
+                          id="afLeaTaskAddContenTypeFormUpdate"
+                          type="normal"
+                          schema=currentTypeSchema
+                          doc=currentElement
+                          buttonClasses="d-none"
+                          validation="none"}}
+                    {{/if}}
+                  {{else}}
+                    {{> loading}}
+                  {{/if}}
+                </div>
+                <div class="col">
+
+                  {{!-- RENDERING THE PREVIEW CONTENT HERE --}}
+                  <h4 class="mb-4">{{i18n
+                      "common.preview"}}</h4>
+                  {{#with previewContent}}
+                    {{>TaskRendererFactory content=this}}
+                    {{!-- additionally, if the preview content is an item
+                          we also render the scoring results as preview --}}
+                    {{#if isItemContent this}}
+                      <h4 class="my-4">
+                        {{i18n "scoring.title"}}
+                      </h4>
+
+                      {{#if allScoresTrue}}
+                        <div class="alert alert-success my-4">
+                          {{> icon name="check"}}
+                          {{i18n "taskContent.allTrue"}}
+                        </div>
+                      {{/if}}
+
+                      {{#with scoreContent}}
+                        {{>TaskRendererFactory content=this}}
+                      {{/with}}
+
+                    {{/if}}
+                  {{else}}
+                    {{#if updatePreview}}
+                      <div class="text-center">{{> loading }}</div>
+                    {{else}}
+                      <p>{{i18n "common.noPreview"}}</p>
+                    {{/if}}
+                  {{/with}}
+                </div>
+              </div>
+            </div>
+          {{else}}
+            <div class="modal-body">
+              {{#each group in contentGroups}}
+                <h4 class="my-4">{{i18n group.label}}</h4>
+                <div class="row my-4 d-flex">
+                  {{#each type in (contentTypes group.name)}}
+                    <div class="col-md-4 col-lg-3 col-xl-2">
+                      <button class="btn btn-outline-primary btn-lg select-content-type-button w-100 h-100"
+                              data-name="{{type.name}}">
+                        <span><i class="fa fas fa-fw fa-{{type.icon}}"></i></span>
+                        <span>{{i18n type.label}}</span>
+                      </button>
+                    </div>
+                  {{/each}}
+                </div>
+              {{/each}}
+            </div>
+          {{/with}}
+          <div class="modal-footer d-flex">
+            {{#if currentTypeToAdd}}
+              <span class="me-auto">
+                                {{#if modalIsNewContent}}
+                                  <button class="btn btn-success" type="submit"
+                                          form="afLeaTaskAddContenTypeFormInsert">
+                                    {{i18n "actions.create"}}
+                                  </button>
+                                {{else}}
+                                  <button class="btn btn-primary" type="submit"
+                                          form="afLeaTaskAddContenTypeFormUpdate">
+                                    {{i18n "actions.update"}}
+                                  </button>
+                                {{/if}}
+                {{#unless updatePreview}}
+                  <button class="btn btn-outline-secondary preview-content-button">
+                                        {{>icon name="sync" }} {{i18n "actions.preview"}}
+                                    </button>
+                {{else}}
+                  <button class="btn btn-secondary preview-content-button disabled" disabled>
+                                            {{>icon name="sync" spin=true }} {{i18n "actions.preview"}}
+                                    </button>
+                {{/unless}}
+                            </span>
+            {{/if}}
+            <button type="button" class="btn btn-secondary ms-auto"
+                    data-bs-dismiss="modal">
+              {{i18n 'actions.close'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{/unless}}
+
+  {{!-- ERRORS, VALIDATION ETC, --}}
+  <div class="{{#unless
+      invalid}}d-block{{else}}d-block{{/unless}} help-block text-danger">
+    <small>{{afFieldMessage name=name}}</small>
+  </div>
+
+  <!-- autoform related -->
+  <input type="hidden" class="afLeaTaskContentHiddenInput"
+         data-schema-key="{{dataSchemaKey}}"/>
 </template>

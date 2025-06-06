@@ -21,10 +21,12 @@ Template.contextSettings.onCreated(function () {
 
     parseSettings({ instance, config, appName })
 
-    const schema = Apps.getSchemaForContext(config)
+    const schema = Apps.getSchemaForContext({
+      ...config,
+      includeKey: true
+    })
 
     instance.schema = Schema.create(schema)
-
     instance.state.set({
       loadComplete: true,
       contextName

@@ -1,0 +1,62 @@
+{
+  "oauth": {
+    "clientId": "porhLyvwTdhJgdda8",
+    "secret": "CegPW7FWebir7iYuPdubAR3wwzavRptB",
+    "dialogUrl": "http://localhost:9090/oauth/authorize",
+    "accessTokenUrl": "http://localhost:9090/oauth/token",
+    "authorizeUrl": "http://localhost:9090/oauth/authorize",
+    "identityUrl": "http://localhost:9090/oauth/ident",
+    "redirectUrl": "http://localhost:5050/_oauth/lea"
+  },
+  "public": {
+    "app": {
+      "title": "lea.online Backend",
+      "version": "1.0.0"
+    },
+    "editor": {
+      "textAreaThreshold": 500
+    },
+    "hosts": {
+      "otulea": {
+        "label": "otu.lea",
+        "name": "otulea",
+        "url": "http://localhost:3000",
+        "icon": "edit",
+        "ddpConnect": true,
+        "ddpLogin": true
+      },
+      "content": {
+        "name": "content",
+        "label": "lea.content",
+        "url": "http://localhost:3030",
+        "icon": "file",
+        "ddpConnect": true,
+        "ddpLogin": true
+      },
+      "teacher": {
+        "name": "teacher",
+        "label": "lea.teacher",
+        "url": "http://localhost:5555",
+        "icon": "chart-line",
+        "ddpConnect": true,
+        "ddpLogin": true
+      },
+      "app": {
+        "name": "app",
+        "label": "lea.app",
+        "url": "http://localhost:8080",
+        "icon": "mobile",
+        "ddpConnect": true,
+        "ddpLogin": true
+      }
+    },
+    "tts": {
+      "url": "http://localhost:3030/tts"
+    },
+    "pages": {
+      "sessions": {
+        "use": "otulea"
+      }
+    }
+  }
+}

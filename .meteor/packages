@@ -4,23 +4,22 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-base@1.5.1             # Packages every Meteor app needs to have
-mobile-experience@1.1.0       # Packages for a great mobile UX
-mongo@1.15.0                   # The database Meteor supports right now
-reactive-var@1.0.11            # Reactive variable for tracker
-tracker@1.2.0                 # Meteor's client-side reactive programming library
-
+meteor-base@1.5.2             # Packages every Meteor app needs to have
+mobile-experience@1.1.2       # Packages for a great mobile UX
+mongo@2.1.1                   # The database Meteor supports right now
+reactive-var@1.0.13            # Reactive variable for tracker
+tracker@1.3.4                 # Meteor's client-side reactive programming library
+blaze-html-templates
 # standard-minifier-css@1.5.3   # CSS minifier run for production mode
-standard-minifier-js@2.8.0    # JS minifier run for production mode
-es5-shim@4.8.0                # ECMAScript 5 compatibility for older browsers
-ecmascript@0.16.2              # Enable ECMAScript2015+ syntax in app code
-shell-server@0.5.0            # Server-side component of the `meteor shell` command
+standard-minifier-js@3.0.0    # JS minifier run for production mode
+es5-shim@4.8.1                # ECMAScript 5 compatibility for older browsers
+ecmascript@0.16.10              # Enable ECMAScript2015+ syntax in app code
+shell-server@0.6.1            # Server-side component of the `meteor shell` command
+hot-module-replacement@0.5.4
+blaze-hot
 
 # required by corelib
-reactive-dict@1.3.0
-http@2.0.0
-templating
-dynamic-import@0.7.2
+reactive-dict@1.3.2
 
 # lea backend toolset
 leaonline:corelib
@@ -31,13 +30,10 @@ leaonline:service-registry
 aldeed:collection2
 dburles:mongo-collection-instances
 
-# methods
-mdg:validated-method
-
 
 # accounts
-service-configuration@1.3.0
-leaonline:accounts-lea
+service-configuration@1.3.5
+leaonline:accounts-lea@2.0.0
 leaonline:ddp-login
 
 # factories
@@ -46,44 +42,46 @@ leaonline:grid-factory
 leaonline:method-factory
 leaonline:publication-factory
 leaonline:ratelimit-factory
+leaonline:blaze-exceptions
+ddp-rate-limiter@1.2.2
 
 # files
-ostrio:files
+ostrio:files@3.0.0-rc.3
 ostrio:autoform-files
 
-ostrio:flow-router-extra
+ostrio:flow-router-extra@3.11.0-rc300.1
 ostrio:i18n
 
 # UI misc
 jkuester:template-states
-jquery@3.0.0!
+jquery
 
 
-# SCSS
-fourseven:scss
-seba:minifiers-autoprefixer
+#========================================
+# CSS / THEME
+#========================================
+fourseven:scss@4.17.0-rc.0
+# seba:minifiers-autoprefixer
 leaonline:theme
 
-# autoform
-aldeed:autoform@7.0.0!
-communitypackages:autoform-bootstrap4
-communitypackages:autoform-bootstrap3
-communitypackages:autoform-plain
+#========================================
+# FORMS
+#========================================
+aldeed:autoform@8.0.0
+communitypackages:autoform-bootstrap5
 
-d3k4y:autoform-markdown
+# d3k4y:autoform-markdown
 leaonline:autoform-regexp
 jkuester:template-loader
-aldeed:autoform-select2
-# experimental
-qnipp:yaml
 
 #========================================
 # SECURITY
 #========================================
-audit-argument-checks@1.0.7
-force-ssl@1.1.0
+audit-argument-checks@1.0.8
+force-ssl@1.1.1
 
-## EXPERIMENTAL
-blaze-html-templates
-# hot-module-replacement@0.2.0
-# blaze-hot
+#========================================
+# TESTS
+#========================================
+meteortesting:mocha@3.3.0
+lmieulet:meteor-coverage@5.0.0

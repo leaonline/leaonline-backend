@@ -27,10 +27,14 @@ import '../../components/upload/upload'
 import '../../components/preview/preview'
 import './list.scss'
 import './list.html'
+import { exportData } from './exporter/exportData'
+import { saveTextFile } from '../../../utils/saveTextFile'
+
+const PAGE_COUNT = 30
 
 Template.genericList.onCreated(function () {
   const instance = this
-  instance.state.set(StateVariables.docsPerPage, 15)
+  instance.state.set(StateVariables.docsPerPage, PAGE_COUNT)
   instance.state.set(StateVariables.currentPage, 0)
 
   // 1. setup backend config / service config
@@ -39,7 +43,6 @@ Template.genericList.onCreated(function () {
     const data = Template.currentData()
     const { pathname } = window.location
     const lastPath = instance.state.get('lastPath')
-
     if (lastPath !== pathname) {
       instance.state.clear()
       Tracker.nonreactive(() => wrapOnCreated(instance, {
@@ -112,7 +115,7 @@ Template.genericList.helpers(wrapHelpers({
     const instance = Template.instance()
     const list = instance.state.get('list')
     const currentPage = instance.state.get(StateVariables.currentPage) || 0
-    const docsPerPage = 15
+    const docsPerPage = PAGE_COUNT
     const start = currentPage * docsPerPage
     const end = start + docsPerPage
     return list.slice(start, end)
@@ -123,7 +126,7 @@ Template.genericList.helpers(wrapHelpers({
   getIndex (index) {
     const instance = Template.instance()
     const currentPage = instance.state.get(StateVariables.currentPage) || 0
-    const docsPerPage = 15
+    const docsPerPage = PAGE_COUNT
     return (currentPage * docsPerPage) + (index + 1)
   },
   pages () {
@@ -193,6 +196,7 @@ Template.genericList.events(wrapEvents({
   },
   'click .edit-button' (event, templateInstance) {
     event.preventDefault()
+    debugger
     resetFormState(templateInstance)
     const target = dataTarget(event, templateInstance)
     setQueryParam({ action: StateActions.update, doc: target })
@@ -474,7 +478,27 @@ Template.genericList.events(wrapEvents({
 
     updateList(filteredDocs, templateInstance)
     templateInstance.state.set('searchOngoing', false)
-  }, 750)
+  }, 750),
+  'click .export-btn' (event, templateInstance) {
+    event.preventDefault()
+
+    const data = templateInstance.mainCollection.find().fetch()
+    const schema = templateInstance.actionInsertSchema
+      ? templateInstance.actionInsertSchema._schema
+      : templateInstance.mainCollection.schema._schema
+    const type = dataTarget(event, 'format')
+    const mime = dataTarget(event, 'mime')
+    const fieldConfig = templateInstance.fieldConfig
+    const output = exportData({ data, type, schema, fieldConfig })
+    const app = 'content'
+    const collection = templateInstance.mainCollection._name
+    const date = new Date().toLocaleString()
+    saveTextFile({
+      type: mime,
+      name: `${app}-${collection}-${date}`,
+      text: output
+    })
+  }
 }))
 
 function onClosed () {
@@ -600,7 +624,7 @@ function getTableRowFields (document, fieldConfig, fields) {
 
 function updateList (list, templateInstance) {
   const prepared = prepareList(list, templateInstance)
-  const docsPerPage = 15
+  const docsPerPage = PAGE_COUNT
   const count = list.length
   const numberOfPages = Math.ceil(count / docsPerPage)
   const pageCount = []
@@ -608,7 +632,6 @@ function updateList (list, templateInstance) {
 
   templateInstance.state.set({
     list: prepared,
-    // [StateVariables.currentPage]: 0,
     [StateVariables.pageCount]: pageCount
   })
 }

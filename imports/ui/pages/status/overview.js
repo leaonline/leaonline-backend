@@ -4,13 +4,12 @@ import './overview.html'
 
 Template.statusOverview.helpers({
   apps () {
-    return Apps.all()
+    return Apps.all().sort((a, b) => a.name.localeCompare(b.name))
   },
   isConnected (app) {
     return app?.status?.connected
   },
   isLoggedIn (app) {
-    console.debug(app)
     return app?.login?.successful
   }
 })

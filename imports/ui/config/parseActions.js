@@ -57,6 +57,10 @@ export const parseActions = function parseActions ({ instance, config, app, logD
     instance.state.set(StateVariables.actionUpdate, actions.update)
   }
 
+  if (actions.export) {
+    instance.state.set(StateVariables.actionExport, actions.actionExport)
+  }
+
   if (config.isFilesCollection) {
     const uploadAction = getUploadAction(config)
     instance.state.set(StateVariables.actionUpload, uploadAction)

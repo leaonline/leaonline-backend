@@ -5,17 +5,17 @@
 				{{#each route in topLevelRoutes}}
 					{{#with route.children}}
 						<li class="nav-item">
-							<a class="nav-link no-wrap" href="#child{{@index}}" id="navbarDropdown" role="button" data-parent="#main-sidebar"
-							   data-toggle="collapse" aria-haspopup="true" aria-expanded="false">
+							<a class="nav-link fw-bold text-secondary no-wrap" href="#child{{@index}}" id="navbarDropdown" role="button" data-parent="#main-sidebar"
+							   data-bs-toggle="collapse" aria-haspopup="true" aria-expanded="false">
 								<i class="fa fas fa-fw fa-{{route.icon}}"></i>
 								{{i18n route.label}}
 								<i class="fa fas fa-fw fa-caret-down"></i>
 							</a>
-							<div id="child{{@index}}" class="collapse show" aria-labelledby="navbarDropdown">
-								<ul class="nav flex-column ml-3">
+							<div id="child{{@index}}" class="collapse" aria-labelledby="navbarDropdown">
+								<ul class="nav flex-column ms-3">
 								{{#each childRoute in this}}
 									<li class="nav-item">
-										<a class="nav-link no-wrap {{#if activeRoute childRoute.path}}active{{/if}}"
+										<a class="nav-link no-wrap {{#if activeRoute childRoute.path}}active text-light{{/if}}"
 										   href="{{childRoute.path}}">
 											{{#if childRoute.icon}}
 												<i class="fa fas fa-fw fa-{{childRoute.icon}}"></i>

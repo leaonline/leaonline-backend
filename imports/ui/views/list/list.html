@@ -3,6 +3,7 @@
         <div class="card-body d-flex justify-content-between">
             <h4>{{i18n config.label}} - {{i18n "actions.insertDoc"}}</h4>
             <span>
+
                 {{#if actionPreview}}
                     <button class="btn btn-sm btn-outline-secondary preview-formDoc-button">
                         {{> icon name="eye" fw=true}}
@@ -51,15 +52,17 @@
                 <button class="btn btn-sm btn-outline-secondary show-source-button">
                     {{> icon name="code" fw=true}}
                 </button>
-				<button class="btn btn-sm btn-outline-secondary cancel-form-button">
+				        <button class="btn btn-sm btn-outline-secondary cancel-form-button">
                     {{> icon name="times" fw=true}}
                 </button>
-			</span>
+			      </span>
         </div>
-
         <div class="card-body {{#if submitting}}d-unavailable{{/if}}">
-            {{#autoForm id="updateForm" type="normal" schema=updateSchema
-                        doc=updateDoc validate="none"}}
+            {{#autoForm id="updateForm"
+                        type="normal"
+                        schema=updateSchema
+                        doc=updateDoc
+                        validate="none"}}
                 {{#each afFieldNames}}
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
                 {{/each}}
@@ -80,6 +83,7 @@
                 <span>{{i18n "actions.submitting"}}</span>
             {{/if}}
         </div>
+
     {{else}}
         <div class="card-body d-flex justify-content-between">
             <span class="no-wrap">
@@ -142,7 +146,7 @@
                     </div>
                 {{/if}}
 
-                <div class="col-auto">
+                <div class="col-auto d-flex gap-2">
                     {{#unless showSearch}}
                         <button class="btn btn-outline-secondary search-button">
                             {{> icon name="search" fw=true}}
@@ -166,7 +170,30 @@
                         {{> icon name="cog" fw=true}}
                     </a>
                     {{#with actionUpload}}
-                        {{> upload filesCollection=uploadFilesCollection accept=this.accept class="ml-auto"}}
+                        {{> upload filesCollection=uploadFilesCollection accept=this.accept class="ms-auto"}}
+                    {{/with}}
+                    {{#with actionExport}}
+                        {{!-- todo custom export method --}}
+                    {{else}}
+                        <div class="dropdown">
+                          <button class="btn btn-outline-secondary dropdown-toggle"
+                                  title="{{i18n "actions.export"}}"
+                                  type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              {{> icon name="file-export" fw=true}}
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item export-btn" href data-format="csv" data-mime="text/csv">
+                                    {{> icon name="table" fw=true}} <span class="ms-1">CSV</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item export-btn" href data-format="json" data-mime="application/json">
+                                    {{> icon name="code" fw=true}} <span class="ms-1">JSON</span>
+                                </a>
+                            </li>
+                          </ul>
+                        </div>
                     {{/with}}
                     {{#with actionInsert}}
                         <button class="btn btn-success insert-button">
@@ -294,7 +321,7 @@
                                     </td>
                                 {{/if}}
                             {{/each}}
-                            <td class="text-right no-wrap">
+                            <td class="text-end no-wrap">
                                 {{#if actionPreview}}
                                     <button class="btn btn-sm btn-outline-secondary border-0 current-document-preview-button"
                                             data-target="{{row.document._id}}">

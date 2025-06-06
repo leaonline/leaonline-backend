@@ -1,5 +1,4 @@
 const SimpleSchema = require('simpl-schema')
-const oauthFlows = ['authorization_code']
 const schema = def => new SimpleSchema(def)
 
 const urlField = {
