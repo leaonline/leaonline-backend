@@ -102,7 +102,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
     }
 
     if (isRichText(definitions)) {
-      autoform.type = 'markdown'
+      autoform.type = 'text' // TODO switch to markdown once we have an af component
     }
 
     if (isRegExp(definitions)) {

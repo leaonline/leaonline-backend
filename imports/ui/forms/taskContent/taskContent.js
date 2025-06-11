@@ -1,6 +1,6 @@
-/* global AutoForm */
 import { Meteor } from 'meteor/meteor'
 import { Template } from 'meteor/templating'
+import { AutoForm } from 'meteor/aldeed:autoform'
 import { EJSON } from 'meteor/ejson'
 import { Random } from 'meteor/random'
 import { ReactiveDict } from 'meteor/reactive-dict'
@@ -37,8 +37,12 @@ const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init({
 AutoForm.addInputType('leaTaskContent', {
   template: 'afLeaTaskContent',
   valueOut () {
-    const val = this.val()
-    return val && EJSON.parse(val)
+    const dsk = this.attr('data-schema-key')
+    const val = this.val() ?? this.value
+    const content = val && EJSON.parse(val)
+    return dsk.startsWith('page')
+      ? { content }
+      : content
   },
   valueIn (initialValue) {
     return initialValue
@@ -73,7 +77,7 @@ const createTypeSchemaDef = ({ name, imageForm }) => {
 
 const isItem = name => {
   const context = ContextRegistry.get(name)
-  return context && context.isItem
+  return context?.isItem
 }
 
 const getFormId = isNewContent => isNewContent
@@ -177,12 +181,7 @@ Template.afLeaTaskContent.onCreated(function () {
 
   const { data } = instance
   const { atts, value } = data
-  let elements
-  if (value?.content) {
-    elements = value.content
-  } else {
-    elements = Array.isArray(value) ? value : []
-  }
+  const elements = getElements(value)
   instance.stateVars.set({
     elements,
     invalid: atts.class && atts.class.indexOf('invalid') > -1,
@@ -191,9 +190,19 @@ Template.afLeaTaskContent.onCreated(function () {
   })
 })
 
+const getElements = value => {
+  if (Array.isArray(value)) {
+    return value
+  }
+  if (typeof value === 'object' && value.content) {
+    return value.content
+  }
+  return value ?? []
+}
+
 Template.afLeaTaskContent.onRendered(function () {
   const instance = this
-  const elements = instance.state.get('elements') ?? []
+  const elements = getElements(instance.data.value)
 
   // update initial value to underlying hidden input
   if (elements.length > 0) {
@@ -289,9 +298,8 @@ Template.afLeaTaskContent.events({
     event.preventDefault()
     templateInstance.$('#taskContentModel').modal('show')
   },
-  'click .select-content-type-button' (event, templateInstance) {
+  'click .select-content-type-button': (event, templateInstance) => {
     event.preventDefault()
-
     resetModalState(templateInstance)
     const name = dataTarget(event, templateInstance, 'name')
     templateInstance.stateVars.set('currentTypeToAdd', name)
@@ -461,7 +469,8 @@ function move (arr, oldIndex, newIndex) {
 
 function updateElements (elements, templateInstance) {
   const val = EJSON.stringify(elements)
-  templateInstance.$('.afLeaTaskContentHiddenInput').val(val)
+  const dsk = templateInstance.data.atts['data-schema-key']
+  templateInstance.$(`[data-schema-key="${dsk}"]`).val(val)
   templateInstance.stateVars.set('elements', elements)
 }
 

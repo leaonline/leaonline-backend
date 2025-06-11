@@ -196,7 +196,6 @@ Template.genericList.events(wrapEvents({
   },
   'click .edit-button' (event, templateInstance) {
     event.preventDefault()
-    debugger
     resetFormState(templateInstance)
     const target = dataTarget(event, templateInstance)
     setQueryParam({ action: StateActions.update, doc: target })
@@ -252,12 +251,14 @@ Template.genericList.events(wrapEvents({
   },
   'click .preview-formDoc-button' (event, templateInstance) {
     event.preventDefault()
+    event.stopPropagation()
     const doc = getUnsavedFormDoc(templateInstance)
     const compare = getCompare(templateInstance)
     previewDoc(templateInstance, { doc, compare })
   },
   'click .show-source-button' (event, templateInstance) {
     event.preventDefault()
+    event.stopPropagation()
     const targetId = dataTarget(event, templateInstance)
     const template = 'stringified'
     let doc
@@ -286,8 +287,7 @@ Template.genericList.events(wrapEvents({
   },
   'submit #updateForm' (event, templateInstance) {
     event.preventDefault()
-
-    const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema, { template: templateInstance })
+    const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema)
     if (!updateDoc) return
 
     const close = templateInstance.state.get('close')

@@ -45,11 +45,11 @@
             <h4>{{i18n config.label}} - {{i18n "actions.updateDoc"}}</h4>
             <span>
                 {{#if actionPreview}}
-                    <button class="btn btn-sm btn-outline-secondary preview-formDoc-button">
+                    <button class="btn btn-sm btn-outline-secondary preview-formDoc-button" data-target="{{updateDoc._id}}">
                         {{> icon name="eye" fw=true}}
                     </button>
                 {{/if}}
-                <button class="btn btn-sm btn-outline-secondary show-source-button">
+                <button class="btn btn-sm btn-outline-secondary show-source-button" data-target="{{updateDoc._id}}">
                     {{> icon name="code" fw=true}}
                 </button>
 				        <button class="btn btn-sm btn-outline-secondary cancel-form-button">
@@ -62,7 +62,7 @@
                         type="normal"
                         schema=updateSchema
                         doc=updateDoc
-                        validate="none"}}
+                        validation="none"}}
                 {{#each afFieldNames}}
                     {{> afQuickField name=this.name label=(i18n this.label) options=afOptionsFromSchema}}
                 {{/each}}

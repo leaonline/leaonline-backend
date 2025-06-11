@@ -15,10 +15,10 @@
               </div>
               {{#if overElement @index}}
                 <div class="bg-transparent no-wrap">
-						      <button class="btn btn-sm btn-primary edit-element"
+                  <button class="btn btn-sm btn-primary edit-element"
                           data-index="{{@index}}">
-							      <i class="fa fas fa-fw fa-edit"></i>
-						      </button>
+                    <i class="fa fas fa-fw fa-edit"></i>
+                  </button>
                   <button class="btn btn-sm btn-secondary up-element"
                           data-index="{{@index}}"
                           disabled="{{#if firstElement @index}}disabled{{/if}}">
@@ -40,8 +40,7 @@
           {{/each}}
         </div>
       {{/with}}
-      <div class="card-{{#if
-          elements}}footer{{else}}body{{/if}} bg-white">
+      <div class="card-{{#if elements}}footer{{else}}body{{/if}} bg-white">
         <button class="btn btn-primary add-content-button">
           <i class="fa fas fa-plus"></i>
         </button>
@@ -157,27 +156,27 @@
           <div class="modal-footer d-flex">
             {{#if currentTypeToAdd}}
               <span class="me-auto">
-                                {{#if modalIsNewContent}}
-                                  <button class="btn btn-success" type="submit"
-                                          form="afLeaTaskAddContenTypeFormInsert">
-                                    {{i18n "actions.create"}}
-                                  </button>
-                                {{else}}
-                                  <button class="btn btn-primary" type="submit"
-                                          form="afLeaTaskAddContenTypeFormUpdate">
-                                    {{i18n "actions.update"}}
-                                  </button>
-                                {{/if}}
+                {{#if modalIsNewContent}}
+                  <button class="btn btn-success" type="submit"
+                          form="afLeaTaskAddContenTypeFormInsert">
+                    {{i18n "actions.create"}}
+                  </button>
+                {{else}}
+                  <button class="btn btn-primary" type="submit"
+                          form="afLeaTaskAddContenTypeFormUpdate">
+                    {{i18n "actions.update"}}
+                  </button>
+                {{/if}}
                 {{#unless updatePreview}}
                   <button class="btn btn-outline-secondary preview-content-button">
-                                        {{>icon name="sync" }} {{i18n "actions.preview"}}
-                                    </button>
+                    {{>icon name="sync" }} {{i18n "actions.preview"}}
+                  </button>
                 {{else}}
                   <button class="btn btn-secondary preview-content-button disabled" disabled>
-                                            {{>icon name="sync" spin=true }} {{i18n "actions.preview"}}
-                                    </button>
+                    {{>icon name="sync" spin=true }} {{i18n "actions.preview"}}
+                  </button>
                 {{/unless}}
-                            </span>
+              </span>
             {{/if}}
             <button type="button" class="btn btn-secondary ms-auto"
                     data-bs-dismiss="modal">

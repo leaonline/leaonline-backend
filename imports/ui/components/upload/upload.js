@@ -73,7 +73,6 @@ Template.upload.events({
       file: files[0]
     })
 
-    debugger
     const upload = await templateInstance.data.filesCollection.insertAsync(opts, false)
     templateInstance.currentUpload.set(true)
     templateInstance.state.set({ progress: 0 })
