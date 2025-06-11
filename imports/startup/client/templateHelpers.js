@@ -10,3 +10,8 @@ Template.registerHelper('toDate', function (date) {
 Template.registerHelper('eq', function (a, b) {
   return a === b
 })
+
+Template.registerHelper('log', function (...args) {
+  args.pop()
+  console.log(args)
+})
