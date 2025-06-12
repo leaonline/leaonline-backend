@@ -1,5 +1,8 @@
 import { Apps } from '../../api/apps/Apps'
-import { rateLimitMethods, rateLimitPublications } from '../../factories/rateLimit'
+import {
+  rateLimitMethods,
+  rateLimitPublications,
+} from '../../factories/rateLimit'
 import { createMethods } from '../../factories/createMethods'
 import { createCollection } from '../../factories/createCollection'
 import { createPublications } from '../../factories/createPublications'

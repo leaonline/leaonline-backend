@@ -23,5 +23,5 @@ export const StateVariables = {
    */
   pageCount: 'pageCount',
   docsPerPage: 'docsPerPage',
-  currentPage: 'currentPage'
+  currentPage: 'currentPage',
 }

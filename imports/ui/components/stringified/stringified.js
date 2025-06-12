@@ -8,9 +8,9 @@ import './stringified.html'
 highlight.registerLanguage('json', jsonLang)
 
 Template.stringified.helpers({
-  stringify (target) {
+  stringify(target) {
     return target && EJSON.stringify(target, { indent: 2 })
-  }
+  },
 })
 
 Template.stringified.onRendered(function () {

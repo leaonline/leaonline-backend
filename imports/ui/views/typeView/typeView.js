@@ -13,19 +13,19 @@ Template.typeView.onCreated(function () {
 })
 
 Template.typeView.helpers({
-  loadComplete () {
+  loadComplete() {
     return Template.instance().state.get('loadComplete')
   },
-  config () {
+  config() {
     return Template.instance().config
   },
-  types () {
+  types() {
     const config = Template.instance().config
     return config && Object.values(config.types)
   },
-  label (name) {
+  label(name) {
     const config = Template.instance().config
     const type = config && config.types[name]
     return type && type.label()
-  }
+  },
 })

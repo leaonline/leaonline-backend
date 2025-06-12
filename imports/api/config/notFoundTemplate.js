@@ -4,6 +4,6 @@ export const notFoundTemplate = () => {
     template: 'notFound',
     load: async function () {
       return import('../../ui/pages/notfound/notFound')
-    }
+    },
   }
 }

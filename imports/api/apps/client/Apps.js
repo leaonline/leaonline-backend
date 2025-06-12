@@ -11,14 +11,14 @@ const _connections = {}
 
 Apps.debug = true
 
-function connect (name, url) {
+function connect(name, url) {
   if (!_connections[name]) {
     _connections[name] = DDP.connect(url)
   }
   return _connections[name]
 }
 
-function updateStatus (name, status) {
+function updateStatus(name, status) {
   const app = _apps.get(name)
   if (!app) {
     throw new Error(`[Apps] expected app by name ${name}`)
@@ -27,27 +27,27 @@ function updateStatus (name, status) {
   _apps.set(name, app)
 }
 
-function updateLogin (name, userId) {
+function updateLogin(name, userId) {
   const app = _apps.get(name)
   app.login = { successful: !!userId }
   _apps.set(name, app)
 }
 
-function updateConfig (name, config) {
+function updateConfig(name, config) {
   const app = _apps.get(name)
   app.config = config
   _apps.set(name, app)
 }
 
-function log (...args) {
+function log(...args) {
   if (Apps.debug && Meteor.isDevelopment) {
     console.info('[Apps]', ...args)
   }
 }
 
-function track (name, connection, ddpLogin) {
+function track(name, connection, ddpLogin) {
   const url = connection._stream.rawUrl
-  Tracker.autorun(computation => {
+  Tracker.autorun((computation) => {
     // skip this computation if there is
     // currently no logged in backend user
     if (Meteor.status().connected && !Meteor.user() && !Meteor.userId()) {
@@ -101,7 +101,10 @@ function track (name, connection, ddpLogin) {
         return
       }
       log(name, 'init login')
-      const options = { accessToken: credentials.accessToken, debug: Apps.debug }
+      const options = {
+        accessToken: credentials.accessToken,
+        debug: Apps.debug,
+      }
       DDP.loginWithLea(connection, options, (err, res) => {
         connection._loggingIn = false
         if (err) {
@@ -133,7 +136,7 @@ let _loadConfigHandler = () => {
   throw new Error('No config loader registered! Register via Apps.loadConfig.')
 }
 
-function configure (name) {
+function configure(name) {
   _loadConfigHandler(name, function (err, config) {
     if (err) {
       log(name, 'config error')
@@ -154,13 +157,13 @@ Apps.onHostLoaded = function (name, cb) {
   callbacks.set(name, hostCbs)
 }
 
-function hostLoaded (name, err, res) {
+function hostLoaded(name, err, res) {
   const loadedCbs = callbacks.get(name)
   if (!loadedCbs || loadedCbs.length === 0) {
     return
   }
 
-  loadedCbs.forEach(cb => {
+  loadedCbs.forEach((cb) => {
     setTimeout(() => cb(err, res), 0)
   })
 
@@ -191,7 +194,8 @@ Apps.all = function () {
   return all && Object.values(all)
 }
 
-Apps.subscribe = (appName, contextName) => Meteor.subscribe(Apps.publications.getByNames.name, { appName, contextName })
+Apps.subscribe = (appName, contextName) =>
+  Meteor.subscribe(Apps.publications.getByNames.name, { appName, contextName })
 
 const templates = new Map()
 Apps.registerTemplate = (name, options) => templates.set(name, options)
@@ -199,7 +203,10 @@ Apps.getRegisteredTemplates = () => Array.from(templates)
 Apps.getUriBase = function (name) {
   check(name, String)
   const connection = _connections[name]
-  check(connection, Match.Where(x => typeof x === 'object'))
+  check(
+    connection,
+    Match.Where((x) => typeof x === 'object'),
+  )
   return connection._stream.rawUrl
 }
 

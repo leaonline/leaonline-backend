@@ -3,28 +3,32 @@ export const StateActions = {
   update: 'update',
   remove: 'remove',
   upload: 'upload',
-  settings: 'settings'
+  settings: 'settings',
 }
 
-export const updateStateAction = function updateStateAction ({ action = 'reset', updateDoc, instance }) {
+export const updateStateAction = function updateStateAction({
+  action = 'reset',
+  updateDoc,
+  instance,
+}) {
   switch (action) {
     case StateActions.insert:
       return instance.state.set({
         insertForm: true,
         updateForm: false,
-        updateDoc: null
+        updateDoc: null,
       })
     case StateActions.update:
       return instance.state.set({
         insertForm: null,
         updateForm: true,
-        updateDoc
+        updateDoc,
       })
     case 'reset':
       return instance.state.set({
         insertForm: null,
         updateForm: null,
-        updateDoc: null
+        updateDoc: null,
       })
   }
 }

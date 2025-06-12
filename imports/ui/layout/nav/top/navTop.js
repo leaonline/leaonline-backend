@@ -6,17 +6,17 @@ import './navTop.html'
 const applicationName = Meteor.settings.public.app.title
 
 Template.navTop.helpers({
-  applicationName () {
+  applicationName() {
     return applicationName
-  }
+  },
 })
 
 Template.navTop.events({
-  'click .logout-button' (event) {
+  'click .logout-button'(event) {
     event.preventDefault()
-    Meteor.logout(err => {
+    Meteor.logout((err) => {
       if (err) return console.error(err)
       Router.go('/')
     })
-  }
+  },
 })

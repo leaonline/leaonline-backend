@@ -7,7 +7,7 @@ import './h5p.html'
 import { formIsValid } from '../../../utils/form'
 
 const createContentFormSchema = Schema.create({
-  contentId: String
+  contentId: String,
 })
 
 Template.afH5P.onCreated(function () {
@@ -39,52 +39,55 @@ Template.afH5P.onCreated(function () {
 })
 
 Template.afH5P.helpers({
-  listUrl () {
+  listUrl() {
     return Template.instance().state.get('listUrl')
   },
-  createUrl () {
+  createUrl() {
     return Template.instance().state.get('createUrl')
   },
-  editUrl (contentId) {
+  editUrl(contentId) {
     return Template.instance().state.get('editUrl') + contentId
   },
-  playUrl (contentId) {
+  playUrl(contentId) {
     return Template.instance().state.get('playUrl') + contentId
   },
-  editMode () {
+  editMode() {
     return Template.instance().state.get('editMode')
   },
-  contentId () {
+  contentId() {
     return Template.instance().state.get('contentId')
   },
-  dataSchemaKey () {
+  dataSchemaKey() {
     return Template.instance().state.get('dataSchemaKey')
   },
-  createContentFormSchema () {
+  createContentFormSchema() {
     return createContentFormSchema
-  }
+  },
 })
 
 const windows = {}
 
 Template.afH5P.events({
-  'click .close-edit-button' (event, templateInstance) {
+  'click .close-edit-button'(event, templateInstance) {
     event.preventDefault()
     templateInstance.state.set('editMode', null)
   },
-  'click .create-new-content-button' (event, templateInstance) {
+  'click .create-new-content-button'(event, templateInstance) {
     event.preventDefault()
     const createUrl = templateInstance.state.get('createUrl')
     windows[createUrl] = window.open(createUrl, createUrl)
   },
-  'click .edit-content-button' (event, templateInstance) {
+  'click .edit-content-button'(event, templateInstance) {
     event.preventDefault()
     templateInstance.state.set('editMode', true)
   },
-  'submit #createNewContentForm' (event, templateInstance) {
+  'submit #createNewContentForm'(event, templateInstance) {
     event.preventDefault()
 
-    const insertDoc = formIsValid('createNewContentForm', createContentFormSchema)
+    const insertDoc = formIsValid(
+      'createNewContentForm',
+      createContentFormSchema,
+    )
     if (!insertDoc) return
 
     // TODO check against new loaded content list if contentId is present in updated list
@@ -93,5 +96,5 @@ Template.afH5P.events({
 
     templateInstance.$('.afH5PContentHiddenInput').val(contentId)
     templateInstance.state.set('contentId', contentId)
-  }
+  },
 })

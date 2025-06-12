@@ -19,8 +19,8 @@ Template.statusApp.onCreated(function () {
 })
 
 Template.statusApp.helpers({
-  currentApp () {
+  currentApp() {
     const appId = Template.getState('appId')
     return Apps.get(appId)
-  }
+  },
 })

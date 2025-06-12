@@ -4,8 +4,8 @@ import './navSide.scss'
 import './navSide.html'
 
 Template.navSide.helpers({
-  topLevelRoutes () {
+  topLevelRoutes() {
     const routes = RoutesTree.get()
     return routes
-  }
+  },
 })

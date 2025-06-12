@@ -18,19 +18,19 @@ export const defaultNotifications = (err, res) => {
       type: 'danger',
       content: err.reason || err.message,
       details: err.details,
-      timeout: 0
+      timeout: 0,
     })
   } else if (typeof res === 'undefined') {
     Notifications.add({
       title: 'notify.noResultTitle',
       type: 'warning',
-      content: 'notify.noResultDescription'
+      content: 'notify.noResultDescription',
     })
   } else {
     Notifications.add({
       title: 'notify.success',
       type: 'success',
-      timeout: 800
+      timeout: 800,
     })
   }
 
@@ -46,6 +46,6 @@ export const defaultNotifications = (err, res) => {
     warning: function (cb) {
       if (!cb || err || res) return
       cb(err, res)
-    }
+    },
   }
 }

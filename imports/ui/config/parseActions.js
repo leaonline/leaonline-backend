@@ -9,10 +9,16 @@ const cleanOptions = {
   removeEmptyStrings: false,
   trimStrings: false,
   getAutoValues: false,
-  removeNullsFromArrays: false
+  removeNullsFromArrays: false,
 }
 
-export const parseActions = function parseActions ({ instance, config, app, logDebug, settingsDoc }) {
+export const parseActions = function parseActions({
+  instance,
+  config,
+  app,
+  logDebug,
+  settingsDoc,
+}) {
   const actions = config.methods || {}
   const schema = Object.assign({}, config.schema || {})
 
@@ -24,9 +30,10 @@ export const parseActions = function parseActions ({ instance, config, app, logD
   const renderer = TaskRenderers.get(previewName)
 
   if (renderer) {
-    renderer.load()
+    renderer
+      .load()
       .then(() => instance.state.set(StateVariables.actionPreview, renderer))
-      .catch(e => logDebug(`failed loading renderer <${previewName}>`, e))
+      .catch((e) => logDebug(`failed loading renderer <${previewName}>`, e))
   } else {
     logDebug(new Error(`no renderer found for ${previewName}`))
   }
@@ -38,9 +45,11 @@ export const parseActions = function parseActions ({ instance, config, app, logD
       config,
       settingsDoc,
       app,
-      instance
+      instance,
     })
-    instance.actionInsertSchema = Schema.create(insertFormSchema, { clean: cleanOptions })
+    instance.actionInsertSchema = Schema.create(insertFormSchema, {
+      clean: cleanOptions,
+    })
     instance.state.set(StateVariables.actionInsert, actions.insert)
   }
 
@@ -51,9 +60,11 @@ export const parseActions = function parseActions ({ instance, config, app, logD
       config,
       settingsDoc,
       app,
-      instance
+      instance,
     })
-    instance.actionUpdateSchema = Schema.create(updateFormSchema, { clean: cleanOptions })
+    instance.actionUpdateSchema = Schema.create(updateFormSchema, {
+      clean: cleanOptions,
+    })
     instance.state.set(StateVariables.actionUpdate, actions.update)
   }
 
@@ -69,19 +80,22 @@ export const parseActions = function parseActions ({ instance, config, app, logD
   // custom context-specific actions
 
   if (config.actions) {
-    instance.state.set(StateVariables.customActions, Object.values(config.actions))
+    instance.state.set(
+      StateVariables.customActions,
+      Object.values(config.actions),
+    )
   }
 }
 
-function getUploadAction (context) {
+function getUploadAction(context) {
   return {
     fileId: {
       type: 'String',
       autoform: {
         type: 'fileUpload',
         collection: context.name,
-        accept: context.accept
-      }
-    }
+        accept: context.accept,
+      },
+    },
   }
 }

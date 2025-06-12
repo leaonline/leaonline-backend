@@ -14,7 +14,7 @@ import { resolveFieldFromCollection } from './resolveFieldFromCollection'
  * @param fieldSettings
  * @return {*}
  */
-function getFieldConfig (config, key, field, fieldSettings) {
+function getFieldConfig(config, key, field, fieldSettings) {
   const fieldConfig = Object.assign({}, field, fieldSettings)
   fieldConfig.label = getLabel({ key, context: config, field: fieldConfig })
 
@@ -31,7 +31,10 @@ function getFieldConfig (config, key, field, fieldSettings) {
 
   // if the field is not explicitly excluded, we still check, if it should
   // be excluded, due to it's way
-  if (!fieldConfig.exclude && fieldShouldBeExcluded({ key, type: fieldConfig.type })) {
+  if (
+    !fieldConfig.exclude &&
+    fieldShouldBeExcluded({ key, type: fieldConfig.type })
+  ) {
     fieldConfig.exclude = true
   }
 
@@ -44,7 +47,7 @@ function getFieldConfig (config, key, field, fieldSettings) {
  * @param fieldConfig
  * @return {Function}
  */
-function getFieldResolver (fieldConfig) {
+function getFieldResolver(fieldConfig) {
   const { type, display } = fieldConfig
   return (value) => {
     const isArray = Array.isArray(value)
@@ -69,13 +72,17 @@ function getFieldResolver (fieldConfig) {
  * @param config
  * @param settingsDoc
  */
-export const parseFields = function parseFields ({ instance, config, settingsDoc }) {
+export const parseFields = function parseFields({
+  instance,
+  config,
+  settingsDoc,
+}) {
   const fieldLabels = {}
   const fields = {}
 
   const schema = Object.assign({}, config.schema)
   const excludeFromList = new Set()
-  const parentKeyInSet = key => {
+  const parentKeyInSet = (key) => {
     const split = key.split('.')
     if (!split || split.length < 2) {
       return false
@@ -89,7 +96,9 @@ export const parseFields = function parseFields ({ instance, config, settingsDoc
   Object.entries(schema).forEach(([key, value]) => {
     // skip if a key is a child-key of a key in the exclude-from-list-set
     if (parentKeyInSet(key)) return
-    const fieldSettings = settingsDoc.fields && settingsDoc.fields.find(entry => entry.name === key)
+    const fieldSettings =
+      settingsDoc.fields &&
+      settingsDoc.fields.find((entry) => entry.name === key)
     const fieldConfig = getFieldConfig(config, key, value, fieldSettings)
 
     if (fieldConfig.sort) {

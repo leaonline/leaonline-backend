@@ -11,7 +11,7 @@ export const environmentExtensionMixin = function (options) {
   const log = createLog(`method:${options.name}`)
   const runFct = options.run
 
-  options.run = async function run (...args) {
+  options.run = async function run(...args) {
     log('run by ', this.userId)
     return runFct.call(this, ...args)
   }

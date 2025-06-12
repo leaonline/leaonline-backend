@@ -5,7 +5,7 @@ import { environmentExtensionMixin } from '../api/mixins/environmentExtensionMix
 
 export const createMethod = createMethodFactory({
   schemaFactory: Schema.create,
-  mixins: [environmentExtensionMixin, checkPermissions]
+  mixins: [environmentExtensionMixin, checkPermissions],
 })
 
-export const createMethods = methods => methods.forEach(createMethod)
+export const createMethods = (methods) => methods.forEach(createMethod)

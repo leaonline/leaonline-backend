@@ -2,7 +2,7 @@
 import { AutoFormThemeBootstrap5 } from 'meteor/communitypackages:autoform-bootstrap5/dynamic'
 import 'meteor/aldeed:autoform/dynamic'
 
-async function init () {
+async function init() {
   await AutoForm.load()
   await AutoFormThemeBootstrap5.load()
   // theme is imported, you can now make the form available
@@ -10,9 +10,8 @@ async function init () {
   // or any other mechanism you like to use to reactively activate the form
   AutoForm.setDefaultTemplate('bootstrap5')
 }
-
-(function () {
+;(function () {
   init()
-    .catch(e => console.error('[autoForm]: init failed - ', e))
+    .catch((e) => console.error('[autoForm]: init failed - ', e))
     .then(() => console.info('[autoForm]: initialized'))
 })()

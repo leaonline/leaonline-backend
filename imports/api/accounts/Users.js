@@ -3,13 +3,16 @@ import { Meteor } from 'meteor/meteor'
 export const Users = {
   name: 'users',
   label: 'contexts.users.title',
-  icon: 'users'
+  icon: 'users',
 }
 
 Users.inject = {}
 
-let _i18nGet = x => x
-const _i18nReactive = (...args) => () => _i18nGet(...args)
+let _i18nGet = (x) => x
+const _i18nReactive =
+  (...args) =>
+  () =>
+    _i18nGet(...args)
 
 Users.inject.i18n = function (getFct) {
   _i18nGet = getFct
@@ -28,8 +31,8 @@ Users.login.schema = {
     max: 32,
     label: _i18nReactive('contexts.users.username'),
     autoform: {
-      autocomplete: 'username'
-    }
+      autocomplete: 'username',
+    },
   },
   password: {
     type: String,
@@ -37,9 +40,9 @@ Users.login.schema = {
     max: 128,
     autoform: {
       type: 'password',
-      autocomplete: 'current-password'
-    }
-  }
+      autocomplete: 'current-password',
+    },
+  },
 }
 
 Users.login.call = function (cb) {

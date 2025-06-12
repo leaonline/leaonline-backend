@@ -27,7 +27,7 @@ export const getValueFunction = ({ method, input }) => {
 
 const byWhiteSpace = /\s+/g
 
-export const getTokenizeValueResolver = mappedInput => {
+export const getTokenizeValueResolver = (mappedInput) => {
   const input = mappedInput[0]
   const { source, pattern, delimiter } = input
   return () => {
@@ -53,7 +53,7 @@ export const getTokenizeValueResolver = mappedInput => {
  * @return {Function}
  */
 
-const toExecutableEntry = entry => {
+const toExecutableEntry = (entry) => {
   switch (entry.type) {
     case 'value':
       return () => entry.value
@@ -76,7 +76,10 @@ const toExecutableEntry = entry => {
  * @return {function(): Any}
  */
 
-const getIntervalFieldValueResolver = ({ source }) => () => AutoForm.getFieldValue(source)
+const getIntervalFieldValueResolver =
+  ({ source }) =>
+  () =>
+    AutoForm.getFieldValue(source)
 
 /**
  * Returns a function that resolves to a field of an externally linked document
@@ -89,7 +92,7 @@ const getIntervalFieldValueResolver = ({ source }) => () => AutoForm.getFieldVal
 const getDocumentFieldValueResolver = ({ source, collection, field }) => {
   const Collection = getCollection(collection)
   if (!Collection) throw new Error(`Collection does not exist: ${collection}`)
-  return function resolveDocumentFieldValue () {
+  return function resolveDocumentFieldValue() {
     const sourceId = AutoForm.getFieldValue(source)
     const doc = Collection.findOne(sourceId)
     return doc && doc[field]
@@ -107,7 +110,7 @@ const getIncrementValueResolver = ({ decimals, filter, collection }) => {
   const Collection = getCollection(collection)
   if (!Collection) throw new Error(`Collection does not exist: ${collection}`)
   const query = {}
-  return function resolveIcrementValue () {
+  return function resolveIcrementValue() {
     addFieldsToQuery(query, filter?.fields)
     const count = Collection.find(query).count() + 1
     return count.toString().padStart(decimals, '0')
@@ -121,4 +124,4 @@ const getIncrementValueResolver = ({ decimals, filter, collection }) => {
  * @return {function(): *}
  */
 
-const getValueConcat = input => () => input.reduce((a, b) => `${a}${b()}`, '')
+const getValueConcat = (input) => () => input.reduce((a, b) => `${a}${b()}`, '')

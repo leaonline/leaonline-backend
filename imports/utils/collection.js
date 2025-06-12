@@ -1,3 +1,4 @@
 export {
-  getCollection, addCollection
+  getCollection,
+  addCollection,
 } from 'meteor/leaonline:corelib/utils/collection'

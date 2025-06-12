@@ -17,31 +17,34 @@ const settings = Meteor.settings.public.editor
 
 // for computed values that depend on certain fields
 // we define our requiredFields based on the type value
-const isValueField = entry => entry.type === 'field'
-const toTypeName = entry => entry.source
+const isValueField = (entry) => entry.type === 'field'
+const toTypeName = (entry) => entry.source
 const byName = (a, b) => a.localeCompare(b)
 const withMinus = ' - '
 
 // we often want to ensure our required fields are set
 // se we define a common helper here
-const areAllFieldsSet = fields => fields.every(name => !!AutoForm.getFieldValue(name))
+const areAllFieldsSet = (fields) =>
+  fields.every((name) => !!AutoForm.getFieldValue(name))
 
 const addFieldsToQuery = createAddFieldsToQuery(AutoForm.getFieldValue)
 
 const loadTargetForm = ({ targetForm, instance, fieldSettings }) => {
-  const formTypesStatus = instance.state.get(StateVariables.formTypesLoaded) || {}
+  const formTypesStatus =
+    instance.state.get(StateVariables.formTypesLoaded) || {}
 
   if (!targetForm.loaded) {
     formTypesStatus[fieldSettings.form] = false
     instance.state.set(StateVariables.formTypesLoaded, formTypesStatus)
 
-    targetForm.load()
+    targetForm
+      .load()
       .then(() => {
         const fts = instance.state.get(StateVariables.formTypesLoaded)
         fts[fieldSettings.form] = true
         instance.state.set(StateVariables.formTypesLoaded, fts)
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e)
         instance.state.set(StateVariables.formTypesLoaded, null)
       })
@@ -54,10 +57,17 @@ const loadTargetForm = ({ targetForm, instance, fieldSettings }) => {
 // use to map tokens to AutoForm options
 const toIndexedTokens = (token, index) => ({
   value: index,
-  label: `${index + 1} - ${token}`
+  label: `${index + 1} - ${token}`,
 })
 
-export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formId }) => {
+export const toFormSchema = ({
+  schema,
+  config,
+  settingsDoc,
+  app,
+  instance,
+  formId,
+}) => {
   const { name } = config
 
   // first we define all the properties on the copy
@@ -69,7 +79,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
       key,
       context: config,
       field: definitions,
-      type: 'form'
+      type: 'form',
     })
 
     const fieldSettings = getFieldSettings(settingsDoc, key) || {}
@@ -80,7 +90,9 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
     // that resolves all inputs to values at runtime
 
     if (definitions.value) {
-      const requiredFields = definitions.value.input.filter(isValueField).map(toTypeName)
+      const requiredFields = definitions.value.input
+        .filter(isValueField)
+        .map(toTypeName)
       const valueFunction = getValueFunction(definitions.value)
       autoform.defaultValue = function () {
         if (areAllFieldsSet(requiredFields)) {
@@ -132,13 +144,13 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
       autoform.type = FormTypes.taskContent.template
       autoform.connection = app.connection
       autoform.app = app.name
-      autoform.load = { field: name => AutoForm.getFieldValue(name) }
+      autoform.load = { field: (name) => AutoForm.getFieldValue(name) }
 
       Object.assign(autoform, definitions.dependency)
       loadTargetForm({
         targetForm: FormTypes.taskContent,
         instance,
-        fieldSettings
+        fieldSettings,
       })
     }
 
@@ -149,7 +161,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
       loadTargetForm({
         targetForm,
         instance,
-        fieldSettings
+        fieldSettings,
       })
 
       autoform.type = targetForm.template
@@ -161,7 +173,15 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
 
     if (definitions.dependency) {
       const { dependency } = definitions
-      const { requires, collection, filesCollection, context, field, isArray, filter } = dependency
+      const {
+        requires,
+        collection,
+        filesCollection,
+        context,
+        field,
+        isArray,
+        filter,
+      } = dependency
 
       // make all fields to Array structure by default so we can make all
       // operations base on iterations and save us the complex if-branchings
@@ -171,7 +191,7 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
 
       if (collection) {
         const transform = { sort: {} }
-        depFields.forEach(f => {
+        depFields.forEach((f) => {
           transform.sort[f] = 1
         })
 
@@ -179,18 +199,19 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
 
         let DependantCollection = getCollection(collection)
 
-        const toDepLabel = doc => depFields
-          .map(f => doc[f])
-          .sort(byName)
-          .join(withMinus)
+        const toDepLabel = (doc) =>
+          depFields
+            .map((f) => doc[f])
+            .sort(byName)
+            .join(withMinus)
 
-        const toOptions = doc => ({
+        const toOptions = (doc) => ({
           value: doc._id,
-          label: toDepLabel(doc)
+          label: toDepLabel(doc),
         })
         const toIndexOptions = (entry, index) => ({
           value: index,
-          label: entry
+          label: entry,
         })
 
         autoform.options = function () {
@@ -208,7 +229,12 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
             console.error(ContextRegistry.get(collection))
             console.error(ContextRegistry.get(name))
             const formId = AutoForm.getFormId()
-            AutoForm.addStickyValidationError(formId, key, 'errors.collectionNotFound', collection)
+            AutoForm.addStickyValidationError(
+              formId,
+              key,
+              'errors.collectionNotFound',
+              collection,
+            )
             return []
           }
 
@@ -221,10 +247,14 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
             // if we ever need a relation apart from _id in a collection-dep
             // we need to make this configurable
 
-            const queryFieldValue = Array.isArray(fieldValue) ? fieldValue : [fieldValue]
+            const queryFieldValue = Array.isArray(fieldValue)
+              ? fieldValue
+              : [fieldValue]
             query._id = { $in: queryFieldValue }
 
-            const docs = DependantCollection.find(query, transform).fetch().map(entry => toDepLabel(entry))
+            const docs = DependantCollection.find(query, transform)
+              .fetch()
+              .map((entry) => toDepLabel(entry))
             return isArray
               ? docs.flat().map(toIndexOptions)
               : docs.map(toIndexOptions)
@@ -274,7 +304,11 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
 
       if (typeof context !== 'undefined') {
         const DependantContext = context ? ContextRegistry.get(context) : config
-        const valueField = definitions.dependency.valueField || (Array.isArray(DependantContext.representative) ? DependantContext.representative[0] : DependantContext.representative)
+        const valueField =
+          definitions.dependency.valueField ||
+          (Array.isArray(DependantContext.representative)
+            ? DependantContext.representative[0]
+            : DependantContext.representative)
         const labelField = definitions.dependency.labelField || 'label'
 
         if (DependantContext.isItem) {
@@ -302,10 +336,12 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
         }
 
         if (DependantContext.isType) {
-          const typeOptions = Object.values(DependantContext.types).map(type => ({
-            value: type[valueField],
-            label: () => i18n.get(type[labelField])
-          }))
+          const typeOptions = Object.values(DependantContext.types).map(
+            (type) => ({
+              value: type[valueField],
+              label: () => i18n.get(type[labelField]),
+            }),
+          )
           autoform.options = () => typeOptions
         }
 
@@ -343,9 +379,9 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
 
       // the default case is an array, which is mapped into options
       if (Array.isArray(definitions.options)) {
-        const mappedOptions = definitions.options.map(option => ({
+        const mappedOptions = definitions.options.map((option) => ({
           value: option.value || option.name,
-          label: () => i18n.get(option.label)
+          label: () => i18n.get(option.label),
         }))
         autoform.options = () => mappedOptions
 
@@ -362,15 +398,15 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
         const tokenize = getValueFunction(definitions.options)
         autoform.options = function () {
           const tokens = tokenize()
-          return tokens
-            ? tokens.map(toIndexedTokens)
-            : []
+          return tokens ? tokens.map(toIndexedTokens) : []
         }
 
         // and throw if we really don't know what the type is
         // eslint-ignore-next-line
       } else {
-        throw new Error(`Unknown definition for options: ${definitions.options}`)
+        throw new Error(
+          `Unknown definition for options: ${definitions.options}`,
+        )
       }
 
       // in any case we need to define a first option property
@@ -392,10 +428,14 @@ export const toFormSchema = ({ schema, config, settingsDoc, app, instance, formI
 }
 
 const { textAreaThreshold } = settings
-const isRichText = value => value.richText === true
-const isPageContent = value => value.isPageContent === true
-const isMediaUrl = value => value.isMediaUrl === true
-const isTextArea = value => value.type === String && !isRichText(value) && typeof value.max === 'number' && value.max >= textAreaThreshold
+const isRichText = (value) => value.richText === true
+const isPageContent = (value) => value.isPageContent === true
+const isMediaUrl = (value) => value.isMediaUrl === true
+const isTextArea = (value) =>
+  value.type === String &&
+  !isRichText(value) &&
+  typeof value.max === 'number' &&
+  value.max >= textAreaThreshold
 const isRegExp = ({ type }) => type === RegExp
 const isBoolean = ({ type }) => type === Boolean
 const isMultiple = ({ type, dependency }) => type === Array && dependency

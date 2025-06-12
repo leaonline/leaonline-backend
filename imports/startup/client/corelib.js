@@ -12,10 +12,12 @@ Components.contentPath(Meteor.settings.public.hosts.content.url)
 Meteor.startup(() => {
   TTSEngine.configure({
     loader: externalServerTTSLoader,
-    mode: TTSEngine.modes.browser
+    mode: TTSEngine.modes.browser,
   })
 })
 
-function externalServerTTSLoader (requestText, callback) {
-  throw new Error('External TTS server is not configured. Please set the TTS URL in the settings.')
+function externalServerTTSLoader(requestText, callback) {
+  throw new Error(
+    'External TTS server is not configured. Please set the TTS URL in the settings.',
+  )
 }

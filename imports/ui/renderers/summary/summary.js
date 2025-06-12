@@ -12,7 +12,7 @@ Template.summary.onCreated(function () {
 })
 
 Template.summary.helpers({
-  fields () {
+  fields() {
     const instance = Template.instance()
     const { doc } = instance.data
     const { fieldLabels } = instance
@@ -27,5 +27,5 @@ Template.summary.helpers({
       const value = resolver ? resolver(originalValue) : originalValue
       return { key, value, label }
     })
-  }
+  },
 })

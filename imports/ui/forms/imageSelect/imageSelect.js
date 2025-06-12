@@ -7,13 +7,13 @@ import './imageSelect.html'
 
 const SaveType = {
   id: 'id',
-  url: 'url'
+  url: 'url',
 }
 
 const StateVariables = {
   saveType: 'saveType',
   galleryMode: 'galleryMode',
-  selectedImage: 'selectedImage'
+  selectedImage: 'selectedImage',
 }
 
 Template.afImageSelect.onCreated(function () {
@@ -24,13 +24,13 @@ Template.afImageSelect.onCreated(function () {
 
   const imagesCollection = getCollection(atts.imagesCollection)
   if (!imagesCollection) {
-    throw new Error(`Could not find imagesCollection by name <${atts.imagesCollection}>`)
+    throw new Error(
+      `Could not find imagesCollection by name <${atts.imagesCollection}>`,
+    )
   }
   instance.imagesCollection = imagesCollection
 
-  const saveType = (atts.save === SaveType.url)
-    ? SaveType.url
-    : SaveType.id
+  const saveType = atts.save === SaveType.url ? SaveType.url : SaveType.id
   instance.stateVars.set(StateVariables.saveType, saveType)
 
   if (data.value) {
@@ -46,8 +46,14 @@ Template.afImageSelect.onCreated(function () {
     }, 100)
   }
 
-  instance.stateVars.set('invalid', atts.class && atts.class.indexOf('invalid') > -1)
-  instance.stateVars.set('disabled', Object.prototype.hasOwnProperty.call(atts, 'disabled'))
+  instance.stateVars.set(
+    'invalid',
+    atts.class && atts.class.indexOf('invalid') > -1,
+  )
+  instance.stateVars.set(
+    'disabled',
+    Object.prototype.hasOwnProperty.call(atts, 'disabled'),
+  )
   instance.stateVars.set('dataSchemaKey', atts['data-schema-key'])
 })
 
@@ -57,16 +63,16 @@ Template.afImageSelect.onDestroyed(function () {
 })
 
 Template.afImageSelect.helpers({
-  dataSchemaKey () {
+  dataSchemaKey() {
     return Template.instance().stateVars.get('dataSchemaKey')
   },
-  images () {
+  images() {
     return Template.instance().imagesCollection.find()
   },
-  galleryMode () {
+  galleryMode() {
     return Template.instance().stateVars.get(StateVariables.galleryMode)
   },
-  link (doc) {
+  link(doc) {
     if (doc.link) return doc.link
 
     const instance = Template.instance()
@@ -74,42 +80,43 @@ Template.afImageSelect.helpers({
     const uriBase = instance.data.atts.uriBase
     return instance.imagesCollection.filesCollection.link(doc, version, uriBase)
   },
-  selectedImage () {
+  selectedImage() {
     const instance = Template.instance()
     const imageId = instance.stateVars.get(StateVariables.selectedImage)
     return imageId && instance.imagesCollection.findOne(imageId)
-  }
+  },
 })
 
 Template.afImageSelect.events({
-  'click .open-gallery-button' (event, templateInstance) {
+  'click .open-gallery-button'(event, templateInstance) {
     event.preventDefault()
     templateInstance.stateVars.set(StateVariables.galleryMode, true)
   },
-  'click .close-gallery-button' (event, templateInstance) {
+  'click .close-gallery-button'(event, templateInstance) {
     event.preventDefault()
     templateInstance.stateVars.set(StateVariables.galleryMode, false)
   },
-  'click .image-select' (event, templateInstance) {
+  'click .image-select'(event, templateInstance) {
     event.preventDefault()
     const target = templateInstance.$(event.currentTarget).data('target')
     updateTarget(target, templateInstance)
     templateInstance.stateVars.set(StateVariables.galleryMode, false)
   },
-  'click .remove-image-button' (event, templateInstance) {
+  'click .remove-image-button'(event, templateInstance) {
     event.preventDefault()
     updateTarget(null, templateInstance)
-  }
+  },
 })
 
-function updateTarget (targetId, templateInstance) {
+function updateTarget(targetId, templateInstance) {
   const saveType = templateInstance.stateVars.get(StateVariables.saveType)
   const $hiddenInput = templateInstance.$('.afImageSelectHiddenInput')
 
   // update the underlying field
   // based on the desired saveType
   if (saveType === SaveType.url) {
-    const ImagesFilesCollection = templateInstance.imagesCollection.filesCollection
+    const ImagesFilesCollection =
+      templateInstance.imagesCollection.filesCollection
     const version = templateInstance.data.atts.version
     const uriBase = templateInstance.data.atts.uriBase
     const file = ImagesFilesCollection.findOne(targetId)

@@ -5,23 +5,21 @@ import './notify.scss'
 import './notify.html'
 import { dataTarget } from '../../../utils/event'
 
-const componentsLoaded = Components.load([
-  Components.template.icon
-])
+const componentsLoaded = Components.load([Components.template.icon])
 
 Template.notify.helpers({
-  loadComplete () {
+  loadComplete() {
     return componentsLoaded.get()
   },
-  notifications () {
+  notifications() {
     return Notifications.entries()
-  }
+  },
 })
 
 Template.notify.onRendered(function () {
   const instance = this
   instance.autorun(() => {
-    Notifications.entries().forEach(entry => {
+    Notifications.entries().forEach((entry) => {
       if (!entry.visible) {
         instance.$(`[data-id='${entry._id}']`).alert('close')
       }
@@ -30,10 +28,10 @@ Template.notify.onRendered(function () {
 })
 
 Template.notify.events({
-  'close.bs.alert' (event, templateInstance) {
+  'close.bs.alert'(event, templateInstance) {
     setTimeout(() => {
       const id = dataTarget(event, templateInstance, 'id')
       Notifications.remove(id)
     }, 50)
-  }
+  },
 })

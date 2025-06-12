@@ -6,7 +6,14 @@
  * @return {Array}
  */
 
-export const toArray = (value, { includeUndefined = false, includeNull = false, objectToEntries = false } = {}) => {
+export const toArray = (
+  value,
+  {
+    includeUndefined = false,
+    includeNull = false,
+    objectToEntries = false,
+  } = {},
+) => {
   if (Array.isArray(value)) return value
 
   const valueType = typeof value
@@ -15,9 +22,7 @@ export const toArray = (value, { includeUndefined = false, includeNull = false, 
   }
 
   if (valueType === 'object') {
-    return objectToEntries
-      ? Object.entries(value)
-      : [value]
+    return objectToEntries ? Object.entries(value) : [value]
   }
 
   if (value === null && !includeNull) {

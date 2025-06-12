@@ -1,12 +1,11 @@
-
 /* global AutoForm */
 
 AutoForm.addInputType('h5p', {
   template: 'afH5P',
-  valueOut () {
+  valueOut() {
     return this.val()
   },
-  valueIn (initialValue) {
+  valueIn(initialValue) {
     return initialValue
-  }
+  },
 })

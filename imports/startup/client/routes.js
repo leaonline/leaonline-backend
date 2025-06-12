@@ -14,21 +14,20 @@ Router.defaultTarget(defaultTarget)
  * Load all routes definitions into the router
  */
 
-Object
-  .values(Routes)
-  .map(route => {
-    route.target = (route.target || defaultTarget)
+Object.values(Routes)
+  .map((route) => {
+    route.target = route.target || defaultTarget
     return route
   })
-  .forEach(route => Router.register(route))
+  .forEach((route) => Router.register(route))
 
 /**
  * Build to RoutesTree to represent a structured sidebar nav data model
  */
 ;[
-  Routes.statusOverview
+  Routes.statusOverview,
   // Routes.settings
-].forEach(route => RoutesTree.topLevel(route.path(), route))
+].forEach((route) => RoutesTree.topLevel(route.path(), route))
 
 Template.registerHelper('next', function (...args) {
   args.pop()

@@ -2,10 +2,10 @@
 
 AutoForm.addInputType('leaImageSelect', {
   template: 'afImageSelect',
-  valueOut () {
+  valueOut() {
     return this.val()
   },
-  valueIn (initialValue) {
+  valueIn(initialValue) {
     return initialValue
-  }
+  },
 })

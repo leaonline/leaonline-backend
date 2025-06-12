@@ -2,7 +2,7 @@ export const JSONReviver = {}
 
 const handlers = []
 
-function reviver (key, value) {
+function reviver(key, value) {
   for (let i = 0; i < handlers.length; i++) {
     const fn = handlers[i]
     const revivedValue = fn(key, value)
@@ -14,11 +14,11 @@ function reviver (key, value) {
   return value
 }
 
-JSONReviver.register = handlerFn => {
+JSONReviver.register = (handlerFn) => {
   handlers.push(handlerFn)
 }
 
-JSONReviver.revive = json => {
+JSONReviver.revive = (json) => {
   return JSON.parse(json, reviver)
 }
 

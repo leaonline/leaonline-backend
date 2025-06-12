@@ -30,33 +30,42 @@ Template.genericDocument.onCreated(function () {
   })
 })
 
-Template.genericDocument.helpers(wrapHelpers({
-  loadComplete () {
-    const instance = Template.instance()
-    return instance.state.get(StateVariables.allSubsComplete) && instance.state.get('updateDoc')
-  },
-  updateDoc () {
-    return Template.instance().state.get('updateDoc')
-  },
-  isUpdating () {
-    return Template.instance().state.get('isUpdating')
-  },
-  editMode () {
-    return Template.instance().state.get('editMode')
-  }
-}))
+Template.genericDocument.helpers(
+  wrapHelpers({
+    loadComplete() {
+      const instance = Template.instance()
+      return (
+        instance.state.get(StateVariables.allSubsComplete) &&
+        instance.state.get('updateDoc')
+      )
+    },
+    updateDoc() {
+      return Template.instance().state.get('updateDoc')
+    },
+    isUpdating() {
+      return Template.instance().state.get('isUpdating')
+    },
+    editMode() {
+      return Template.instance().state.get('editMode')
+    },
+  }),
+)
 
 Template.genericDocument.events({
-  'click .edit-button' (event, templateInstance) {
+  'click .edit-button'(event, templateInstance) {
     event.preventDefault()
     templateInstance.state.set('editMode', true)
   },
-  'submit #updateForm' (event, templateInstance) {
+  'submit #updateForm'(event, templateInstance) {
     event.preventDefault()
-    const updateDoc = formIsValid('updateForm', templateInstance.actionUpdateSchema, {
-      template: templateInstance,
-      fallback: false
-    })
+    const updateDoc = formIsValid(
+      'updateForm',
+      templateInstance.actionUpdateSchema,
+      {
+        template: templateInstance,
+        fallback: false,
+      },
+    )
 
     if (!updateDoc) return
 
@@ -68,7 +77,7 @@ Template.genericDocument.events({
       mutate: true,
       filter: true,
       autoConvert: true,
-      removeEmptyStrings: true
+      removeEmptyStrings: true,
     }
 
     templateInstance.actionUpdateSchema.clean(updateDoc, cleanOptions)
@@ -84,25 +93,28 @@ Template.genericDocument.events({
     const config = templateInstance.data.config()
     const { connection } = app
 
-    connection.call(actonUpdate.name, updateDoc, by300((err, res) => {
-      templateInstance.state.set(StateVariables.submitting, false)
-      defaultNotifications(err, res)
-        .success(function () {
+    connection.call(
+      actonUpdate.name,
+      updateDoc,
+      by300((err, res) => {
+        templateInstance.state.set(StateVariables.submitting, false)
+        defaultNotifications(err, res).success(function () {
           updateDocumentState({
             docId: target._id,
             connection,
             context: config,
-            onComplete: doc => templateInstance.state.set('updateDoc', doc)
+            onComplete: (doc) => templateInstance.state.set('updateDoc', doc),
           })
           Router.queryParam({ action: null })
           templateInstance.state.set('updateForm', false)
           templateInstance.state.set('isUpdating', false)
           templateInstance.state.set('editMode', false)
         })
-    }))
+      }),
+    )
   },
-  'click .cancel-edit-button' (event, templateInstance) {
+  'click .cancel-edit-button'(event, templateInstance) {
     event.preventDefault()
     templateInstance.state.set('editMode', false)
-  }
+  },
 })

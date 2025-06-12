@@ -23,57 +23,61 @@ Template.contextSettings.onCreated(function () {
 
     const schema = Apps.getSchemaForContext({
       ...config,
-      includeKey: true
+      includeKey: true,
     })
 
     instance.schema = Schema.create(schema)
     instance.state.set({
       loadComplete: true,
-      contextName
+      contextName,
     })
   })
 })
 
 Template.contextSettings.helpers({
-  context () {
+  context() {
     const contextName = Template.getState('contextName')
     return contextName && ContextRegistry.get(contextName)
   },
-  loadComplete () {
+  loadComplete() {
     return Template.getState('loadComplete')
   },
-  settingsSchema () {
+  settingsSchema() {
     return Template.instance().schema
   },
-  settingsDoc () {
+  settingsDoc() {
     return Template.instance().state.get('settingsDoc')
   },
-  submitting () {
+  submitting() {
     return Template.instance().state.get('submitting')
-  }
+  },
 })
 
 Template.contextSettings.events({
-  'submit #settingsForm' (event, templateInstance) {
+  'submit #settingsForm'(event, templateInstance) {
     event.preventDefault()
     const settingsDoc = formIsValid('settingsForm', templateInstance.schema)
     if (!settingsDoc) return
 
     templateInstance.state.set('submitting', true)
-    Meteor.call(Apps.methods.updateSettings.name, settingsDoc, by300((err, res) => {
-      templateInstance.state.set('submitting', false)
-      defaultNotifications(err, res).success(function () {
-        closeSettings(templateInstance)
-      })
-    }))
+    Meteor.call(
+      Apps.methods.updateSettings.name,
+      settingsDoc,
+      by300((err, res) => {
+        templateInstance.state.set('submitting', false)
+        defaultNotifications(err, res).success(function () {
+          closeSettings(templateInstance)
+        })
+      }),
+    )
   },
-  'click .cancel-form-button' (event, templateInstance) {
+  'click .cancel-form-button'(event, templateInstance) {
     event.preventDefault()
     closeSettings(templateInstance)
-  }
+  },
 })
 
-function closeSettings (templateInstance) {
+function closeSettings(templateInstance) {
   if (templateInstance.data.onComplete) {
     const { appName, contextName } = templateInstance.data.params
     templateInstance.data.onComplete({ appName, contextName })

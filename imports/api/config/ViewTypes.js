@@ -5,7 +5,7 @@ export const ViewTypes = {
     label: 'viewTypes.list',
     load: async function () {
       return import('../../ui/views/list/list')
-    }
+    },
   },
   gallery: {
     name: 'gallery',
@@ -13,7 +13,7 @@ export const ViewTypes = {
     label: 'viewTypes.gallery',
     load: async function () {
       return import('../../ui/views/gallery/gallery')
-    }
+    },
   },
   document: {
     name: 'document',
@@ -21,7 +21,7 @@ export const ViewTypes = {
     label: 'viewTypes.document',
     load: async function () {
       return import('../../ui/views/document/document')
-    }
+    },
   },
   typeView: {
     name: 'typeView',
@@ -29,6 +29,6 @@ export const ViewTypes = {
     label: 'viewTypes.typeView',
     load: async function () {
       return import('../../ui/views/typeView/typeView')
-    }
-  }
+    },
+  },
 }

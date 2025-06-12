@@ -1,4 +1,4 @@
-const pass = obj => obj && Object.keys(obj).length > 0
+const pass = (obj) => obj && Object.keys(obj).length > 0
 
 /**
  * A content that is editable on this backend needs to have
@@ -12,5 +12,5 @@ const pass = obj => obj && Object.keys(obj).length > 0
 export const isEdtableContext = ({ methods, publications, routes }) => {
   if (pass(methods)) return true
   if (pass(publications)) return true
-  return !!(pass(routes))
+  return !!pass(routes)
 }

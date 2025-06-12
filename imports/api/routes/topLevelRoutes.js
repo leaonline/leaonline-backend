@@ -21,5 +21,5 @@ RoutesTree.get = function (name) {
   if (name) {
     return _map.get(name)
   }
-  return Object.keys(_routes.all()).map(key => _map.get(key))
+  return Object.keys(_routes.all()).map((key) => _map.get(key))
 }

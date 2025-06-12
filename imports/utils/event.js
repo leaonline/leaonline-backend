@@ -1,7 +1,5 @@
 export const dataTarget = (event, instance, type) => {
-  let t = typeof instance === 'string'
-    ? instance
-    : type
+  let t = typeof instance === 'string' ? instance : type
   if (!t) t = 'target'
   const target = event.currentTarget ?? event.target
   if (!target) return

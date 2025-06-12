@@ -1,5 +1,5 @@
 {
-  "too-many-requests":"Zu viele Anfragen",
+  "too-many-requests": "Zu viele Anfragen",
   "404": "404 (nicht gefunden)",
   "actions": {
     "create": "Erstellen",
@@ -57,7 +57,7 @@
   "form": {
     "selectOne": "(Bitte wählen)",
     "validation": {
-      "required": "{{label}} ist eine Pflichtfeld",
+      "required": "{{label}} ist ein Pflichtfeld",
       "uploadError": "Fehler beim Hochladen {{value}}",
       "min": "{{label}} muss mindestens {{min}} sein",
       "max": "{{label}} muss maximal {{max}} sein"

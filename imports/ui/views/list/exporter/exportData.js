@@ -4,7 +4,13 @@ import { resolveFieldFromContext } from '../../../config/fields/resolveFieldFrom
 import { jsonExporter } from './jsonExporter'
 import { safeStringify } from '../../../../utils/safeStringify'
 
-export const exportData = ({ data, type, schema, fieldConfig, exporterConfig }) => {
+export const exportData = ({
+  data,
+  type,
+  schema,
+  fieldConfig,
+  exporterConfig,
+}) => {
   const exporter = exporters[type]
   if (!exporter) throw new Error(`Exporter for type "${type}" not found.`)
 
@@ -13,7 +19,7 @@ export const exportData = ({ data, type, schema, fieldConfig, exporterConfig }) 
 
 const exporters = {
   csv: csvExporter,
-  json: jsonExporter
+  json: jsonExporter,
 }
 
 const exportTo = ({ data, schema, fieldConfig, exporter, exporterConfig }) => {
@@ -21,7 +27,7 @@ const exportTo = ({ data, schema, fieldConfig, exporter, exporterConfig }) => {
   return exporter({
     data,
     mapping,
-    config: exporterConfig
+    config: exporterConfig,
   })
 }
 
@@ -30,7 +36,7 @@ const createMapping = ({ schema, fieldConfig }) => {
   const metas = []
   const uniqueKeys = new Set()
 
-  Object.keys(schema).forEach(key => {
+  Object.keys(schema).forEach((key) => {
     let resolve
     if (schema[key].dependency) {
       const collectionName = schema[key].dependency.collection
@@ -40,7 +46,7 @@ const createMapping = ({ schema, fieldConfig }) => {
           const { doc } = resolveFieldFromCollection({
             value: docId,
             fieldConfig: collectionConfig,
-            isArray: schema[key].type === Array
+            isArray: schema[key].type === Array,
           })
           const { value, label } = doc
           return label ?? value
@@ -51,7 +57,10 @@ const createMapping = ({ schema, fieldConfig }) => {
       const contextConfig = fieldConfig[contextName] ?? fieldConfig[key]
       if (contextName && contextConfig) {
         resolve = (value) => {
-          const result = resolveFieldFromContext({ value, fieldConfig: contextConfig })
+          const result = resolveFieldFromContext({
+            value,
+            fieldConfig: contextConfig,
+          })
           return result?.name ? result.name : value
         }
       }
@@ -60,7 +69,7 @@ const createMapping = ({ schema, fieldConfig }) => {
     uniqueKeys.add(key)
   })
 
-  Object.keys(metaSchema).forEach(key => {
+  Object.keys(metaSchema).forEach((key) => {
     // sometimes meta keys are already covered
     // or overridden by the schema, so we skip
     // to avoid duplicate entrues
@@ -69,10 +78,8 @@ const createMapping = ({ schema, fieldConfig }) => {
   })
 
   const mapper = ({ key, doc, resolve }) => {
-    const isMeta = doc.meta && (key in doc.meta)
-    let value = isMeta
-      ? doc.meta[key]
-      : doc[key]
+    const isMeta = doc.meta && key in doc.meta
+    let value = isMeta ? doc.meta[key] : doc[key]
 
     if (resolve) {
       value = resolve(value, key)
@@ -81,7 +88,7 @@ const createMapping = ({ schema, fieldConfig }) => {
     const type = typeof value
 
     if (type === 'string') {
-      value = `"${value.replaceAll('"', '\'')}"`
+      value = `"${value.replaceAll('"', "'")}"`
     }
 
     if (type === 'object' && value !== null) {
@@ -102,12 +109,12 @@ const createMapping = ({ schema, fieldConfig }) => {
   return { header, metas, mapper }
 }
 
-const resolveDate = v => v && new Date(v).toLocaleString()
-const resolveUser = id => id
+const resolveDate = (v) => v && new Date(v).toLocaleString()
+const resolveUser = (id) => id
 const metaSchema = {
   _id: String,
   createdAt: { resolve: resolveDate },
   updatedAt: { resolve: resolveDate },
   createdBy: { resolve: resolveUser },
-  updatedBy: { resolve: resolveUser }
+  updatedBy: { resolve: resolveUser },
 }

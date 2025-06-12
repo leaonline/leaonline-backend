@@ -1,15 +1,15 @@
 import { marked, Renderer } from 'marked'
 
 class DefaultRenderer extends Renderer {
-  heading (text) {
+  heading(text) {
     return `<span class="lea-text-bold">${text}</span>`
   }
 
-  paragraph (text /*, level */) {
+  paragraph(text /*, level */) {
     return `<p class="lea-text">${text}</p>`
   }
 
-  strong (text) {
+  strong(text) {
     return `<span class="lea-text-bold">${text}</span>`
   }
 }
@@ -20,14 +20,14 @@ const defaultOptions = {
   breaks: true,
   gfm: true,
   async: true,
-  headerIds: false
+  headerIds: false,
 }
 
 export const MarkdownRenderer = {}
 
-MarkdownRenderer.render = async txt => {
+MarkdownRenderer.render = async (txt) => {
   return marked.parse(txt, {
     ...defaultOptions,
-    renderer
+    renderer,
   })
 }

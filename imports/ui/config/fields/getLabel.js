@@ -1,7 +1,6 @@
-
 const getFallbackLabel = (config, key) => `${config.name}.${key}`
-const fieldIsExcluded = field => !!field.excluded
-const labelIsExcluded = field => !!field.hideLabel
+const fieldIsExcluded = (field) => !!field.excluded
+const labelIsExcluded = (field) => !!field.hideLabel
 
 export const getLabel = ({ key, context, field }) => {
   const type = context.type

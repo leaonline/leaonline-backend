@@ -9,7 +9,7 @@ import { Routes } from '../../api/routes/Routes'
 
 const { hosts } = Meteor.settings.public
 const allHosts = Object.values(hosts)
-allHosts.forEach(host => Apps.register(host))
+allHosts.forEach((host) => Apps.register(host))
 
 const pathname = window.location.pathname
 const location = pathname.split('/')
@@ -23,14 +23,16 @@ const isOfHosts = !!hosts[hostName]
 const fullPath = `${pathname}${window.location.search}`
 
 if (isOfHosts) {
-  Router.addLoadDependency(new Promise(resolve => {
-    Apps.onHostLoaded(hostName, (err, res) => {
-      if (!err && !!res) {
-        setTimeout(() => Router.go(fullPath), 300)
-      }
-      resolve()
-    })
-  }))
+  Router.addLoadDependency(
+    new Promise((resolve) => {
+      Apps.onHostLoaded(hostName, (err, res) => {
+        if (!err && !!res) {
+          setTimeout(() => Router.go(fullPath), 300)
+        }
+        resolve()
+      })
+    }),
+  )
 
   setTimeout(() => Router.go(Routes.loading), 0)
 }

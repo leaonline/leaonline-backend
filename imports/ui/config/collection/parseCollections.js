@@ -13,23 +13,34 @@ const defaultSchema = {
   meta: {
     optional: true,
     type: Object,
-    blackbox: true
-  }
+    blackbox: true,
+  },
 }
 
-export const parseCollections = function parseCollections ({ instance, config, connection, logDebug = defaultLog }) {
+export const parseCollections = function parseCollections({
+  instance,
+  config,
+  connection,
+  logDebug = defaultLog,
+}) {
   instance.collections = instance.collections || new Map()
 
   const dependencies = getDependenciesForContext(config)
 
   // merge all contexts into a single list
   // so we can easily create everything in a row
-  const allCollections = dependencies.length > 0
-    ? [config].concat(dependencies)
-    : [config].filter(({ isType }) => !isType)
-  console.debug('parse collections', { instance, config, dependencies, allCollections })
+  const allCollections =
+    dependencies.length > 0
+      ? [config].concat(dependencies)
+      : [config].filter(({ isType }) => !isType)
+  console.debug('parse collections', {
+    instance,
+    config,
+    dependencies,
+    allCollections,
+  })
 
-  allCollections.forEach(collectionConfig => {
+  allCollections.forEach((collectionConfig) => {
     const isFilesCollection = collectionConfig.isFilesCollection
     const collectionName = collectionConfig.name
     const collection = getCollection(collectionName)
@@ -39,12 +50,15 @@ export const parseCollections = function parseCollections ({ instance, config, c
     if (collection && collectionName !== Meteor.users._name) {
       instance.collections.set(collectionName, collection)
     } else {
-      const localCollection = createCollection({
-        name: null,
-        schema: Object.assign({}, config.schema, defaultSchema),
-        connection,
-        attachSchema: false
-      }, collectionName)
+      const localCollection = createCollection(
+        {
+          name: null,
+          schema: Object.assign({}, config.schema, defaultSchema),
+          connection,
+          attachSchema: false,
+        },
+        collectionName,
+      )
 
       localCollection._name = collectionName
 
@@ -58,14 +72,16 @@ export const parseCollections = function parseCollections ({ instance, config, c
           ddp: connection,
           maxSize: config.maxSize,
           extension: config.extensions,
-          validateUser
+          validateUser,
         })
       }
     }
 
     // sanity check
     if (!getCollection(collectionName)) {
-      throw new Error(`Expected collection to be created by name <${collectionName}>`)
+      throw new Error(
+        `Expected collection to be created by name <${collectionName}>`,
+      )
     }
   })
 

@@ -7,23 +7,25 @@ export const isOptions = (key, value) => {
     const optonsMapFct = (el) => {
       return {
         value: el[(value.map && value.map.valueSrc) || '_id'],
-        label: el[(value.map && value.map.labelSrc) || 'label']
+        label: el[(value.map && value.map.labelSrc) || 'label'],
       }
     }
 
-    return function options () {
+    return function options() {
       const OptionsCollection = getCollection(value.collectionName)
       if (!OptionsCollection) return []
       const optionsQuery = {}
       if (value.query) {
-        Object.keys(value.query).forEach(key => {
+        Object.keys(value.query).forEach((key) => {
           const fieldValue = global.AutoForm.getFieldValue(key)
           if (fieldValue) {
             optionsQuery[key] = fieldValue
           }
         })
       }
-      return OptionsCollection.find(optionsQuery, optionsProjection).fetch().map(optonsMapFct)
+      return OptionsCollection.find(optionsQuery, optionsProjection)
+        .fetch()
+        .map(optonsMapFct)
     }
   }
 }

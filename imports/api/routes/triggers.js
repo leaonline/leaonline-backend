@@ -4,7 +4,7 @@ import { loggedIn, loggedOut } from '../../utils/accounts'
 
 export const createLoginTrigger = (redirectRoute) => {
   check(redirectRoute.path, Function)
-  return function loginTrigger () {
+  return function loginTrigger() {
     if (loggedOut()) {
       const location = Router.location()
       const fullPath = redirectRoute.path(encodeURIComponent(location))
@@ -15,7 +15,7 @@ export const createLoginTrigger = (redirectRoute) => {
 
 export const createLoggedinTrigger = (redirectRoute) => {
   check(redirectRoute.path, Function)
-  return function loggedTrigger () {
+  return function loggedTrigger() {
     if (loggedIn()) {
       const location = Router.location()
       const fullPath = redirectRoute.path(encodeURIComponent(location))

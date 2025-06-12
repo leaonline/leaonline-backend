@@ -7,7 +7,7 @@ import i18nDE from '../../../resources/i18n/de/i18n_de'
 
 const config = {
   settings: i18nConfig,
-  de: i18nDE
+  de: i18nDE,
 }
 
 // We first need to create our provider,
@@ -20,7 +20,7 @@ i18n.load({
   get: i18nProvider.get,
   set: (locale, definitions) => i18nProvider.addl10n({ [locale]: definitions }),
   getLocale: () => i18nProvider.currentLocale.get(),
-  thisContext: i18nProvider
+  thisContext: i18nProvider,
 })
 
 // provide a language tag on the html root element
@@ -40,8 +40,14 @@ Schema.provider.setDefaultMessages({
       maxString: i18n.get('form.validation.max', ['{{{label}}}', '{{max}}']),
       minNumber: i18n.get('form.validation.min', ['{{{label}}}', '{{min}}']),
       maxNumber: i18n.get('form.validation.max', ['{{{label}}}', '{{max}}']),
-      minNumberExclusive: i18n.get('form.validation.minNumberExclusive', ['{{{label}}}', '{{min}}']),
-      maxNumberExclusive: i18n.get('form.validation.maxNumberExclusive', ['{{{label}}}', '{{max}}']),
+      minNumberExclusive: i18n.get('form.validation.minNumberExclusive', [
+        '{{{label}}}',
+        '{{min}}',
+      ]),
+      maxNumberExclusive: i18n.get('form.validation.maxNumberExclusive', [
+        '{{{label}}}',
+        '{{max}}',
+      ]),
       minDate: i18n.get('form.validation.min', ['{{{label}}}', '{{min}}']),
       maxDate: i18n.get('form.validation.max', ['{{{label}}}', '{{max}}']),
       badDate: i18n.get('form.validation.badDate', ['{{{label}}}']),
@@ -49,12 +55,15 @@ Schema.provider.setDefaultMessages({
       maxCount: i18n.get('form.validation.max', ['{{maxCount}}']),
       noDecimal: i18n.get('form.validation.noDecimal', ['{{{label}}}']),
       notAllowed: i18n.get('form.validation.notAllowed', ['{{{value}}}']),
-      expectedType: i18n.get('form.validation.expectedType', ['{{{label}}}', '{{dataType}}']),
+      expectedType: i18n.get('form.validation.expectedType', [
+        '{{{label}}}',
+        '{{dataType}}',
+      ]),
       regEx: i18n.get('form.validation.regExFail'),
       keyNotInSchema: i18n.get('form.validation.keyNotInSchema'['{{label}}']),
-      valueAlreadyExists: i18n.get('form.valueAlreadyExists')
-    }
-  }
+      valueAlreadyExists: i18n.get('form.valueAlreadyExists'),
+    },
+  },
 })
 
 Schema.provider.ErrorTypes.VALUE_EXISTS = 'valueAlreadyExists'

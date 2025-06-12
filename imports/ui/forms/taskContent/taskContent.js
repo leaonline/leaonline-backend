@@ -28,31 +28,31 @@ import './taskContent.html'
 import './autoform'
 
 Scoring.init()
-const renderersLoaded = reactiveAsyncLoader(TaskRenderers.init({
-  markdown: {
-    renderer: MarkdownRenderer.render
-  }
-}))
+const renderersLoaded = reactiveAsyncLoader(
+  TaskRenderers.init({
+    markdown: {
+      renderer: MarkdownRenderer.render,
+    },
+  }),
+)
 
 AutoForm.addInputType('leaTaskContent', {
   template: 'afLeaTaskContent',
-  valueOut () {
+  valueOut() {
     const dsk = this.attr('data-schema-key')
     const val = this.val() ?? this.value
     const content = val && EJSON.parse(val)
-    return dsk.startsWith('page')
-      ? { content }
-      : content
+    return dsk.startsWith('page') ? { content } : content
   },
-  valueIn (initialValue) {
+  valueIn(initialValue) {
     return initialValue
-  }
+  },
 })
 
 const typeSchemas = {}
-const rendererGroups = Object
-  .values(RendererGroups)
-  .filter(group => group.isTaskContent)
+const rendererGroups = Object.values(RendererGroups).filter(
+  (group) => group.isTaskContent,
+)
 
 const getContent = (element) => {
   if (element.type !== 'item') {
@@ -75,28 +75,34 @@ const createTypeSchemaDef = ({ name, imageForm }) => {
   return renderer.schema({ i18n: i18n.get, name, imageForm })
 }
 
-const isItem = name => {
+const isItem = (name) => {
   const context = ContextRegistry.get(name)
   return context?.isItem
 }
 
-const getFormId = isNewContent => isNewContent
-  ? 'afLeaTaskAddContenTypeFormInsert'
-  : 'afLeaTaskAddContenTypeFormUpdate'
+const getFormId = (isNewContent) =>
+  isNewContent
+    ? 'afLeaTaskAddContenTypeFormInsert'
+    : 'afLeaTaskAddContenTypeFormUpdate'
 
 const contentFromItem = (name, value) => ({
   type: 'item',
   subtype: name,
   value,
-  width: '12'
+  width: '12',
 })
 
-const getImageForm = ({ imagesCollection, save = 'url', uriBase, version }) => ({
+const getImageForm = ({
+  imagesCollection,
+  save = 'url',
+  uriBase,
+  version,
+}) => ({
   type: FormTypes.imageSelect.template,
   imagesCollection,
   save,
   uriBase,
-  version
+  version,
 })
 
 const loadDependencies = (config, appName) => {
@@ -105,13 +111,13 @@ const loadDependencies = (config, appName) => {
   const { connection } = app
 
   dependencies
-    .map(name => ContextRegistry.get(name))
-    .forEach(dependency => {
+    .map((name) => ContextRegistry.get(name))
+    .forEach((dependency) => {
       const instance = {}
       parseCollections({
         config: dependency,
         connection,
-        instance
+        instance,
       })
 
       loadDocumentsWithDependencies({
@@ -119,7 +125,7 @@ const loadDependencies = (config, appName) => {
         connection,
         instance: null,
         logDebug: (...args) => console.log(...args),
-        onSubscribed: () => console.log('subscribed', config.name)
+        onSubscribed: () => console.log('subscribed', config.name),
       })
     })
 }
@@ -142,7 +148,14 @@ const createItemData = ({ unitId, page, subtype, onInput }) => {
   return data
 }
 
-const currentTypeSchema = ({ name, imagesCollection, version, uriBase, app, settingsDoc }) => {
+const currentTypeSchema = ({
+  name,
+  imagesCollection,
+  version,
+  uriBase,
+  app,
+  settingsDoc,
+}) => {
   const imageForm = getImageForm({ imagesCollection, version, uriBase })
   if (!typeSchemas[name]) {
     const isItemContent = isItem(name)
@@ -170,7 +183,7 @@ const createTypeSchema = (name, templateInstance) => {
     version,
     uriBase,
     app,
-    settingsDoc
+    settingsDoc,
   })
   setTimeout(() => templateInstance.stateVars.set('hasSchema', true), 300)
 }
@@ -186,11 +199,11 @@ Template.afLeaTaskContent.onCreated(function () {
     elements,
     invalid: atts.class && atts.class.indexOf('invalid') > -1,
     disabled: Object.prototype.hasOwnProperty.call(atts, 'disabled'),
-    dataSchemaKey: atts['data-schema-key']
+    dataSchemaKey: atts['data-schema-key'],
   })
 })
 
-const getElements = value => {
+const getElements = (value) => {
   if (Array.isArray(value)) {
     return value
   }
@@ -211,59 +224,61 @@ Template.afLeaTaskContent.onRendered(function () {
 })
 
 Template.afLeaTaskContent.helpers({
-  loadComplete () {
+  loadComplete() {
     return renderersLoaded.get()
   },
-  dataSchemaKey () {
+  dataSchemaKey() {
     return Template.instance().data.atts['data-schema-key']
   },
-  elements () {
+  elements() {
     return Template.instance().stateVars.get('elements')
   },
-  stringify (src) {
+  stringify(src) {
     return EJSON.stringify(src)
   },
-  contentGroups () {
+  contentGroups() {
     return rendererGroups
   },
-  contentTypes (group) {
+  contentTypes(group) {
     return TaskRenderers.getGroup(group)
   },
-  currentTypeToAdd () {
+  currentTypeToAdd() {
     if (!renderersLoaded.get()) return
     const name = Template.instance().stateVars.get('currentTypeToAdd')
     return TaskRenderers.get(name)
   },
-  hasSchema () {
+  hasSchema() {
     return Template.instance().stateVars.get('hasSchema')
   },
-  currentTypeSchema () {
+  currentTypeSchema() {
     return _currentTypeSchema
   },
-  overElement (index) {
+  overElement(index) {
     return Template.instance().stateVars.get('overElement') == index
   },
-  currentElement () {
-    return !Template.instance().stateVars.get('isNewContent') &&
+  currentElement() {
+    return (
+      !Template.instance().stateVars.get('isNewContent') &&
       Template.instance().stateVars.get('currentElement')
+    )
   },
-  firstElement (index) {
+  firstElement(index) {
     return index < 1
   },
-  lastElement (index) {
+  lastElement(index) {
     const elements = Template.instance().stateVars.get('elements') ?? []
-    return index > (elements.length - 2)
+    return index > elements.length - 2
   },
-  getContent (element) {
+  getContent(element) {
     return getContent(element)
   },
-  isItemContent () {
+  isItemContent() {
     const instance = Template.instance()
     if (!renderersLoaded.get()) return
     const previewContent = instance.stateVars.get('previewContent')
     return previewContent && previewContent.type === 'item'
   },
-  previewContent () {
+  previewContent() {
     if (!renderersLoaded.get()) return
 
     const instance = Template.instance()
@@ -274,27 +289,27 @@ Template.afLeaTaskContent.helpers({
     const onInput = onItemInput.bind(Template.instance())
     return Object.assign({}, previewContent, previewData, { onInput })
   },
-  scoreContent () {
+  scoreContent() {
     return Template.instance().stateVars.get('scoreContent')
   },
-  updatePreview () {
+  updatePreview() {
     return Template.instance().stateVars.get('updatePreview')
   },
-  isUpdateContentForm () {
+  isUpdateContentForm() {
     return Template.instance().data.value
   },
   // modal
-  modalIsNewContent () {
+  modalIsNewContent() {
     return Template.instance().stateVars.get('isNewContent')
   },
   // score
-  allScoresTrue () {
+  allScoresTrue() {
     return Template.instance().stateVars.get('allScoresTrue')
-  }
+  },
 })
 
 Template.afLeaTaskContent.events({
-  'click .add-content-button' (event, templateInstance) {
+  'click .add-content-button'(event, templateInstance) {
     event.preventDefault()
     templateInstance.$('#taskContentModel').modal('show')
   },
@@ -306,19 +321,19 @@ Template.afLeaTaskContent.events({
     templateInstance.stateVars.set('isNewContent', true)
     createTypeSchema(name, templateInstance)
   },
-  'click .modal-back-button' (event, templateInstance) {
+  'click .modal-back-button'(event, templateInstance) {
     event.preventDefault()
     resetModalState(templateInstance)
   },
-  'submit #afLeaTaskAddContenTypeFormInsert' (event, templateInstance) {
+  'submit #afLeaTaskAddContenTypeFormInsert'(event, templateInstance) {
     event.preventDefault()
     submitForms(getFormId(true), templateInstance)
   },
-  'submit #afLeaTaskAddContenTypeFormUpdate' (event, templateInstance) {
+  'submit #afLeaTaskAddContenTypeFormUpdate'(event, templateInstance) {
     event.preventDefault()
     submitForms(getFormId(false), templateInstance)
   },
-  'click .preview-content-button' (event, templateInstance) {
+  'click .preview-content-button'(event, templateInstance) {
     event.preventDefault()
     const isNewContent = templateInstance.stateVars.get('isNewContent')
     const type = templateInstance.stateVars.get('currentTypeToAdd')
@@ -332,7 +347,7 @@ Template.afLeaTaskContent.events({
 
     templateInstance.stateVars.set({
       previewContent: null,
-      updatePreview: true
+      updatePreview: true,
     })
 
     // we use a timeout here to allow some update
@@ -347,7 +362,7 @@ Template.afLeaTaskContent.events({
       const scoreContent = isItemContent && {
         type: 'preview',
         subtype: Scoring.name,
-        scores: Scoring.run(type, previewContent.value, [])
+        scores: Scoring.run(type, previewContent.value, []),
       }
 
       if (isItemContent && isNewContent) {
@@ -359,35 +374,34 @@ Template.afLeaTaskContent.events({
       templateInstance.stateVars.set({
         previewContent,
         scoreContent,
-        updatePreview: false
+        updatePreview: false,
       })
     }, 300)
   },
-  'hidden.bs.modal' (event, templateInstance) {
+  'hidden.bs.modal'(event, templateInstance) {
     event.preventDefault()
     resetModalState(templateInstance)
   },
-  'mouseenter .element-container' (event, templateInstance) {
+  'mouseenter .element-container'(event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     templateInstance.stateVars.set('overElement', index)
   },
-  'mouseleave .element-container' (event, templateInstance) {
+  'mouseleave .element-container'(event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const currentIndex = templateInstance.stateVars.get('overElement')
-    if (index === currentIndex) templateInstance.stateVars.set('overElement', null)
+    if (index === currentIndex)
+      templateInstance.stateVars.set('overElement', null)
   },
-  'click .edit-element' (event, templateInstance) {
+  'click .edit-element'(event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.stateVars.get('elements')
     const elementDoc = elements[index]
     const name = elementDoc.subtype
     const elementIsItem = isItem(name)
-    const currentElement = (elementIsItem)
-      ? elementDoc.value
-      : elementDoc
+    const currentElement = elementIsItem ? elementDoc.value : elementDoc
 
     if (elementIsItem) {
       const unitId = templateInstance.data.unitId || 'undefined'
@@ -403,7 +417,7 @@ Template.afLeaTaskContent.events({
     templateInstance.stateVars.set('currentElementIndex', index)
     templateInstance.$('#taskContentModel').modal('show')
   },
-  'click .remove-element' (event, templateInstance) {
+  'click .remove-element'(event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.stateVars.get('elements')
@@ -414,32 +428,34 @@ Template.afLeaTaskContent.events({
     elements.splice(index, 1)
     updateElements(elements, templateInstance)
   },
-  'click .up-element' (event, templateInstance) {
+  'click .up-element'(event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.stateVars.get('elements')
     move(elements, index, index - 1)
     updateElements(elements, templateInstance)
   },
-  'click .down-element' (event, templateInstance) {
+  'click .down-element'(event, templateInstance) {
     event.preventDefault()
     const index = dataTarget(event, templateInstance, 'index')
     const elements = templateInstance.stateVars.get('elements')
     move(elements, index, index + 1)
     updateElements(elements, templateInstance)
   },
-  'click .generate-responses' (event, templateInstance) {
+  'click .generate-responses'(event, templateInstance) {
     event.preventDefault()
-  }
+  },
 })
 
-function submitForms (formId, templateInstance) {
+function submitForms(formId, templateInstance) {
   const name = templateInstance.stateVars.get('currentTypeToAdd')
   const insertDoc = formIsValid(formId, _currentTypeSchema)
   if (!insertDoc) return
 
   const elements = templateInstance.stateVars.get('elements') || []
-  const currentElementIndex = templateInstance.stateVars.get('currentElementIndex')
+  const currentElementIndex = templateInstance.stateVars.get(
+    'currentElementIndex',
+  )
 
   const contentElementDoc = isItem(name)
     ? contentFromItem(name, insertDoc)
@@ -462,12 +478,12 @@ function submitForms (formId, templateInstance) {
   templateInstance.$('#taskContentModel').modal('hide')
 }
 
-function move (arr, oldIndex, newIndex) {
+function move(arr, oldIndex, newIndex) {
   arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0])
   return arr
 }
 
-function updateElements (elements, templateInstance) {
+function updateElements(elements, templateInstance) {
   const val = EJSON.stringify(elements)
   const dsk = templateInstance.data.atts['data-schema-key']
   templateInstance.$(`[data-schema-key="${dsk}"]`).val(val)
@@ -483,7 +499,15 @@ function updateElements (elements, templateInstance) {
  * @param type
  * @param responses
  */
-function onItemInput ({ userId, sessionId, taskId, page, type, subtype, responses }) {
+function onItemInput({
+  userId,
+  sessionId,
+  taskId,
+  page,
+  type,
+  subtype,
+  responses,
+}) {
   const instance = this
   const previewContent = instance.stateVars.get('previewContent')
   if (!previewContent) {
@@ -497,15 +521,15 @@ function onItemInput ({ userId, sessionId, taskId, page, type, subtype, response
   const scoreContent = {
     type: 'preview',
     subtype: Scoring.name,
-    scores: scoreResults
+    scores: scoreResults,
   }
 
-  const allScoresTrue = scoreResults.every(entry => entry.score)
+  const allScoresTrue = scoreResults.every((entry) => entry.score)
 
   instance.stateVars.set({ scoreContent, responses, allScoresTrue })
 }
 
-function resetModalState (templateInstance) {
+function resetModalState(templateInstance) {
   _currentTypeSchema = null
   templateInstance.stateVars.set({
     isNewContent: false,
@@ -517,6 +541,6 @@ function resetModalState (templateInstance) {
     currentElementIndex: null,
     scoreContent: null,
     responses: null,
-    allScoresTrue: null
+    allScoresTrue: null,
   })
 }
