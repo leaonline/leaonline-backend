@@ -113,12 +113,11 @@ function track(name, connection, ddpLogin) {
           //   add error to app, so we can display this issue
           //   in the overview template
           return console.error(err)
-        } else {
-          log(name, 'logged in with token', !!res)
-          updateLogin(name, connection.userId())
-          computation.stop()
-          configure(name)
         }
+        log(name, 'logged in with token', !!res)
+        updateLogin(name, connection.userId())
+        computation.stop()
+        configure(name)
       })
     })
   })
@@ -128,7 +127,7 @@ function track(name, connection, ddpLogin) {
  *
  * @param callback {function(name:string, done:function):void} callback to call after parsing is done
  */
-Apps.loadConfig = function (callback) {
+Apps.loadConfig = (callback) => {
   _loadConfigHandler = callback
 }
 
@@ -137,7 +136,7 @@ let _loadConfigHandler = () => {
 }
 
 function configure(name) {
-  _loadConfigHandler(name, function (err, config) {
+  _loadConfigHandler(name, (err, config) => {
     if (err) {
       log(name, 'config error')
       log(err)
@@ -151,7 +150,7 @@ function configure(name) {
 
 const callbacks = new Map()
 
-Apps.onHostLoaded = function (name, cb) {
+Apps.onHostLoaded = (name, cb) => {
   const hostCbs = callbacks.get(name) || []
   hostCbs.push(cb)
   callbacks.set(name, hostCbs)
@@ -170,7 +169,7 @@ function hostLoaded(name, err, res) {
   loadedCbs.length = 0
 }
 
-Apps.register = function ({ name, label, url, icon, ddpConnect, ddpLogin }) {
+Apps.register = ({ name, label, url, icon, ddpConnect, ddpLogin }) => {
   const app = _apps.set(name, { name, label, url, icon, ddpConnect, ddpLogin })
   if (ddpConnect) {
     const connection = connect(name, url)
@@ -179,17 +178,15 @@ Apps.register = function ({ name, label, url, icon, ddpConnect, ddpLogin }) {
   return app
 }
 
-Apps.get = function (name) {
+Apps.get = (name) => {
   const app = _apps.get(name)
   const connection = _connections[name]
   return Object.assign({}, app, { connection })
 }
 
-Apps.connection = function (name) {
-  return _connections[name]
-}
+Apps.connection = (name) => _connections[name]
 
-Apps.all = function () {
+Apps.all = () => {
   const all = _apps.all()
   return all && Object.values(all)
 }
@@ -200,7 +197,7 @@ Apps.subscribe = (appName, contextName) =>
 const templates = new Map()
 Apps.registerTemplate = (name, options) => templates.set(name, options)
 Apps.getRegisteredTemplates = () => Array.from(templates)
-Apps.getUriBase = function (name) {
+Apps.getUriBase = (name) => {
   check(name, String)
   const connection = _connections[name]
   check(

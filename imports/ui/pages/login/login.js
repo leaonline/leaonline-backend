@@ -16,14 +16,13 @@ const states = {
 }
 
 Template.login.onCreated(function () {
-  const instance = this
-  instance.autorun(() => {
-    const view = instance.state.get('view')
+  this.autorun(() => {
+    const view = this.state.get('view')
     if (loggedIn()) {
-      return instance.state.set('view', states.loggedIn)
+      return this.state.set('view', states.loggedIn)
     }
     if (!view) {
-      instance.state.set('view', states.login)
+      this.state.set('view', states.login)
     }
   })
 })
@@ -65,10 +64,9 @@ Template.login.events({
             reason: err.reason,
             details: EJSON.stringify(err.details?.data),
           })
-        } else {
-          const route = templateInstance.data.next()
-          Router.go(route)
         }
+        const route = templateInstance.data.next()
+        Router.go(route)
       }),
     )
   },

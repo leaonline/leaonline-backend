@@ -10,7 +10,7 @@ export const updateDocumentState = ({
 }) => {
   const method = context.methods.getOne || context.methods.get
   connection.call(method.name, { _id: docId }, (err, doc) => {
-    defaultNotifications(err, doc).success(function () {
+    defaultNotifications(err, doc).success(() => {
       const collection = getCollection(context.name)
       upsertIntoCollection(collection, [doc])
       if (onComplete) onComplete(doc)

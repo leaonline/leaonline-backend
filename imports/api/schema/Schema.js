@@ -10,7 +10,7 @@ SimpleSchema.extendOptions(schemaOptions)
 
 export const Schema = {}
 
-Schema.create = function (schemaDefinition, options) {
+Schema.create = (schemaDefinition, options) => {
   const fullOptions = Object.assign({}, options, onClient({ tracker: Tracker }))
   return new SimpleSchema(schemaDefinition, fullOptions)
 }

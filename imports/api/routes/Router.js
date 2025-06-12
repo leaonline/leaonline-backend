@@ -14,17 +14,17 @@ export const Router = {}
 Router.src = FlowRouter
 Router.debug = false
 
-Router.go = function (value, ...optionalArgs) {
+Router.go = (value, ...optionalArgs) => {
   const type = typeof value
   if (type === 'object' && value !== null) {
     return FlowRouter.go(value.path(...optionalArgs))
-  } else if (type === 'string') {
-    return FlowRouter.go(value)
-  } else {
-    throw new Error(
-      `Unexpected format: [${typeof type}], expected string or object`,
-    )
   }
+  if (type === 'string') {
+    return FlowRouter.go(value)
+  }
+  throw new Error(
+    `Unexpected format: [${typeof type}], expected string or object`,
+  )
 }
 
 const log = (...args) =>
@@ -32,30 +32,28 @@ const log = (...args) =>
 
 let loadDep
 
-Router.addLoadDependency = function (dep) {
+Router.addLoadDependency = (dep) => {
   check(dep, Promise)
   loadDep = dep
 }
 
-Router.has = function (path) {
-  return paths[path]
-}
+Router.has = (path) => paths[path]
 
-Router.location = function (options = {}) {
+Router.location = (options = {}) => {
   if (options.pathName) {
     return FlowRouter.current().route.name
   }
   return FlowRouter.current().path
 }
 
-Router.current = function (options = {}) {
+Router.current = (options = {}) => {
   if (options.reactive) {
     FlowRouter.watchPathChange()
   }
   return FlowRouter.current()
 }
 
-Router.param = function (value) {
+Router.param = (value) => {
   const type = typeof value
   if (type === 'object') {
     return FlowRouter.setParams(value)
@@ -66,7 +64,7 @@ Router.param = function (value) {
   throw new Error(`Unexpected format: [${type}], expected string or object`)
 }
 
-Router.queryParam = function (value) {
+Router.queryParam = (value) => {
   const type = typeof value
   if (type === 'object') {
     return FlowRouter.setQueryParams(value)
@@ -79,19 +77,19 @@ Router.queryParam = function (value) {
 
 let _titlePrefix = ''
 
-Router.titlePrefix = function (value = '') {
+Router.titlePrefix = (value = '') => {
   _titlePrefix = value
 }
 
 let _loadingTemplate
 
-Router.loadingTemplate = function (value = 'loading') {
+Router.loadingTemplate = (value = 'loading') => {
   _loadingTemplate = value
 }
 
 let _defaultTarget
 
-Router.defaultTarget = function (value) {
+Router.defaultTarget = (value) => {
   _defaultTarget = value
 }
 
@@ -140,7 +138,7 @@ function createRoute(routeDef, onError) {
         }),
       ])
     },
-    triggersEnter: routeDef.triggersEnter && routeDef.triggersEnter(),
+    triggersEnter: routeDef.triggersEnter?.(),
     action(params, queryParams) {
       if (routeDef.debug) log('route action', routeDef)
 
@@ -182,7 +180,7 @@ function createRoute(routeDef, onError) {
   }
 }
 
-Router.register = function (routeDefinition) {
+Router.register = (routeDefinition) => {
   const path = routeDefinition.path()
   paths[path] = routeDefinition
   const routeInstance = createRoute(routeDefinition)

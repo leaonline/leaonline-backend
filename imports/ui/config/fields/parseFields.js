@@ -96,9 +96,9 @@ export const parseFields = function parseFields({
   Object.entries(schema).forEach(([key, value]) => {
     // skip if a key is a child-key of a key in the exclude-from-list-set
     if (parentKeyInSet(key)) return
-    const fieldSettings =
-      settingsDoc.fields &&
-      settingsDoc.fields.find((entry) => entry.name === key)
+    const fieldSettings = settingsDoc.fields?.find(
+      (entry) => entry.name === key,
+    )
     const fieldConfig = getFieldConfig(config, key, value, fieldSettings)
 
     if (fieldConfig.sort) {

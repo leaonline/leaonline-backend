@@ -14,7 +14,7 @@ const _i18nReactive =
   () =>
     _i18nGet(...args)
 
-Users.inject.i18n = function (getFct) {
+Users.inject.i18n = (getFct) => {
   _i18nGet = getFct
 }
 
@@ -45,6 +45,6 @@ Users.login.schema = {
   },
 }
 
-Users.login.call = function (cb) {
+Users.login.call = (cb) => {
   Meteor.loginWithLea(cb)
 }

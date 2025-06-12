@@ -189,13 +189,12 @@ const createTypeSchema = (name, templateInstance) => {
 }
 
 Template.afLeaTaskContent.onCreated(function () {
-  const instance = this
-  instance.stateVars = new ReactiveDict()
+  this.stateVars = new ReactiveDict()
 
-  const { data } = instance
+  const { data } = this
   const { atts, value } = data
   const elements = getElements(value)
-  instance.stateVars.set({
+  this.stateVars.set({
     elements,
     invalid: atts.class && atts.class.indexOf('invalid') > -1,
     disabled: Object.prototype.hasOwnProperty.call(atts, 'disabled'),
@@ -214,12 +213,11 @@ const getElements = (value) => {
 }
 
 Template.afLeaTaskContent.onRendered(function () {
-  const instance = this
-  const elements = getElements(instance.data.value)
+  const elements = getElements(this.data.value)
 
   // update initial value to underlying hidden input
   if (elements.length > 0) {
-    updateElements(elements, instance)
+    updateElements(elements, this)
   }
 })
 
@@ -254,6 +252,7 @@ Template.afLeaTaskContent.helpers({
     return _currentTypeSchema
   },
   overElement(index) {
+    // biome-ignore  lint/suspicious/noDoubleEquals: index compare
     return Template.instance().stateVars.get('overElement') == index
   },
   currentElement() {
@@ -508,8 +507,7 @@ function onItemInput({
   subtype,
   responses,
 }) {
-  const instance = this
-  const previewContent = instance.stateVars.get('previewContent')
+  const previewContent = this.stateVars.get('previewContent')
   if (!previewContent) {
     console.warn('[TaskContent]: no content to submit onItemInput')
     return
@@ -526,7 +524,7 @@ function onItemInput({
 
   const allScoresTrue = scoreResults.every((entry) => entry.score)
 
-  instance.stateVars.set({ scoreContent, responses, allScoresTrue })
+  this.stateVars.set({ scoreContent, responses, allScoresTrue })
 }
 
 function resetModalState(templateInstance) {

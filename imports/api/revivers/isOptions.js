@@ -6,8 +6,8 @@ export const isOptions = (key, value) => {
     const optionsProjection = Object.assign({}, value.projection)
     const optonsMapFct = (el) => {
       return {
-        value: el[(value.map && value.map.valueSrc) || '_id'],
-        label: el[(value.map && value.map.labelSrc) || 'label'],
+        value: el[value.map?.valueSrc || '_id'],
+        label: el[value.map?.labelSrc || 'label'],
       }
     }
 

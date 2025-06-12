@@ -3,7 +3,7 @@ import { ViewTypes } from './ViewTypes'
 
 export const getViewType = (name, context) => {
   const settingsDoc = Apps.collection().findOne({ name, context })
-  if (settingsDoc && settingsDoc.viewType && ViewTypes[settingsDoc.viewType]) {
+  if (settingsDoc?.viewType && ViewTypes[settingsDoc.viewType]) {
     return ViewTypes[settingsDoc.viewType]
   }
 

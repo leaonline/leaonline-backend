@@ -13,19 +13,17 @@ import { debounce } from '../../../utils/debounce'
 const coreComponentsLoaded = Components.load([Components.template.image])
 
 Template.genericGallery.onCreated(function () {
-  const instance = this
-
-  instance.autorun(() => {
+  this.autorun(() => {
     const data = Template.currentData()
     const { pathname } = window.location
-    const lastPath = instance.state.get('lastPath')
+    const lastPath = this.state.get('lastPath')
 
     if (lastPath !== pathname) {
-      instance.state.clear()
+      this.state.clear()
     }
 
-    wrapOnCreated(instance, { data })
-    instance.state.set('lastPath', pathname)
+    wrapOnCreated(this, { data })
+    this.state.set('lastPath', pathname)
   })
 })
 

@@ -65,7 +65,7 @@ Template.contextSettings.events({
       settingsDoc,
       by300((err, res) => {
         templateInstance.state.set('submitting', false)
-        defaultNotifications(err, res).success(function () {
+        defaultNotifications(err, res).success(() => {
           closeSettings(templateInstance)
         })
       }),

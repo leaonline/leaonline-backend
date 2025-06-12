@@ -94,7 +94,7 @@ export const toFormSchema = ({
         .filter(isValueField)
         .map(toTypeName)
       const valueFunction = getValueFunction(definitions.value)
-      autoform.defaultValue = function () {
+      autoform.defaultValue = () => {
         if (areAllFieldsSet(requiredFields)) {
           return valueFunction()
         }
@@ -214,7 +214,7 @@ export const toFormSchema = ({
           label: entry,
         })
 
-        autoform.options = function () {
+        autoform.options = () => {
           AutoForm.getFormId() // trigger reactivity
 
           // if in any case the dependant collection has not been loaded initially
@@ -396,7 +396,7 @@ export const toFormSchema = ({
         // eslint-ignore-next-line
       } else if (optionsType === 'object') {
         const tokenize = getValueFunction(definitions.options)
-        autoform.options = function () {
+        autoform.options = () => {
           const tokens = tokenize()
           return tokens ? tokens.map(toIndexedTokens) : []
         }

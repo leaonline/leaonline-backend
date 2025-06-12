@@ -7,10 +7,9 @@ import './sortable.css'
 import './sortable.html'
 
 Template.afSortable.onCreated(function () {
-  const instance = this
-  instance.stateVars = new ReactiveDict()
+  this.stateVars = new ReactiveDict()
 
-  instance.autorun(() => {
+  this.autorun(() => {
     const data = Template.currentData()
     const { atts } = data
     const invalid = atts.class && atts.class.indexOf('invalid') > -1
@@ -25,7 +24,7 @@ Template.afSortable.onCreated(function () {
       data.selectOptions || [],
     )
 
-    instance.state.set({
+    this.state.set({
       invalid,
       disabled,
       dataSchemaKey,
@@ -51,20 +50,19 @@ Template.afSortable.helpers({
 })
 
 Template.afSortable.onRendered(function () {
-  const instance = this
-  const $target = instance.$('.afsortable-sort-target')
-  const $unused = instance.$('.afsortable-unused-target')
+  const $target = this.$('.afsortable-sort-target')
+  const $unused = this.$('.afsortable-unused-target')
 
   createSortable($target.get(0), {
     animation: 150,
     ghostClass: 'bg-primary',
     group: 'shared',
     swapThreshold: 1,
-    onEnd: function () {
-      updateData(instance)
+    onEnd: () => {
+      updateData(this)
     },
-    onAdd: function (evt) {
-      const $element = instance.$(evt.item)
+    onAdd: (evt) => {
+      const $element = this.$(evt.item)
       $element.addClass('afsortable-entry')
       $element.removeClass('afsortable-unused')
     },
@@ -75,17 +73,17 @@ Template.afSortable.onRendered(function () {
     ghostClass: 'bg-primary',
     group: 'shared',
     swapThreshold: 1,
-    onEnd: function () {
-      updateData(instance)
+    onEnd: () => {
+      updateData(this)
     },
-    onAdd: function (evt) {
-      const $element = instance.$(evt.item)
+    onAdd: (evt) => {
+      const $element = this.$(evt.item)
       $element.addClass('afsortable-unused')
       $element.removeClass('afsortable-entry')
     },
   })
 
-  updateData(instance)
+  updateData(this)
 })
 
 function getSelectedOptions(value = [], allOptions = []) {

@@ -17,11 +17,10 @@ Template.notify.helpers({
 })
 
 Template.notify.onRendered(function () {
-  const instance = this
-  instance.autorun(() => {
+  this.autorun(() => {
     Notifications.entries().forEach((entry) => {
       if (!entry.visible) {
-        instance.$(`[data-id='${entry._id}']`).alert('close')
+        this.$(`[data-id='${entry._id}']`).alert('close')
       }
     })
   })

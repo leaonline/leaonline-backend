@@ -16,7 +16,7 @@ export const FormTypes = {
         allowedValues: ['id', 'url'],
       },
     },
-    load: async function () {
+    load: async () => {
       const mod = await import('./imageSelect/imageSelect')
       FormTypes.imageSelect.loaded = true
       return mod
@@ -27,7 +27,7 @@ export const FormTypes = {
     template: 'leaSortable',
     loaded: false,
     schema: {},
-    load: async function () {
+    load: async () => {
       const mod = await import('./sortable/sortable')
       FormTypes.sortable.loaded = true
       return mod
@@ -49,7 +49,7 @@ export const FormTypes = {
         type: String,
       },
     },
-    load: async function () {
+    load: async () => {
       const mod = await import('./taskContent/taskContent')
       FormTypes.taskContent.loaded = true
       return mod
@@ -59,7 +59,7 @@ export const FormTypes = {
     name: 'regExp',
     template: 'regexp',
     loaded: false,
-    load: async function () {
+    load: async () => {
       const mod = await import('meteor/leaonline:autoform-regexp')
       FormTypes.regExp.loaded = true
       return mod

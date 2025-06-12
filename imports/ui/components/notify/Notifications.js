@@ -8,14 +8,14 @@ const NotificationsCollection = new Mongo.Collection(null)
  */
 export const Notifications = {}
 
-Notifications.add = function ({
+Notifications.add = ({
   title,
   type,
   content,
   details,
   visible = true,
   timeout = 2500,
-}) {
+}) => {
   const insertId = NotificationsCollection.insert({
     title,
     type,
@@ -32,10 +32,6 @@ Notifications.add = function ({
   return insertId
 }
 
-Notifications.remove = function (id) {
-  return NotificationsCollection.remove(id)
-}
+Notifications.remove = (id) => NotificationsCollection.remove(id)
 
-Notifications.entries = function () {
-  return NotificationsCollection.find()
-}
+Notifications.entries = () => NotificationsCollection.find()

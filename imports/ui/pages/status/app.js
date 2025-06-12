@@ -3,9 +3,7 @@ import { Apps } from '../../../api/apps/Apps'
 import './app.html'
 
 Template.statusApp.onCreated(function () {
-  const instance = this
-
-  instance.autorun(() => {
+  this.autorun(() => {
     const data = Template.currentData()
     const { params } = data
     const { appId } = params
@@ -14,7 +12,7 @@ Template.statusApp.onCreated(function () {
       throw new Error(`Expected appId, got ${appId}`)
     }
     console.log(Apps.connect(appId))
-    instance.state.set('appId', appId)
+    this.state.set('appId', appId)
   })
 })
 

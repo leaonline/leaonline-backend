@@ -3,32 +3,24 @@ export const ViewTypes = {
     name: 'list',
     template: 'genericList',
     label: 'viewTypes.list',
-    load: async function () {
-      return import('../../ui/views/list/list')
-    },
+    load: async () => import('../../ui/views/list/list'),
   },
   gallery: {
     name: 'gallery',
     template: 'genericGallery',
     label: 'viewTypes.gallery',
-    load: async function () {
-      return import('../../ui/views/gallery/gallery')
-    },
+    load: async () => import('../../ui/views/gallery/gallery'),
   },
   document: {
     name: 'document',
     template: 'genericDocument',
     label: 'viewTypes.document',
-    load: async function () {
-      return import('../../ui/views/document/document')
-    },
+    load: async () => import('../../ui/views/document/document'),
   },
   typeView: {
     name: 'typeView',
     template: 'typeView',
     label: 'viewTypes.typeView',
-    load: async function () {
-      return import('../../ui/views/typeView/typeView')
-    },
+    load: async () => import('../../ui/views/typeView/typeView'),
   },
 }

@@ -11,21 +11,19 @@ import '../../components/stringified/stringified'
 import './document.html'
 
 Template.genericDocument.onCreated(function () {
-  const instance = this
-
   const onSubscribed = () => {
-    const updateDoc = instance.mainCollection.findOne() || {}
-    instance.state.set({ updateDoc })
+    const updateDoc = this.mainCollection.findOne() || {}
+    this.state.set({ updateDoc })
   }
 
-  instance.autorun(() => {
+  this.autorun(() => {
     const data = Template.currentData()
     const { pathname } = window.location
-    const lastPath = instance.state.get('lastPath')
+    const lastPath = this.state.get('lastPath')
     if (lastPath !== pathname) {
-      instance.state.clear()
-      wrapOnCreated(instance, { data, onSubscribed, debug: true })
-      instance.state.set('lastPath', pathname)
+      this.state.clear()
+      wrapOnCreated(this, { data, onSubscribed, debug: true })
+      this.state.set('lastPath', pathname)
     }
   })
 })
@@ -98,7 +96,7 @@ Template.genericDocument.events({
       updateDoc,
       by300((err, res) => {
         templateInstance.state.set(StateVariables.submitting, false)
-        defaultNotifications(err, res).success(function () {
+        defaultNotifications(err, res).success(() => {
           updateDocumentState({
             docId: target._id,
             connection,

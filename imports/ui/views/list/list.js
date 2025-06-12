@@ -240,7 +240,7 @@ Template.genericList.events(
         insertDoc,
         by300((err, insertDocId) => {
           templateInstance.state.set(StateVariables.submitting, false)
-          defaultNotifications(err, insertDocId).success(function () {
+          defaultNotifications(err, insertDocId).success(() => {
             updateDocumentState({
               connection,
               context: config,
@@ -331,7 +331,7 @@ Template.genericList.events(
         updateDoc,
         by300((err, res) => {
           templateInstance.state.set(StateVariables.submitting, false)
-          defaultNotifications(err, res).success(function () {
+          defaultNotifications(err, res).success(() => {
             updateDocumentState({
               context: templateInstance.data.config(),
               connection,
@@ -426,7 +426,7 @@ Template.genericList.events(
         actionArgs,
         by300((err, actionResult) => {
           console.debug(err, actionResult)
-          defaultNotifications(err, actionResult).success(function () {
+          defaultNotifications(err, actionResult).success(() => {
             if (targetId) {
               updateDocumentState({
                 context: config,
@@ -620,42 +620,38 @@ function getTableRowAttributes(document, validationErrors) {
 }
 
 function getTableRowFields(document, fieldConfig, fields) {
-  return (
-    fields &&
-    fields.map((key) => {
-      const value = document[key]
-      const config = fieldConfig[key]
-      const resolver = config?.resolver
+  return fields?.map((key) => {
+    const value = document[key]
+    const config = fieldConfig[key]
+    const resolver = config?.resolver
 
-      if (!resolver) {
-        console.warn('no resolver found for key', key)
-        return value
-      } else {
-        const resolvedValue = resolver(value)
-        const type = Object.prototype.toString.call(value)
+    if (!resolver) {
+      console.warn('no resolver found for key', key)
+      return value
+    }
+    const resolvedValue = resolver(value)
+    const type = Object.prototype.toString.call(value)
 
-        if (type === '[object Boolean]') {
-          resolvedValue.isBoolean = true
-        }
+    if (type === '[object Boolean]') {
+      resolvedValue.isBoolean = true
+    }
 
-        if (type === '[object Date]') {
-          resolvedValue.isDate = true
-        }
+    if (type === '[object Date]') {
+      resolvedValue.isDate = true
+    }
 
-        if (resolvedValue.display) {
-          switch (resolvedValue.display) {
-            case 'code':
-              resolvedValue.isCode = true
-              break
-            default:
-              break
-          }
-        }
-
-        return resolvedValue
+    if (resolvedValue.display) {
+      switch (resolvedValue.display) {
+        case 'code':
+          resolvedValue.isCode = true
+          break
+        default:
+          break
       }
-    })
-  )
+    }
+
+    return resolvedValue
+  })
 }
 
 function updateList(list, templateInstance) {

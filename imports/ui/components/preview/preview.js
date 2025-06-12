@@ -13,8 +13,7 @@ const sizes = {
 }
 
 Template.preview.onCreated(function () {
-  const instance = this
-  instance.state.set('size', sizes.lg)
+  this.state.set('size', sizes.lg)
 })
 
 Template.preview.helpers({
@@ -62,6 +61,7 @@ Template.preview.helpers({
       case sizes.sm:
         return 'modal-sm'
       case sizes.default:
+        return undefined
       default:
         return undefined
     }
@@ -69,8 +69,7 @@ Template.preview.helpers({
 })
 
 Template.preview.onRendered(function () {
-  const instance = this
-  instance.$('.modal').modal('show')
+  this.$('.modal').modal('show')
 })
 
 Template.preview.events({

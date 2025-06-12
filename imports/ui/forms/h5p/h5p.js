@@ -11,10 +11,9 @@ const createContentFormSchema = Schema.create({
 })
 
 Template.afH5P.onCreated(function () {
-  const instance = this
-  instance.state = new ReactiveDict()
-  console.log(instance.data)
-  const { data } = instance
+  this.state = new ReactiveDict()
+  console.log(this.data)
+  const { data } = this
   const { atts } = data
 
   const { h5p } = atts
@@ -24,12 +23,12 @@ Template.afH5P.onCreated(function () {
   const { listUrl } = h5p
 
   const { value } = data
-  instance.state.set('contentId', value)
-  instance.state.set('createUrl', createUrl)
-  instance.state.set('listUrl', listUrl)
-  instance.state.set('editUrl', editUrl)
-  instance.state.set('playUrl', playUrl)
-  instance.state.set('dataSchemaKey', atts['data-schema-key'])
+  this.state.set('contentId', value)
+  this.state.set('createUrl', createUrl)
+  this.state.set('listUrl', listUrl)
+  this.state.set('editUrl', editUrl)
+  this.state.set('playUrl', playUrl)
+  this.state.set('dataSchemaKey', atts['data-schema-key'])
 
   HTTP.get(listUrl, (err, res) => {
     if (err) return console.error(err) // todo display in Template

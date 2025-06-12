@@ -11,10 +11,7 @@ import { getDebug } from '../../utils/getDebug'
 import { dataTarget } from '../../utils/event'
 import { by300 } from '../../utils/dely'
 
-export const wrapOnCreated = function (
-  instance,
-  { data, debug, onSubscribed } = {},
-) {
+export const wrapOnCreated = (instance, { data, debug, onSubscribed } = {}) => {
   const logDebug = getDebug(instance, debug)
   const app = data.app()
   const { connection } = app
@@ -40,8 +37,8 @@ export const wrapOnCreated = function (
   mutationChecker.compare(config)
 }
 
-export const wrapHelpers = function (obj) {
-  return Object.assign(
+export const wrapHelpers = (obj) =>
+  Object.assign(
     {},
     {
       fields(document) {
@@ -49,20 +46,13 @@ export const wrapHelpers = function (obj) {
         const { fieldConfig } = instance
         const fields = instance.state.get(StateVariables.documentFields)
 
-        return (
-          fields &&
-          fields.map((key) => {
-            const value = document[key]
-            const config = fieldConfig[key]
-            const resolver = config?.resolver
+        return fields?.map((key) => {
+          const value = document[key]
+          const config = fieldConfig[key]
+          const resolver = config?.resolver
 
-            if (!resolver) {
-              return value
-            } else {
-              return resolver(value)
-            }
-          })
-        )
+          return resolver ? resolver(value) : value
+        })
       },
       fieldLabels() {
         return Template.instance().fieldLabels
@@ -82,9 +72,7 @@ export const wrapHelpers = function (obj) {
         const transform = instance.state.get('transform') || {}
 
         console.warn('documents called', query)
-        const cursor =
-          instance.mainCollection &&
-          instance.mainCollection.find(query, transform)
+        const cursor = instance.mainCollection?.find(query, transform)
 
         if (!cursor || cursor.count() === 0) return null
 
@@ -92,18 +80,15 @@ export const wrapHelpers = function (obj) {
       },
       files() {
         const instance = Template.instance()
-        return instance.mainCollection && instance.mainCollection.find()
+        return instance.mainCollection?.find()
       },
       link(file) {
         const instance = Template.instance()
         const remoteUrl = instance.state.get(StateVariables.remoteUrl)
-        return (
-          instance.mainCollection &&
-          instance.mainCollection.filesCollection.link(
-            file,
-            'original',
-            remoteUrl,
-          )
+        return instance.mainCollection?.filesCollection.link(
+          file,
+          'original',
+          remoteUrl,
         )
       },
       submitting() {
@@ -127,9 +112,7 @@ export const wrapHelpers = function (obj) {
       },
       uploadFilesCollection() {
         const instance = Template.instance()
-        return (
-          instance.mainCollection && instance.mainCollection.filesCollection
-        )
+        return instance.mainCollection?.filesCollection
       },
       // /////////////////////////////////////////////////
       //  insert
@@ -176,7 +159,6 @@ export const wrapHelpers = function (obj) {
     },
     obj,
   )
-}
 
 export const wrapEvents = (obj) => {
   const confirmRemove = (title) => i18n.get('actions.confirmRemove', { title })
@@ -208,7 +190,7 @@ export const wrapEvents = (obj) => {
           { _id },
           by300((err, res) => {
             templateInstance.state.set(StateVariables.removing, null)
-            defaultNotifications(err, res).success(function () {
+            defaultNotifications(err, res).success(() => {
               templateInstance.state.set(StateVariables.removed, _id)
             })
           }),

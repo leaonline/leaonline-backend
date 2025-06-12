@@ -35,15 +35,15 @@ export const defaultNotifications = (err, res) => {
   }
 
   return {
-    success: function (cb) {
+    success: (cb) => {
       if (!cb || err || !res) return
       cb(res)
     },
-    error: function (cb) {
+    error: (cb) => {
       if (!cb || !err) return
       cb(err)
     },
-    warning: function (cb) {
+    warning: (cb) => {
       if (!cb || err || res) return
       cb(err, res)
     },

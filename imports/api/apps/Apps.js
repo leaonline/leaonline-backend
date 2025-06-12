@@ -126,12 +126,10 @@ Apps.schema = {
     optional: true,
     autoform: {
       firstOption,
-      options: function () {
-        return [
-          { value: 'default', label: 'apps.fields.display.default' },
-          { value: 'code', label: 'apps.fields.display.code' },
-        ]
-      },
+      options: () => [
+        { value: 'default', label: 'apps.fields.display.default' },
+        { value: 'code', label: 'apps.fields.display.code' },
+      ],
     },
   },
   'fields.$.form': {
@@ -169,7 +167,7 @@ Apps.methods.getServiceCredentials = {
     const user = await Meteor.users.findOneAsync(this.userId)
     return user?.services?.lea
   }),
-  call: function (cb) {
+  call: (cb) => {
     Meteor.call(Apps.methods.getServiceCredentials.name, cb)
   },
 }
@@ -179,7 +177,7 @@ Apps.methods.updateSettings = {
   schema: Apps.schema,
   numRequests: 1,
   timeInterval: 1000,
-  run: onServer(async function (settingsDoc) {
+  run: onServer(async (settingsDoc) => {
     const existingDocId = await Apps.collection().findOneAsync({
       name: settingsDoc.name,
       context: settingsDoc.context,
@@ -188,9 +186,8 @@ Apps.methods.updateSettings = {
       return await Apps.collection().updateAsync(existingDocId, {
         $set: settingsDoc,
       })
-    } else {
-      return await Apps.collection().insertAsync(settingsDoc)
     }
+    return await Apps.collection().insertAsync(settingsDoc)
   }),
 }
 
@@ -204,20 +201,18 @@ Apps.publications.getByNames = {
   },
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(async function ({ appName, contextName }) {
-    return Apps.collection().find({ name: appName, context: contextName })
-  }),
+  run: onServer(async ({ appName, contextName }) =>
+    Apps.collection().find({ name: appName, context: contextName }),
+  ),
 }
 
 Apps.publications.all = {
   name: 'apps.publications.all',
   schema: {},
-  log: function (...args) {
+  log: (...args) => {
     console.log(...args)
   },
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(async function () {
-    return Apps.collection().find()
-  }),
+  run: onServer(async () => Apps.collection().find()),
 }

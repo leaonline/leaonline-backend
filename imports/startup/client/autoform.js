@@ -10,7 +10,7 @@ async function init() {
   // or any other mechanism you like to use to reactively activate the form
   AutoForm.setDefaultTemplate('bootstrap5')
 }
-;(function () {
+;(() => {
   init()
     .catch((e) => console.error('[autoForm]: init failed - ', e))
     .then(() => console.info('[autoForm]: initialized'))

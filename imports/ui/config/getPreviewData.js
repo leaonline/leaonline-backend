@@ -2,7 +2,7 @@ import { Apps } from '../../api/apps/Apps'
 import { ContextRegistry } from '../../api/config/ContextRegistry'
 import { getCollection } from '../../utils/collection'
 
-export const getPreviewData = function ({ docId, appName, contextName }) {
+export const getPreviewData = ({ docId, appName, contextName }) => {
   const context = ContextRegistry.get(contextName)
   const collection = getCollection(context)
   const doc = collection.findOne(docId)
@@ -11,6 +11,6 @@ export const getPreviewData = function ({ docId, appName, contextName }) {
     name: appName,
     context: contextName,
   })
-  const template = (settingsDoc && settingsDoc.previewType) || 'summary'
+  const template = settingsDoc?.previewType || 'summary'
   return { doc, template, titleField, context }
 }

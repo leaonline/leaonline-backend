@@ -95,7 +95,7 @@ const getDocumentFieldValueResolver = ({ source, collection, field }) => {
   return function resolveDocumentFieldValue() {
     const sourceId = AutoForm.getFieldValue(source)
     const doc = Collection.findOne(sourceId)
-    return doc && doc[field]
+    return doc?.[field]
   }
 }
 

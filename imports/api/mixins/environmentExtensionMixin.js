@@ -7,7 +7,7 @@ import { createLog } from '../../utils/log'
  * @param options
  * @return {*}
  */
-export const environmentExtensionMixin = function (options) {
+export const environmentExtensionMixin = (options) => {
   const log = createLog(`method:${options.name}`)
   const runFct = options.run
 

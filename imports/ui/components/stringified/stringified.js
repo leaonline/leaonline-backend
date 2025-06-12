@@ -13,7 +13,7 @@ Template.stringified.helpers({
   },
 })
 
-Template.stringified.onRendered(function () {
+Template.stringified.onRendered(() => {
   document.querySelectorAll('pre code').forEach((block) => {
     highlight.highlightBlock(block)
   })

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 
-export const checkPermissions = function (options) {
+export const checkPermissions = (options) => {
   if (options.isPublic) return options
 
   const runFct = options.run

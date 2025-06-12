@@ -11,13 +11,11 @@ const defaultInsertOpts = {
 }
 
 Template.upload.onCreated(function () {
-  const instance = this
-
-  if (!instance.data.filesCollection) {
+  if (!this.data.filesCollection) {
     throw new Error('Upload impossible without FilesCollection')
   }
 
-  instance.currentUpload = new ReactiveVar()
+  this.currentUpload = new ReactiveVar()
 })
 
 Template.upload.helpers({
@@ -60,7 +58,7 @@ Template.upload.events({
     }
     templateInstance.state.set({ selectedFile })
   },
-  'click .upload-button': async function (event, templateInstance) {
+  'click .upload-button': async (event, templateInstance) => {
     event.preventDefault()
 
     const insertConfig = templateInstance.state.get('insertConfig')
@@ -82,18 +80,18 @@ Template.upload.events({
     templateInstance.currentUpload.set(true)
     templateInstance.state.set({ progress: 0 })
 
-    upload.on('start', function () {})
+    upload.on('start', () => {})
 
-    upload.on('error', function (error) {
+    upload.on('error', (error) => {
       console.error(error)
       templateInstance.state.set('uploadError', error)
     })
 
-    upload.on('progress', function (progress) {
+    upload.on('progress', (progress) => {
       templateInstance.state.set({ progress })
     })
 
-    upload.on('end', function (error, fileObj) {
+    upload.on('end', (error, fileObj) => {
       setTimeout(() => {
         if (!error) {
           templateInstance.state.set({

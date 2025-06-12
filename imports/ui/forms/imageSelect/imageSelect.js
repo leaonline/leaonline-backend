@@ -17,9 +17,8 @@ const StateVariables = {
 }
 
 Template.afImageSelect.onCreated(function () {
-  const instance = this
-  instance.stateVars = new ReactiveDict()
-  const { data } = instance
+  this.stateVars = new ReactiveDict()
+  const { data } = this
   const { atts } = data
 
   const imagesCollection = getCollection(atts.imagesCollection)
@@ -28,38 +27,37 @@ Template.afImageSelect.onCreated(function () {
       `Could not find imagesCollection by name <${atts.imagesCollection}>`,
     )
   }
-  instance.imagesCollection = imagesCollection
+  this.imagesCollection = imagesCollection
 
   const saveType = atts.save === SaveType.url ? SaveType.url : SaveType.id
-  instance.stateVars.set(StateVariables.saveType, saveType)
+  this.stateVars.set(StateVariables.saveType, saveType)
 
   if (data.value) {
-    let valueDoc = instance.imagesCollection.findOne(data.value)
+    let valueDoc = this.imagesCollection.findOne(data.value)
     if (!valueDoc) {
       const split = data.value.split('/')
       const last = split[split.length - 1]
       const noExtSplit = last.split('.')
-      valueDoc = instance.imagesCollection.findOne(noExtSplit[0])
+      valueDoc = this.imagesCollection.findOne(noExtSplit[0])
     }
     setTimeout(() => {
-      updateTarget(valueDoc._id, instance)
+      updateTarget(valueDoc._id, this)
     }, 100)
   }
 
-  instance.stateVars.set(
+  this.stateVars.set(
     'invalid',
     atts.class && atts.class.indexOf('invalid') > -1,
   )
-  instance.stateVars.set(
+  this.stateVars.set(
     'disabled',
     Object.prototype.hasOwnProperty.call(atts, 'disabled'),
   )
-  instance.stateVars.set('dataSchemaKey', atts['data-schema-key'])
+  this.stateVars.set('dataSchemaKey', atts['data-schema-key'])
 })
 
 Template.afImageSelect.onDestroyed(function () {
-  const instance = this
-  instance.stateVars.clear()
+  this.stateVars.clear()
 })
 
 Template.afImageSelect.helpers({
@@ -120,7 +118,7 @@ function updateTarget(targetId, templateInstance) {
     const version = templateInstance.data.atts.version
     const uriBase = templateInstance.data.atts.uriBase
     const file = ImagesFilesCollection.findOne(targetId)
-    const link = file && file.link(version, uriBase)
+    const link = file?.link(version, uriBase)
     $hiddenInput.val(link)
   } else {
     $hiddenInput.val(targetId)

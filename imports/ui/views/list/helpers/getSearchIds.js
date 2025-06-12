@@ -103,13 +103,13 @@ export const getSearchIds = (options) => {
         if (type === Number) {
           if (resolvedType === 'number') {
             return Number(resolvedValue).toString(10).includes(lowerCaseValue)
-          } else if (resolvedType === 'string') {
-            return resolvedValue.includes(lowerCaseValue)
-          } else {
-            console.warn(
-              `Mismatch: expected ${resolvedType} to be Number or String`,
-            )
           }
+          if (resolvedType === 'string') {
+            return resolvedValue.includes(lowerCaseValue)
+          }
+          console.warn(
+            `Mismatch: expected ${resolvedType} to be Number or String`,
+          )
         }
 
         // nothing found at all :(

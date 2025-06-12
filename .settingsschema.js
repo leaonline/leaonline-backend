@@ -50,6 +50,6 @@ const settingsSchema = schema({
   }),
 })
 
-module.exports = function (settings) {
+module.exports = (settings) => {
   settingsSchema.validate(settings)
 }
