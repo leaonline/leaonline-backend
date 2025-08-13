@@ -44,8 +44,16 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "babel-plugin-istanbul": "^7.0.0",
     "chai": "^5.2.0",
     "puppeteer": "^24.10.0",
     "sinon": "^20.0.0"
+  },
+  "babel": {
+    "env": {
+      "COVERAGE": {
+        "plugins": ["istanbul"]
+      }
+    }
   }
 }
