@@ -1,6 +1,7 @@
 accounts-base@3.1.0
 accounts-oauth@1.4.6
 aldeed:autoform@8.0.0
+aldeed:autoform-select2@4.0.0-rc.0
 aldeed:collection2@4.1.4
 aldeed:simple-schema@2.0.0
 allow-deny@2.1.0

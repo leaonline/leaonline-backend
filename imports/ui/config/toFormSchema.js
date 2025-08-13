@@ -45,7 +45,7 @@ const loadTargetForm = ({ targetForm, instance, fieldSettings }) => {
         instance.state.set(StateVariables.formTypesLoaded, fts)
       })
       .catch((e) => {
-        console.error(e)
+        console.error(e, targetForm)
         instance.state.set(StateVariables.formTypesLoaded, null)
       })
   } else {
