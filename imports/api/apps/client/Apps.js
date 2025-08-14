@@ -48,9 +48,25 @@ function log(...args) {
 function track(name, connection, ddpLogin) {
   const url = connection._stream.rawUrl
   Tracker.autorun((computation) => {
-    // skip this computation if there is
+
+    // always update status to
+    // trigger reactive Template updates
+    const status = connection.status()
+    updateStatus(name, status)
+
+    // first of all, skip if we are not yet connected
+    if (!status.connected) {
+      log(name, 'not yet connected -> skip', status.retryCount)
+      if (status.retryCount >= 3) {
+        log(name, 'cancel connection')
+        computation.stop()
+      }
+      return
+    }
+
+    // otherwise, skip this computation if there is
     // currently no logged in backend user
-    if (Meteor.status().connected && !Meteor.user() && !Meteor.userId()) {
+    if (!Meteor.user() || !Meteor.userId()) {
       // clear localStorage entries from previous
       // login results to avoid follow-up 403 errors
       localStorage.removeItem(`${url}/lea/userId`)
@@ -63,22 +79,7 @@ function track(name, connection, ddpLogin) {
       return
     }
 
-    // always update status to
-    // trigger reactive Template updates
-    const status = connection.status()
-    updateStatus(name, status)
-
-    // also skip if we are not yet connected
-    if (!status.connected) {
-      log(name, 'not yet connected -> skip', status.retryCount)
-      if (status.retryCount >= 3) {
-        log(name, 'cancel connection')
-        computation.stop()
-      }
-      return
-    }
-
-    // skip if we have not explcitly enabled the DDP login
+    // skip if we have not explicitly enabled the DDP login
     if (!ddpLogin) {
       computation.stop()
       return

@@ -16,9 +16,20 @@
             {{/if}}
 
             {{#with loginError}}
-                <div class="alert alert-danger">
-                    <h2 class="py-2">{{i18n this.name}}: {{i18n this.reason}}</h2>
-                    <pre>{{this.details}}</pre>
+                <div class="alert alert-danger my-2">
+                    <div class="alert-heading fw-bold">{{i18n "common.error"}}</div>
+                    {{#if this.reason}}
+                      <p>{{i18n this.reason}}</p>
+                    {{else}}
+                      <p>{{this.message}}</p>
+                    {{/if}}
+
+                    {{#if this.details}}
+                      <details>
+                        <summary>{{i18n "common.details"}}</summary>
+                        {{> stringified this.details}}
+                      </details>
+                    {{/if}}
                 </div>
             {{/with}}
 

@@ -1,9 +1,9 @@
 import { Template } from 'meteor/templating'
-import { EJSON } from 'meteor/ejson'
 import { Schema } from '../../../api/schema/Schema'
 import { Users } from '../../../api/accounts/Users'
 import { loggedIn } from '../../../utils/accounts'
 import { Router } from '../../../api/routes/Router'
+import { errorToObject } from '../../../utils/errorToObject'
 import dely from 'dely'
 import './login.html'
 
@@ -53,18 +53,27 @@ Template.login.events({
   'click .login-button'(event, templateInstance) {
     event.preventDefault()
 
-    templateInstance.state.set('loggingIn', true)
+    templateInstance.state.set({ loggingIn: true, loginError: null })
     Users.login.call(
       by300((err) => {
         templateInstance.state.set('loggingIn', false)
         if (err) {
-          const code = String(err.error)
-          return templateInstance.state.set('loginError', {
-            name: code,
-            reason: err.reason,
-            details: EJSON.stringify(err.details?.data),
-          })
+          console.error(err)
+          let loginError = err
+          if (err.errorType === 'Accounts.LoginCancelledError') {
+            loginError = new Meteor.Error(400, 'pages.login.cancelled')
+          }
+          if (err.message === 'Login service configuration not yet loaded') {
+            loginError = new Meteor.Error(400, 'pages.login.waitForConfig')
+          }
+
+          return templateInstance.state.set(
+            'loginError',
+            errorToObject(loginError),
+          )
         }
+
+        templateInstance.state.set('loginError', null)
         const route = templateInstance.data.next()
         Router.go(route)
       }),
