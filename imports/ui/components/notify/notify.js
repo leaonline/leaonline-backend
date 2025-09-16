@@ -20,7 +20,7 @@ Template.notify.onRendered(function () {
   this.autorun(() => {
     Notifications.entries().forEach((entry) => {
       if (!entry.visible) {
-        this.$(`[data-id='${entry._id}']`).alert('close')
+        Notifications.remove(entry._id)
       }
     })
   })

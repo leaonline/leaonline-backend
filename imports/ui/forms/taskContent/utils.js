@@ -19,9 +19,10 @@ TaskContentUtils.getElements = (value) => {
     return value
   }
 
-  if (typeof value === 'object' && value.content) {
-    return value.content
+  if (typeof value === 'object') {
+    return value.content || []
   }
+
   return value || []
 }
 
