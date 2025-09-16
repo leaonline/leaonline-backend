@@ -34,10 +34,8 @@ from.helpers({
 AutoForm.addInputType('leaTaskContent', {
   template: 'afLeaTaskContent',
   valueOut() {
-    const dsk = this.attr('data-schema-key')
     const val = this.val() ?? this.value
-    const content = val && EJSON.parse(val)
-    return dsk.startsWith('page') ? { content } : content
+    return val && EJSON.parse(val)
   },
   valueIn(initialValue) {
     return initialValue
