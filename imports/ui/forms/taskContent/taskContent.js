@@ -19,7 +19,9 @@ import '../imageSelect/imageSelect'
 import './taskContent.css'
 import './taskContent.html'
 import './autoform'
+import { createLog } from '../../../utils/log'
 
+const debug = createLog('ui:forms:taskContent', 'debug')
 const from = Template.afSelect2
 from.helpers({
   atts: function addFormControlAtts () {
@@ -130,11 +132,11 @@ Template.afLeaTaskContent.helpers({
     return index > elements.length - 2
   },
   getContent(element) {
-    return getContent(element)
+    return Utils.getContent(element)
   },
   isItemContent() {
-    const instance = Template.instance()
     if (!renderersLoaded.get()) return
+    const instance = Template.instance()
     const previewContent = instance.stateVars.get('previewContent')
     return previewContent && previewContent.type === 'item'
   },
@@ -191,7 +193,6 @@ Template.afLeaTaskContent.events({
   },
   'submit #afLeaTaskAddContenTypeFormUpdate'(event, templateInstance) {
     event.preventDefault()
-    debugger
     Utils.submitForms(getFormId(false), templateInstance)
   },
   'click .preview-content-button'(event, templateInstance) {

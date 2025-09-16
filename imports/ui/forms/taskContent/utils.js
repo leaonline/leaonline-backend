@@ -18,10 +18,11 @@ TaskContentUtils.getElements = (value) => {
   if (Array.isArray(value)) {
     return value
   }
+
   if (typeof value === 'object' && value.content) {
     return value.content
   }
-  return value ?? []
+  return value || []
 }
 
 /**
