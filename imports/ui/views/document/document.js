@@ -22,7 +22,7 @@ Template.genericDocument.onCreated(function () {
     const lastPath = this.state.get('lastPath')
     if (lastPath !== pathname) {
       this.state.clear()
-      wrapOnCreated(this, { data, onSubscribed, debug: true })
+      wrapOnCreated(this, { data, onSubscribed })
       this.state.set('lastPath', pathname)
     }
   })

@@ -11,8 +11,6 @@
     "format:code-fix": "npx @biomejs/biome format --write ./",
     "lint:style": "stylelint \"**/*.scss\"",
     "lint:style-fix": "stylelint --fix \"**/*.scss\"",
-    "lint:markdown": "markdownlint \"**/*.md\" --config ./.markdownlint.json",
-    "lint:markdown-fix": "markdownlint --fix \"**/*.md\" --config ./.markdownlint.json",
     "build:notes-tree": "markdown-notes-tree && npm run lint:markdown-fix",
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
@@ -21,6 +19,7 @@
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@popperjs/core": "^2.11.8",
     "@shopify/draggable": "^1.0.0-beta.12",
+    "@swc/helpers": "^0.5.17",
     "bootstrap": "^5.3.6",
     "dely": "^1.0.2",
     "easy-speech": "^2.4.0",
@@ -44,6 +43,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@meteorjs/rspack": "^1.0.0",
+    "@rsdoctor/rspack-plugin": "^1.2.3",
+    "@rspack/cli": "^1.7.1",
+    "@rspack/core": "^1.7.1",
     "babel-plugin-istanbul": "^7.0.0",
     "chai": "^5.2.0",
     "puppeteer": "^24.10.0",
@@ -52,7 +55,9 @@
   "babel": {
     "env": {
       "COVERAGE": {
-        "plugins": ["istanbul"]
+        "plugins": [
+          "istanbul"
+        ]
       }
     }
   }

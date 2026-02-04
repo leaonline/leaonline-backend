@@ -48,7 +48,6 @@ Template.genericList.onCreated(function () {
       Tracker.nonreactive(() =>
         wrapOnCreated(instance, {
           data,
-          debug: false,
           onSubscribed() {
             const query = instance.state.get('query') || {}
             const transform = instance.state.get('transform') || {}
