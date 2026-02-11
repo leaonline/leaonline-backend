@@ -5,6 +5,7 @@ import { check, Match } from 'meteor/check'
 import { Tracker } from 'meteor/tracker'
 import { DDP } from 'meteor/ddp-client'
 import { ReactiveDict } from 'meteor/reactive-dict'
+import { callMethod } from '../../../utils/callMethod'
 
 const _apps = new ReactiveDict()
 const _connections = {}
@@ -145,7 +146,9 @@ function configure(name) {
     }
     log(name, 'config received successful')
     updateConfig(name, config)
-    hostLoaded(name, null, true)
+    Apps
+      .getHealth(name, config)
+      .finally(() => hostLoaded(name, null, true))
   })
 }
 
@@ -206,6 +209,29 @@ Apps.getUriBase = (name) => {
     Match.Where((x) => typeof x === 'object'),
   )
   return connection._stream.rawUrl
+}
+
+Apps.getHealth = async (name, config) => {
+  const app = _apps.get(name)
+  const connection = _connections[name]
+  if (!app || !connection) {
+    app.health = { status: 'failed', reason: 'not connected' }
+    _apps.set(name, app)
+    return app.health
+  }
+  try {
+    const health = await Meteor.callAsync(Apps.methods.getHealth.name, { name })
+    if (!health) {
+      throw new Error('no health received')
+    }
+    app.health = { status: { ok: true }, ...health }
+  } catch (e) {
+    console.error('[Apps] health check failed for', name, e)
+    app.health = { status: 'failed', reason: e.message }
+  }
+
+  _apps.set(name, app)
+  return app.health
 }
 
 export { Apps }

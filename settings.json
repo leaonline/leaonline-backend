@@ -31,7 +31,11 @@
         "url": "http://localhost:3030",
         "icon": "file",
         "ddpConnect": true,
-        "ddpLogin": true
+        "ddpLogin": true,
+        "jwt": {
+          "key": "0123456789001234567890",
+          "sub": "backend-app-01234567890"
+        }
       },
       "teacher": {
         "name": "teacher",

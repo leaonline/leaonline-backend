@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import { onServer } from '../../utils/arch'
+import { onServer, onServerExec } from '../../utils/arch'
 import { getConfigTypeOptions } from '../config/getConfigTypeOptions'
 import { getFormTypeOptions } from '../../ui/forms/getFormTypeOptions'
 import { getAlignmentOptions } from '../../ui/layout/definitions/getAlignmentOptions'
@@ -188,6 +188,26 @@ Apps.methods.updateSettings = {
       })
     }
     return await Apps.collection().insertAsync(settingsDoc)
+  }),
+}
+
+Apps.methods.getHealth = {
+  name: 'apps.methods.getHealth',
+  schema: { name: String },
+  numRequests: 5,
+  timeInterval: 500,
+  run: onServerExec(() => {
+    return async ({ name }) => {
+      return {
+        name,
+        os: {
+          platform: process.platform,
+          release: process.release,
+          arch: process.arch,
+        },
+        node: process.version,
+      }
+    }
   }),
 }
 

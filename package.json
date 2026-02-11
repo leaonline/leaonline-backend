@@ -15,24 +15,23 @@
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
-    "@babel/runtime": "^7.27.6",
+    "@babel/runtime": "^7.28.6",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@popperjs/core": "^2.11.8",
-    "@shopify/draggable": "^1.0.0-beta.12",
-    "@swc/helpers": "^0.5.17",
-    "bootstrap": "^5.3.6",
+    "@shopify/draggable": "^1.2.1",
+    "@swc/helpers": "^0.5.18",
+    "bootstrap": "^5.3.8",
     "dely": "^1.0.2",
     "easy-speech": "^2.4.0",
-    "fast-shuffle": "^4.5.1",
+    "fast-shuffle": "^6.1.1",
     "file-saver": "^2.0.5",
-    "highlight.js": "^10.7.3",
-    "jquery": "^3.7.1",
+    "highlight.js": "^11.11.1",
+    "jquery": "^4.0.0",
     "lozad": "^1.16.0",
-    "marked": "^5.1.0",
-    "meteor-node-stubs": "^1.2.19",
+    "marked": "^17.0.1",
+    "meteor-node-stubs": "^1.2.25",
     "select2": "^3.5.1",
-    "simpl-schema": "^1.13.1",
-    "sortablejs": "^1.14.0"
+    "sortablejs": "^1.15.6"
   },
   "meteor": {
     "mainModule": {
@@ -42,15 +41,12 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@meteorjs/rspack": "^1.0.0",
-    "@rsdoctor/rspack-plugin": "^1.2.3",
-    "@rspack/cli": "^1.7.1",
-    "@rspack/core": "^1.7.1",
-    "babel-plugin-istanbul": "^7.0.0",
-    "chai": "^5.2.0",
-    "puppeteer": "^24.10.0",
-    "sinon": "^20.0.0"
+    "@biomejs/biome": "^2.3.14",
+    "babel-plugin-istanbul": "^7.0.1",
+    "chai": "^6.2.2",
+    "puppeteer": "^24.37.2",
+    "simpl-schema": "^1.13.1",
+    "sinon": "^21.0.1"
   },
   "babel": {
     "env": {

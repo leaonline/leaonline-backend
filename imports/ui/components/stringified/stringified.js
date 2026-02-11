@@ -9,6 +9,7 @@ highlight.registerLanguage('json', jsonLang)
 
 Template.stringified.helpers({
   stringify(target) {
+    console.debug(EJSON.stringify(target, { indent: 2 }))
     return target && EJSON.stringify(target, { indent: 2 })
   },
 })

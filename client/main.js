@@ -22,5 +22,8 @@ import '../imports/ui/layout/nav/top/navTop'
 import '../imports/ui/layout/nav/side/navSide'
 import '../imports/ui/layout/nav/bottom/navBottom'
 
+// helpers
+import '../imports/ui/components/stringified/stringified'
+
 import './main.scss'
 import './main.html'

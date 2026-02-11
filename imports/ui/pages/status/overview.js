@@ -12,4 +12,7 @@ Template.statusOverview.helpers({
   isLoggedIn(app) {
     return app?.login?.successful
   },
+  health (app) {
+    return app.health
+  }
 })

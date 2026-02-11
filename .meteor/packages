@@ -57,7 +57,7 @@ ostrio:i18n
 # UI misc
 jkuester:template-states
 jquery
-
+aldeed:simple-schema@2.0.0
 
 #========================================
 # CSS / THEME
@@ -82,6 +82,7 @@ jkuester:template-loader
 #========================================
 audit-argument-checks@1.0.8
 force-ssl@1.1.1
+leaonline:jwt
 
 #========================================
 # TESTS
