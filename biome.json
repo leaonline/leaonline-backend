@@ -21,17 +21,13 @@
   },
   "formatter": {
     "enabled": true,
-    "includes": [
-      "**/*.js"
-    ],
+    "includes": ["imports/**/*.js"],
     "indentStyle": "space",
     "indentWidth": 2
   },
   "linter": {
     "enabled": true,
-    "includes": [
-      "**/*.js"
-    ],
+    "includes": ["imports/**/*.js"],
     "rules": {
       "recommended": true,
       "performance": {

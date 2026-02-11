@@ -49,10 +49,7 @@ Template.afImageSelect.onCreated(function () {
     'invalid',
     atts.class && atts.class.indexOf('invalid') > -1,
   )
-  this.stateVars.set(
-    'disabled',
-    Object.prototype.hasOwnProperty.call(atts, 'disabled'),
-  )
+  this.stateVars.set('disabled', Object.hasOwn(atts, 'disabled'))
   this.stateVars.set('dataSchemaKey', atts['data-schema-key'])
 })
 

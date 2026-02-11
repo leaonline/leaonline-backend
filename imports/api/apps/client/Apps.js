@@ -49,7 +49,6 @@ function log(...args) {
 function track(name, connection, ddpLogin) {
   const url = connection._stream.rawUrl
   Tracker.autorun((computation) => {
-
     // always update status to
     // trigger reactive Template updates
     const status = connection.status()
@@ -146,9 +145,7 @@ function configure(name) {
     }
     log(name, 'config received successful')
     updateConfig(name, config)
-    Apps
-      .getHealth(name, config)
-      .finally(() => hostLoaded(name, null, true))
+    Apps.getHealth(name, config).finally(() => hostLoaded(name, null, true))
   })
 }
 

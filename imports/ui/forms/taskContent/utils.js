@@ -38,9 +38,8 @@ TaskContentUtils.updateElements = (elements, templateInstance) => {
   templateInstance.stateVars.set({ elements })
 }
 
-
 TaskContentUtils.createOnItemInput = (templateInstance) => {
-   /**
+  /**
    * Handler for scoring item inputs in preview mode
    * @param userId
    * @param sessionId
@@ -50,14 +49,14 @@ TaskContentUtils.createOnItemInput = (templateInstance) => {
    * @param subtype
    * @param responses
    */
-   const onItemInput = ({
+  const onItemInput = ({
     userId,
     sessionId,
     taskId,
     page,
     type,
     subtype,
-    responses
+    responses,
   }) => {
     const previewContent = templateInstance.stateVars.get('previewContent')
     if (!previewContent) {
@@ -120,7 +119,7 @@ TaskContentUtils.getContent = (element) => {
  */
 TaskContentUtils.isItem = (name) => {
   const context = ContextRegistry.get(name)
-  return !!(context?.isItem)
+  return !!context?.isItem
 }
 
 TaskContentUtils.submitForms = (formId, templateInstance) => {

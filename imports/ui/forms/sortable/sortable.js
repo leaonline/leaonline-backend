@@ -13,7 +13,7 @@ Template.afSortable.onCreated(function () {
     const data = Template.currentData()
     const { atts } = data
     const invalid = atts.class && atts.class.indexOf('invalid') > -1
-    const disabled = Object.prototype.hasOwnProperty.call(atts, 'disabled')
+    const disabled = Object.hasOwn(atts, 'disabled')
     const dataSchemaKey = atts['data-schema-key']
     const selectedOptions = getSelectedOptions(
       data.value || [],

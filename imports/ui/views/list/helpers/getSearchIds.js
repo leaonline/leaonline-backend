@@ -85,7 +85,7 @@ export const getSearchIds = (options) => {
 
         // some simple fields are split into { type, value }
         // so we need to extract their value
-        const resolvedValue = Object.hasOwnProperty.call(fieldValue, 'value')
+        const resolvedValue = Object.hasOwn(fieldValue, 'value')
           ? fieldValue.value
           : fieldValue
 

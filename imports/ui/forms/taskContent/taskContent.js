@@ -24,11 +24,11 @@ import { createLog } from '../../../utils/log'
 const debug = createLog('ui:forms:taskContent', 'debug')
 const from = Template.afSelect2
 from.helpers({
-  atts: function addFormControlAtts () {
+  atts: function addFormControlAtts() {
     const { select2Options, ...rest } = this.atts
     // Add bootstrap class
     return AutoForm.Utility.addClass(rest, 'form-control')
-  }
+  },
 })
 
 AutoForm.addInputType('leaTaskContent', {
@@ -68,7 +68,7 @@ Template.afLeaTaskContent.onCreated(function () {
   this.stateVars.set({
     elements,
     invalid: atts.class && atts.class.indexOf('invalid') > -1,
-    disabled: Object.prototype.hasOwnProperty.call(atts, 'disabled'),
+    disabled: Object.hasOwn(atts, 'disabled'),
     dataSchemaKey: atts['data-schema-key'],
   })
 })
@@ -227,7 +227,11 @@ Template.afLeaTaskContent.events({
 
       if (isItemContent && isNewContent) {
         const unitId = templateInstance.data.unitId || 'undefined'
-        const previewData = Utils.createItemData({ unitId, subtype: type, page: 0 })
+        const previewData = Utils.createItemData({
+          unitId,
+          subtype: type,
+          page: 0,
+        })
         templateInstance.stateVars.set({ previewData })
       }
 
@@ -265,7 +269,11 @@ Template.afLeaTaskContent.events({
 
     if (elementIsItem) {
       const unitId = templateInstance.data.unitId || 'undefined'
-      const previewData = Utils.createItemData({ unitId, subtype: name, page: index })
+      const previewData = Utils.createItemData({
+        unitId,
+        subtype: name,
+        page: index,
+      })
       templateInstance.stateVars.set({ previewData })
     }
 

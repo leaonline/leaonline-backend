@@ -26,7 +26,8 @@ CurrentTypeSchema.reset = () => {
 }
 
 CurrentTypeSchema.create = (name, templateInstance) => {
-  const { settingsDoc, app, version, connection, filesCollection } = templateInstance.data.atts
+  const { settingsDoc, app, version, connection, filesCollection } =
+    templateInstance.data.atts
 
   _currentTypeSchema = currentTypeSchema({
     name,

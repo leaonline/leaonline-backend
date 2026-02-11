@@ -1,5 +1,5 @@
 module.exports = (SimpleSchema, settings) => {
-  const schema = def => new SimpleSchema(def)
+  const schema = (def) => new SimpleSchema(def)
   const urlField = {
     type: String,
     regEx: SimpleSchema.RegEx.url,
@@ -14,7 +14,7 @@ module.exports = (SimpleSchema, settings) => {
     ddpLogin: Boolean,
     jwt: {
       type: Object,
-      optional: true
+      optional: true,
     },
     'jwt.key': String,
     'jwt.sub': String,
