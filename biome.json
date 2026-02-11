@@ -21,11 +21,17 @@
   },
   "formatter": {
     "enabled": true,
+    "includes": [
+      "**/*.js"
+    ],
     "indentStyle": "space",
     "indentWidth": 2
   },
   "linter": {
     "enabled": true,
+    "includes": [
+      "**/*.js"
+    ],
     "rules": {
       "recommended": true,
       "performance": {
@@ -43,6 +49,11 @@
       "indentWidth": 2,
       "quoteStyle": "single",
       "semicolons": "asNeeded"
+    }
+  },
+  "css": {
+    "linter": {
+      "enabled": true
     }
   }
 }
