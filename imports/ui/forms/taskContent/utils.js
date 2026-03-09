@@ -41,20 +41,15 @@ TaskContentUtils.updateElements = (elements, templateInstance) => {
 TaskContentUtils.createOnItemInput = (templateInstance) => {
   /**
    * Handler for scoring item inputs in preview mode
-   * @param userId
-   * @param sessionId
-   * @param taskId
-   * @param page
-   * @param type
    * @param subtype
    * @param responses
    */
   const onItemInput = ({
-    userId,
-    sessionId,
-    taskId,
-    page,
-    type,
+    // userId,
+    // sessionId,
+    // taskId,
+    // page,
+    // type,
     subtype,
     responses,
   }) => {

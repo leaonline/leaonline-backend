@@ -66,7 +66,6 @@ export const toFormSchema = ({
   settingsDoc,
   app,
   instance,
-  formId,
 }) => {
   const { name } = config
 

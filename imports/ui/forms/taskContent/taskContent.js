@@ -19,9 +19,7 @@ import '../imageSelect/imageSelect'
 import './taskContent.css'
 import './taskContent.html'
 import './autoform'
-import { createLog } from '../../../utils/log'
 
-const debug = createLog('ui:forms:taskContent', 'debug')
 const from = Template.afSelect2
 from.helpers({
   atts: function addFormControlAtts() {
@@ -310,7 +308,7 @@ Template.afLeaTaskContent.events({
     move(elements, index, index + 1)
     Utils.updateElements(elements, templateInstance)
   },
-  'click .generate-responses'(event, templateInstance) {
+  'click .generate-responses'(event) {
     event.preventDefault()
   },
 })

@@ -94,7 +94,7 @@ const createMapping = ({ schema, fieldConfig }) => {
     if (type === 'object' && value !== null) {
       try {
         value = safeStringify(value)
-      } catch (e) {
+      } catch {
         value = value.toString()
       }
     }

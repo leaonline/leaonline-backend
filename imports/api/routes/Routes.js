@@ -124,7 +124,7 @@ Routes.statusOverview = {
   template: 'statusOverview',
   roles: null,
   data: {
-    next(appId) {},
+    next(/* appId */) {},
   },
   icon: 'heartbeat',
 }

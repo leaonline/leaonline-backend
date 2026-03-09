@@ -16,7 +16,7 @@ export const upsertIntoCollection = (
 
   const ctx = collection.schema.newContext()
 
-  documents.forEach((doc) => {
+  for (const doc of documents) {
     console.debug(`[${collection._name}]: upsert`, doc._id)
 
     try {
@@ -36,5 +36,5 @@ export const upsertIntoCollection = (
     } catch (e) {
       console.error(e)
     }
-  })
+  }
 }

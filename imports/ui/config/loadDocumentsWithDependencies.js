@@ -12,7 +12,7 @@ export const loadDocumentsWithDependencies = ({
   config,
   logDebug = defaultLog,
   onSubscribed,
-  settingsDoc,
+  // settingsDoc,
   connection,
 }) => {
   const dependencies = getDependenciesForContext(config)

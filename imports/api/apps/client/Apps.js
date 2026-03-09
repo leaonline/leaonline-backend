@@ -5,7 +5,6 @@ import { check, Match } from 'meteor/check'
 import { Tracker } from 'meteor/tracker'
 import { DDP } from 'meteor/ddp-client'
 import { ReactiveDict } from 'meteor/reactive-dict'
-import { callMethod } from '../../../utils/callMethod'
 
 const _apps = new ReactiveDict()
 const _connections = {}
@@ -208,7 +207,7 @@ Apps.getUriBase = (name) => {
   return connection._stream.rawUrl
 }
 
-Apps.getHealth = async (name, config) => {
+Apps.getHealth = async (name) => {
   const app = _apps.get(name)
   const connection = _connections[name]
   if (!app || !connection) {

@@ -10,7 +10,7 @@ export const validateDocs = (instance) => {
 
   // this is to attach validation errors to the table-entry's first column
   // TODO: translate errors
-  instance.mainCollection.find().forEach((doc) => {
+  for (const doc of instance.mainCollection.find().fetch()) {
     const { _id, meta, ...rest } = doc
     ctx.validate(rest)
 
@@ -19,7 +19,7 @@ export const validateDocs = (instance) => {
     }
 
     // validate dependency referencing
-    instance.fieldLabels.forEach(({ key }) => {
+    for (const {key } of instance.fieldLabels) {
       const config = instance.fieldConfig[key]
       if (!config) return false
 
@@ -40,7 +40,7 @@ export const validateDocs = (instance) => {
           ? dependencyDoc
           : [dependencyDoc]
 
-        depList.forEach((depDoc) => {
+        for (const depDoc of depList) {
           const id = depDoc._id || depDoc.value
           if (collection.find(id).count() === 0) {
             const field = i18n.get(config.label)
@@ -50,10 +50,10 @@ export const validateDocs = (instance) => {
               type: i18n.get('document.dependencyNotFound', { field, id }),
             })
           }
-        })
+        }
       }
-    })
-  })
+    }
+  }
 
   instance.state.set({ validationErrors })
 }

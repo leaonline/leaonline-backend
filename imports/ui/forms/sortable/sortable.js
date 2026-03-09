@@ -117,7 +117,7 @@ function updateData(templateInstance) {
   const $source = templateInstance.$('.afsortable-entry')
   const iteratable = $source.get(0) ? $source : []
 
-  iteratable.map((index, node) => {
+  iteratable.map((_index, node) => {
     const value = templateInstance.$(node).data('target')
     values.push(value)
     return undefined

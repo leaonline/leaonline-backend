@@ -16,7 +16,7 @@ Meteor.startup(() => {
   })
 })
 
-function externalServerTTSLoader(requestText, callback) {
+function externalServerTTSLoader() {
   throw new Error(
     'External TTS server is not configured. Please set the TTS URL in the settings.',
   )

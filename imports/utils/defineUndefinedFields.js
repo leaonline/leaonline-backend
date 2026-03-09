@@ -24,7 +24,7 @@ export const defineUndefinedFields = (
   const options = Object.assign({}, currentOptions, defaultOptions)
 
   let propertiesDefined = false
-  Object.entries(source).forEach(([key, value]) => {
+  Object.entries(source).forEach(([key]) => {
     if (!Object.hasOwn(destination, key)) {
       Object.defineProperty(destination, key, options)
       propertiesDefined = true

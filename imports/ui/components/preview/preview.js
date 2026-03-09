@@ -79,7 +79,7 @@ Template.preview.events({
     console.debug(target)
     templateInstance.state.set('size', target)
   },
-  'hidden.bs.modal'(event, templateInstance) {
+  'hidden.bs.modal'(_event, templateInstance) {
     const { onClosed } = templateInstance.data
     if (onClosed) {
       onClosed()

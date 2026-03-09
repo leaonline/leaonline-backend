@@ -15,13 +15,13 @@ class DefaultRenderer extends Renderer {
     return `<h${level}>${tts}<span class="lea-text-bold">${text}</span></h${level}>`
   }
 
-  paragraph({ tokens, ...options } /*, level */) {
+  paragraph({ tokens } /*, level */) {
     const text = this.parser.parseInline(tokens)
     const tts = this.userOptions.useTTS ? createTTS(tokens) : ''
     return `<p class="lea-text">${tts} ${text}</p>`
   }
 
-  strong({ tokens, ...options }) {
+  strong({ tokens }) {
     const text = this.parser.parseInline(tokens)
     return `<span class="lea-text-bold">${text}</span>`
   }
@@ -75,6 +75,7 @@ MarkdownRenderer.render = async (data) => {
   const { value, ...options } = data
   const renderer = new DefaultRenderer(options)
   return await marked.parse(
+    // biome-ignore lint: noMisleadingCharacterClass
     value.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, ''),
     {
       ...defaultOptions,
