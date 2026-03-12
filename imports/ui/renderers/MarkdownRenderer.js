@@ -9,26 +9,36 @@ class DefaultRenderer extends Renderer {
     this.userOptions = userOptions
   }
 
-  heading({ tokens, level }) {
+  heading(data) {
+    const { tokens, depth } = data
     const text = this.parser.parseInline(tokens)
-    const tts = this.userOptions.useTTS ? createTTS(text) : ''
-    return `<h${level}>${tts}<span class="lea-text-bold">${text}</span></h${level}>`
+    return `<h${depth} class="lea-text">${text}</h${depth}>`
   }
 
   paragraph({ tokens } /*, level */) {
     const text = this.parser.parseInline(tokens)
-    const tts = this.userOptions.useTTS ? createTTS(tokens) : ''
-    return `<p class="lea-text">${tts} ${text}</p>`
+    return `<p class="lea-text">${text}</p>`
   }
 
   strong({ tokens }) {
     const text = this.parser.parseInline(tokens)
     return `<span class="lea-text-bold">${text}</span>`
   }
+
+  text({ tokens, text }) {
+    const txt = tokens
+      ? this.parser.parseInline(tokens)
+      : text
+    const tts = !tokens && this.userOptions.useTTS
+      ? createTTS(txt)
+      : ''
+    return tts
+      ? `${tts} ${txt}`
+      : txt
+  }
 }
 
 const createTTS = (tokens) => {
-  console.debug(tokens)
   let text
   if (Array.isArray(tokens)) {
     text = tokens.reduce((acc, token) => {
@@ -48,7 +58,6 @@ const createTTS = (tokens) => {
   const ttsId = `markdown-tts-${Random.id(6)}`
   setTimeout(() => {
     const parent = document.querySelector(`#${ttsId}`)
-    console.debug('SBNT Text', text)
     Blaze.renderWithData(Template.soundbutton, {
       text,
       outline: true,
