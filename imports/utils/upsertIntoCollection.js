@@ -30,7 +30,7 @@ export const upsertIntoCollection = (
         }
       }
 
-      return collection.findOne(doc._id, { reactive })
+      collection.findOne(doc._id, { reactive })
         ? collection.update(doc._id, { $set: doc })
         : collection.insert(doc)
     } catch (e) {
