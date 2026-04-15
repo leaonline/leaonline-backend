@@ -4,7 +4,7 @@ import { marked, Renderer } from 'marked'
 import { Random } from 'meteor/random'
 
 class DefaultRenderer extends Renderer {
-  constructor (userOptions) {
+  constructor(userOptions) {
     super()
     this.userOptions = userOptions
   }
@@ -26,15 +26,9 @@ class DefaultRenderer extends Renderer {
   }
 
   text({ tokens, text }) {
-    const txt = tokens
-      ? this.parser.parseInline(tokens)
-      : text
-    const tts = !tokens && this.userOptions.useTTS
-      ? createTTS(txt)
-      : ''
-    return tts
-      ? `${tts} ${txt}`
-      : txt
+    const txt = tokens ? this.parser.parseInline(tokens) : text
+    const tts = !tokens && this.userOptions.useTTS ? createTTS(txt) : ''
+    return tts ? `${tts} ${txt}` : txt
   }
 }
 
@@ -58,13 +52,17 @@ const createTTS = (tokens) => {
   const ttsId = `markdown-tts-${Random.id(6)}`
   setTimeout(() => {
     const parent = document.querySelector(`#${ttsId}`)
-    Blaze.renderWithData(Template.soundbutton, {
-      text,
-      outline: true,
-      sm: true,
-      type: 'secondary',
-      class: 'border-0'
-    }, parent)
+    Blaze.renderWithData(
+      Template.soundbutton,
+      {
+        text,
+        outline: true,
+        sm: true,
+        type: 'secondary',
+        class: 'border-0',
+      },
+      parent,
+    )
   }, 1000)
   return `<span id="${ttsId}"></span>`
 }

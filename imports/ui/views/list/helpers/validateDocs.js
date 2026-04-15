@@ -19,7 +19,7 @@ export const validateDocs = (instance) => {
     }
 
     // validate dependency referencing
-    for (const {key } of instance.fieldLabels) {
+    for (const { key } of instance.fieldLabels) {
       const config = instance.fieldConfig[key]
       if (!config) return false
 

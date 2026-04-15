@@ -176,6 +176,9 @@
     "list": {
       "title": "Listenansicht",
       "validationErrors": "Es ist/sind {{length}} Validierungsfehler aufgetreten!"
+    },
+    "queryBuilder": {
+      "title": "Query Builder"
     }
   },
   "errors": {

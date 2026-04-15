@@ -5,7 +5,6 @@ import './navSide.html'
 
 Template.navSide.helpers({
   topLevelRoutes() {
-    const routes = RoutesTree.get()
-    return routes
+    return RoutesTree.get()
   },
 })

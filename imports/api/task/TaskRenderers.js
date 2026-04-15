@@ -3,13 +3,13 @@ import { DocumentRenderers } from '../../ui/renderers/DocumentRenderers'
 export { RendererGroups } from 'meteor/leaonline:ui/renderers/RendererGroups'
 
 for (const renderer of DocumentRenderers.all()) {
-    TaskRenderers.registerRenderer({
-        name: renderer.name,
-        label: renderer.label,
-        group: TaskRenderers.groups.documents.name,
-        template: renderer.template,
-        load: renderer.load,
-    })
+  TaskRenderers.registerRenderer({
+    name: renderer.name,
+    label: renderer.label,
+    group: TaskRenderers.groups.documents.name,
+    template: renderer.template,
+    load: renderer.load,
+  })
 }
 
 export { TaskRenderers }

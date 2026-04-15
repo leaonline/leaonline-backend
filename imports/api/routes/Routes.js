@@ -130,6 +130,26 @@ Routes.statusOverview = {
 }
 
 /**
+ * Displays status overview for all apps.
+ */
+
+Routes.queryBuilder = {
+  path: () => `/${settings.queryBuilder}`,
+  label: 'pages.queryBuilder.title',
+  triggersEnter: () => [createLoginTrigger(Routes.login)],
+  async load() {
+    return import('../../ui/pages/queryBuilder/queryBuilder')
+  },
+  target: null,
+  template: 'queryBuilder',
+  roles: null,
+  data: {
+    next(/* appId */) {},
+  },
+  icon: 'database',
+}
+
+/**
  * Generic settings page for any app -> context definition.
  */
 

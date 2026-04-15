@@ -19,8 +19,12 @@ for (const route of allRoutes) {
 
 const topLevel = [
   Routes.statusOverview,
+  Routes.queryBuilder,
   // Routes.settings
 ]
+
+// this creates the top-level routes for the Backend-App
+// - not the routes for the registered apps
 for (const route of topLevel) {
   RoutesTree.topLevel(route.path(), route)
 }

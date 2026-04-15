@@ -8,5 +8,6 @@
   "mediaLib": "medien-bibliothek",
   "task": "aufgaben",
   "taskSet": "aufgaben-sammlungen",
-  "loading": "lade"
+  "loading": "lade",
+  "queryBuilder": "query-builder"
 }
