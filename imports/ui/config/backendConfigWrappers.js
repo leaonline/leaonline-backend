@@ -34,7 +34,9 @@ export const wrapOnCreated = (instance, { data, debug, onSubscribed } = {}) => {
     settingsDoc,
     connection,
   })
+  instance.state.set('initStatus', 'mutationChecker')
   mutationChecker.compare(config)
+  instance.state.set('initStatus', 'done')
 }
 
 export const wrapHelpers = (obj) =>

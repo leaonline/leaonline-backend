@@ -77,6 +77,7 @@ export const parseFields = function parseFields({
   config,
   settingsDoc,
 }) {
+  instance.state.set('initStatus', 'parseFields')
   const fieldLabels = {}
   const fields = {}
 

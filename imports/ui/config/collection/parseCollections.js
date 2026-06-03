@@ -23,6 +23,7 @@ export const parseCollections = function parseCollections({
   connection,
   logDebug = defaultLog,
 }) {
+  instance.state.set('initStatus', 'parseCollections')
   instance.collections = instance.collections || new Map()
 
   const dependencies = getDependenciesForContext(config)

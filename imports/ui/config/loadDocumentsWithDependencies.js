@@ -15,6 +15,7 @@ export const loadDocumentsWithDependencies = ({
   // settingsDoc,
   connection,
 }) => {
+  instance.state.set('initStatus', 'loadDocumentsWithDependencies')
   const dependencies = getDependenciesForContext(config)
     .filter((dep) => !dep.isType)
     .map((dep) => ({ name: dep.name }))

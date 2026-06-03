@@ -19,6 +19,7 @@ export const parseActions = function parseActions({
   logDebug,
   settingsDoc,
 }) {
+  instance.state.set('initStatus', 'parseActions')
   const actions = config.methods || {}
   const schema = Object.assign({}, config.schema || {})
 
@@ -88,13 +89,20 @@ export const parseActions = function parseActions({
 }
 
 function getUploadAction(context) {
+  let accept
+  if (Array.isArray(context.extensions)) {
+    accept = context.extensions.map(e => e.startsWith('.') ? e : `.${e}`).join(',')
+  }
+  else if (typeof context.accept === 'string') {
+    accept = context.accept
+  }
   return {
     fileId: {
       type: 'String',
       autoform: {
         type: 'fileUpload',
         collection: context.name,
-        accept: context.accept,
+        accept,
       },
     },
   }

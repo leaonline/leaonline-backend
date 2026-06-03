@@ -20,13 +20,13 @@
         </div>
 
 
-        {{#with actionUpload}}
+        {{#if actionUpload}}
 			{{> upload
                     filesCollection=uploadFilesCollection
-                    accept=this.accept
+                    accept=config.accept
                     onComplete=onUploadComplete
                     class="ms-auto"}}
-		{{/with}}
+		{{/if}}
 	</div>
 	</div>
 
