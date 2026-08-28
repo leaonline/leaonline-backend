@@ -13,6 +13,7 @@ Apps.collection = () => AppsCollection
 
 Meteor.subscribe(Apps.publications.all.name)
 
+// register remote Apps:
 // the following registers a config loader callback and runs a
 // parsing mechanism and adds the respective routes to the navigation
 
@@ -20,8 +21,10 @@ Apps.loadConfig((name, done) => {
   const app = Apps.get(name)
   const { connection } = app
   const lang = i18n.getLocale()
+  const options = { lang }
 
-  connection.call(ServiceRegistry.methods.get.name, { lang }, (err, config) => {
+  // remote call the app for its config, which should include the content and the language
+  connection.call(ServiceRegistry.methods.get.name, options, (err, config) => {
     if (err) return done(err)
     if (!config) return done(new Error(`Expected config for app ${name}`))
 

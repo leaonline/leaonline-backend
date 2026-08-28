@@ -1,4 +1,4 @@
-export const once = fct => {
+export const once = (fct) => {
   let executed = false
   let result
   return (...args) => {

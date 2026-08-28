@@ -20,7 +20,7 @@ export const parseContext = (name, application) => {
 
   // round 1 - parse and register
 
-  content.forEach(context => {
+  content.forEach((context) => {
     if (!context.viewType) {
       context.viewType = getViewType(name, context)
     }

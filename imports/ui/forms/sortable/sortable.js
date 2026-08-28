@@ -7,61 +7,65 @@ import './sortable.css'
 import './sortable.html'
 
 Template.afSortable.onCreated(function () {
-  const instance = this
-  instance.stateVars = new ReactiveDict()
+  this.stateVars = new ReactiveDict()
 
-  instance.autorun(() => {
+  this.autorun(() => {
     const data = Template.currentData()
     const { atts } = data
     const invalid = atts.class && atts.class.indexOf('invalid') > -1
-    const disabled = Object.prototype.hasOwnProperty.call(atts, 'disabled')
+    const disabled = Object.hasOwn(atts, 'disabled')
     const dataSchemaKey = atts['data-schema-key']
-    const selectedOptions = getSelectedOptions(data.value || [], data.selectOptions || [])
-    const unselectedOptions = getUnselectedOptions(selectedOptions || [], data.selectOptions || [])
+    const selectedOptions = getSelectedOptions(
+      data.value || [],
+      data.selectOptions || [],
+    )
+    const unselectedOptions = getUnselectedOptions(
+      selectedOptions || [],
+      data.selectOptions || [],
+    )
 
-    instance.state.set({
+    this.state.set({
       invalid,
       disabled,
       dataSchemaKey,
       selectedOptions,
-      unselectedOptions
+      unselectedOptions,
     })
   })
 })
 
 Template.afSortable.helpers({
-  selectedOptions () {
+  selectedOptions() {
     return Template.instance().state.get('selectedOptions')
   },
-  unselectedOptions () {
+  unselectedOptions() {
     return Template.instance().state.get('unselectedOptions')
   },
-  dataSchemaKey () {
+  dataSchemaKey() {
     return Template.instance().state.get('dataSchemaKey')
   },
-  invalid () {
+  invalid() {
     return Template.instance().state.get('invalid')
-  }
+  },
 })
 
 Template.afSortable.onRendered(function () {
-  const instance = this
-  const $target = instance.$('.afsortable-sort-target')
-  const $unused = instance.$('.afsortable-unused-target')
+  const $target = this.$('.afsortable-sort-target')
+  const $unused = this.$('.afsortable-unused-target')
 
   createSortable($target.get(0), {
     animation: 150,
     ghostClass: 'bg-primary',
     group: 'shared',
     swapThreshold: 1,
-    onEnd: function () {
-      updateData(instance)
+    onEnd: () => {
+      updateData(this)
     },
-    onAdd: function (evt) {
-      const $element = instance.$(evt.item)
+    onAdd: (evt) => {
+      const $element = this.$(evt.item)
       $element.addClass('afsortable-entry')
       $element.removeClass('afsortable-unused')
-    }
+    },
   })
 
   createSortable($unused.get(0), {
@@ -69,49 +73,51 @@ Template.afSortable.onRendered(function () {
     ghostClass: 'bg-primary',
     group: 'shared',
     swapThreshold: 1,
-    onEnd: function () {
-      updateData(instance)
+    onEnd: () => {
+      updateData(this)
     },
-    onAdd: function (evt) {
-      const $element = instance.$(evt.item)
+    onAdd: (evt) => {
+      const $element = this.$(evt.item)
       $element.addClass('afsortable-unused')
       $element.removeClass('afsortable-entry')
-    }
+    },
   })
 
-  updateData(instance)
+  updateData(this)
 })
 
-function getSelectedOptions (value = [], allOptions = []) {
-  return value.map(id => allOptions.find(opt => {
-    if (!opt) {
-      console.warn('opt is undefined', id, allOptions)
-      return false
-    }
+function getSelectedOptions(value = [], allOptions = []) {
+  return value.map((id) =>
+    allOptions.find((opt) => {
+      if (!opt) {
+        console.warn('opt is undefined', id, allOptions)
+        return false
+      }
 
-    return opt.value === id
-  }))
+      return opt.value === id
+    }),
+  )
 }
 
-function getUnselectedOptions (options = [], allOptions = []) {
+function getUnselectedOptions(options = [], allOptions = []) {
   if (options.length === allOptions.length) return []
 
-  return (allOptions || []).filter(doc => !options.find(search => search?.value === doc?.value))
+  return (allOptions || []).filter(
+    (doc) => !options.find((search) => search?.value === doc?.value),
+  )
 }
 
-function createSortable (target, options) {
+function createSortable(target, options) {
   return new Sortable(target, options)
 }
 
-function updateData (templateInstance) {
+function updateData(templateInstance) {
   const values = []
   const $destination = templateInstance.$('.afSortableHiddenInput')
   const $source = templateInstance.$('.afsortable-entry')
-  const iteratable = $source.get(0)
-    ? $source
-    : []
+  const iteratable = $source.get(0) ? $source : []
 
-  iteratable.map((index, node) => {
+  iteratable.map((_index, node) => {
     const value = templateInstance.$(node).data('target')
     values.push(value)
     return undefined

@@ -18,34 +18,34 @@ export const defaultNotifications = (err, res) => {
       type: 'danger',
       content: err.reason || err.message,
       details: err.details,
-      timeout: 0
+      timeout: 0,
     })
   } else if (typeof res === 'undefined') {
     Notifications.add({
       title: 'notify.noResultTitle',
       type: 'warning',
-      content: 'notify.noResultDescription'
+      content: 'notify.noResultDescription',
     })
   } else {
     Notifications.add({
       title: 'notify.success',
       type: 'success',
-      timeout: 800
+      timeout: 800,
     })
   }
 
   return {
-    success: function (cb) {
+    success: (cb) => {
       if (!cb || err || !res) return
       cb(res)
     },
-    error: function (cb) {
+    error: (cb) => {
       if (!cb || !err) return
       cb(err)
     },
-    warning: function (cb) {
+    warning: (cb) => {
       if (!cb || err || res) return
       cb(err, res)
-    }
+    },
   }
 }

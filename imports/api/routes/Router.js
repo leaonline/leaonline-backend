@@ -14,45 +14,46 @@ export const Router = {}
 Router.src = FlowRouter
 Router.debug = false
 
-Router.go = function (value, ...optionalArgs) {
+Router.go = (value, ...optionalArgs) => {
   const type = typeof value
   if (type === 'object' && value !== null) {
     return FlowRouter.go(value.path(...optionalArgs))
-  } else if (type === 'string') {
-    return FlowRouter.go(value)
-  } else {
-    throw new Error(`Unexpected format: [${typeof type}], expected string or object`)
   }
+  if (type === 'string') {
+    return FlowRouter.go(value)
+  }
+  throw new Error(
+    `Unexpected format: [${typeof type}], expected string or object`,
+  )
 }
 
-const log = (...args) => Meteor.isDevelopment && console.info('[Router]:', ...args)
+const log = (...args) =>
+  Meteor.isDevelopment && console.info('[Router]:', ...args)
 
 let loadDep
 
-Router.addLoadDependency = function (dep) {
+Router.addLoadDependency = (dep) => {
   check(dep, Promise)
   loadDep = dep
 }
 
-Router.has = function (path) {
-  return paths[path]
-}
+Router.has = (path) => paths[path]
 
-Router.location = function (options = {}) {
+Router.location = (options = {}) => {
   if (options.pathName) {
     return FlowRouter.current().route.name
   }
   return FlowRouter.current().path
 }
 
-Router.current = function (options = {}) {
+Router.current = (options = {}) => {
   if (options.reactive) {
     FlowRouter.watchPathChange()
   }
   return FlowRouter.current()
 }
 
-Router.param = function (value) {
+Router.param = (value) => {
   const type = typeof value
   if (type === 'object') {
     return FlowRouter.setParams(value)
@@ -63,7 +64,7 @@ Router.param = function (value) {
   throw new Error(`Unexpected format: [${type}], expected string or object`)
 }
 
-Router.queryParam = function (value) {
+Router.queryParam = (value) => {
   const type = typeof value
   if (type === 'object') {
     return FlowRouter.setQueryParams(value)
@@ -76,19 +77,19 @@ Router.queryParam = function (value) {
 
 let _titlePrefix = ''
 
-Router.titlePrefix = function (value = '') {
+Router.titlePrefix = (value = '') => {
   _titlePrefix = value
 }
 
 let _loadingTemplate
 
-Router.loadingTemplate = function (value = 'loading') {
+Router.loadingTemplate = (value = 'loading') => {
   _loadingTemplate = value
 }
 
 let _defaultTarget
 
-Router.defaultTarget = function (value) {
+Router.defaultTarget = (value) => {
   _defaultTarget = value
 }
 
@@ -105,19 +106,22 @@ const paths = {}
     .action() hook
     .triggersExit() hooks
  */
-function createRoute (routeDef, onError) {
+function createRoute(routeDef, onError) {
   if (routeDef.debug) log('register route', routeDef)
   return {
     name: routeDef.key,
-    whileWaiting () {
+    whileWaiting() {
       // we render by default a "loading" template if the Template has not been loaded yet
       // which can be explicitly prevented by switching showLoading to false
       if (!Template[routeDef.template] && routeDef.showLoading !== false) {
         const renderTarget = routeDef.target || _defaultTarget
-        this.render(renderTarget, _loadingTemplate, { whileWaiting: true, title: routeDef.label })
+        this.render(renderTarget, _loadingTemplate, {
+          whileWaiting: true,
+          title: routeDef.label,
+        })
       }
     },
-    waitOn () {
+    waitOn() {
       if (routeDef.debug) log('waitOn', routeDef)
       const ld = loadDep || true
       return Promise.all([
@@ -131,18 +135,20 @@ function createRoute (routeDef, onError) {
               resolve()
             }
           })
-        })
+        }),
       ])
     },
-    triggersEnter: routeDef.triggersEnter && routeDef.triggersEnter(),
-    action (params, queryParams) {
+    triggersEnter: routeDef.triggersEnter?.(),
+    action(params, queryParams) {
       if (routeDef.debug) log('route action', routeDef)
 
       // if we have loaded the template but it is not available
       // on the rendering pipeline through Template.<name> we
       // just skip the action and wait for the next rendering cycle
       if (!Template[routeDef.template]) {
-        console.warn(`Found rendering attempt on unloaded Template [${routeDef.template}]`)
+        console.warn(
+          `Found rendering attempt on unloaded Template [${routeDef.template}]`,
+        )
         return
       }
 
@@ -170,11 +176,11 @@ function createRoute (routeDef, onError) {
           onError(e)
         }
       }
-    }
+    },
   }
 }
 
-Router.register = function (routeDefinition) {
+Router.register = (routeDefinition) => {
   const path = routeDefinition.path()
   paths[path] = routeDefinition
   const routeInstance = createRoute(routeDefinition)
@@ -182,7 +188,7 @@ Router.register = function (routeDefinition) {
 }
 
 Router.helpers = {
-  isActive (name) {
+  isActive(name) {
     return RouterHelpers.name(name)
-  }
+  },
 }

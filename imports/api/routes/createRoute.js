@@ -13,27 +13,28 @@ export const createRoute = (appName, config, parentRoute) => {
     key: config.name,
     icon: config.icon,
     label: config.label,
-    triggersEnter: () => [
-      loginTrigger
-    ],
+    triggersEnter: () => [loginTrigger],
     load: view.load,
     target: null,
     template: view.template,
     roles: null,
     args: [],
     data: {
-      app () {
+      app() {
         return Apps.get(appName)
       },
-      config () {
+      config() {
         return config
       },
-      settings () {
-        return Apps.collection().findOne({ name: appName, context: config.name })
+      settings() {
+        return Apps.collection().findOne({
+          name: appName,
+          context: config.name,
+        })
       },
-      top () {
+      top() {
         return parentRoute || Routes.dashboard
-      }
-    }
+      },
+    },
   }
 }

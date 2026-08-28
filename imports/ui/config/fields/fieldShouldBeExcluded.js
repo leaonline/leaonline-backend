@@ -6,4 +6,5 @@
  * @param type {constructor} the potential type constructor
  * @return {boolean} true/false
  */
-export const fieldShouldBeExcluded = ({ key, type }) => type === Array || type === Object || key.includes('$')
+export const fieldShouldBeExcluded = ({ key, type }) =>
+  type === Array || type === Object || key.includes('$')

@@ -3,11 +3,11 @@ import { EJSON } from 'meteor/ejson'
 
 AutoForm.addInputType('leaSortable', {
   template: 'afSortable',
-  valueOut () {
+  valueOut() {
     const val = this.val()
     return val && EJSON.parse(val)
   },
-  valueIn (initialValue) {
+  valueIn(initialValue) {
     return initialValue
-  }
+  },
 })

@@ -3,7 +3,7 @@ import { ServiceRegistry } from 'meteor/leaonline:service-registry'
 ServiceRegistry.fieldTypes = {
   keyMap: 'keyMap',
   context: 'context',
-  collection: 'collection'
+  collection: 'collection',
 }
 
 export { ServiceRegistry }

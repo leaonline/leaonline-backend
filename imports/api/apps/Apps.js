@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import { onServer } from '../../utils/arch'
+import { onServer, onServerExec } from '../../utils/arch'
 import { getConfigTypeOptions } from '../config/getConfigTypeOptions'
 import { getFormTypeOptions } from '../../ui/forms/getFormTypeOptions'
 import { getAlignmentOptions } from '../../ui/layout/definitions/getAlignmentOptions'
@@ -12,7 +12,7 @@ export const Apps = {
   name: 'apps',
   label: 'apps.title',
   icon: 'cubes',
-  debug: false
+  debug: false,
 }
 
 // Note, that the schema is normalized to map one context to one document.
@@ -24,8 +24,8 @@ Apps.schema = {
     type: String,
     label: 'apps.name',
     autoform: {
-      type: 'hidden'
-    }
+      type: 'hidden',
+    },
   },
 
   // name of the context that has been registered
@@ -33,8 +33,8 @@ Apps.schema = {
     type: String,
     label: 'apps.context',
     autoform: {
-      type: 'hidden'
-    }
+      type: 'hidden',
+    },
   },
 
   // edit log / history flag
@@ -42,7 +42,7 @@ Apps.schema = {
     type: Boolean,
     label: 'apps.useHistory',
     optional: true,
-    defaultValue: true
+    defaultValue: true,
   },
 
   // comments flag
@@ -50,7 +50,7 @@ Apps.schema = {
     type: Boolean,
     label: 'apps.useComments',
     optional: true,
-    defaultValue: true
+    defaultValue: true,
   },
 
   // flag if we want to track links to this context
@@ -58,7 +58,7 @@ Apps.schema = {
     type: Boolean,
     label: 'apps.useDependencyTracking',
     optional: true,
-    defaultValue: true
+    defaultValue: true,
   },
 
   // which template to use as main template for overview
@@ -67,8 +67,8 @@ Apps.schema = {
     label: 'viewTypes.title',
     autoform: {
       firstOption,
-      options: getConfigTypeOptions
-    }
+      options: getConfigTypeOptions,
+    },
   },
 
   // which renderer to use to preview documents
@@ -78,38 +78,38 @@ Apps.schema = {
     label: 'previewTypes.title',
     autoform: {
       firstOption,
-      options: getPrewiewRenderers()
-    }
+      options: getPrewiewRenderers(),
+    },
   },
 
   // define fields-specific settings
   fields: {
     type: Array,
     label: 'apps.fields.title',
-    optional: true
+    optional: true,
   },
   'fields.$': {
     type: Object,
-    label: 'apps.field'
+    label: 'apps.field',
   },
   'fields.$.name': {
     type: String,
-    label: 'common.name'
+    label: 'common.name',
   },
   'fields.$.exclude': {
     type: Boolean,
     label: 'apps.fields.exclude',
-    optional: true
+    optional: true,
   },
   'fields.$.hideLabel': {
     type: Boolean,
     label: 'apps.fields.hideLabel',
-    optional: true
+    optional: true,
   },
   'fields.$.stretch': {
     type: Boolean,
     label: 'apps.fields.stretch',
-    optional: true
+    optional: true,
   },
   'fields.$.alignment': {
     type: String,
@@ -117,8 +117,8 @@ Apps.schema = {
     optional: true,
     autoform: {
       firstOption,
-      options: getAlignmentOptions
-    }
+      options: getAlignmentOptions,
+    },
   },
   'fields.$.display': {
     type: String,
@@ -126,13 +126,11 @@ Apps.schema = {
     optional: true,
     autoform: {
       firstOption,
-      options: function () {
-        return [
-          { value: 'default', label: 'apps.fields.display.default' },
-          { value: 'code', label: 'apps.fields.display.code' }
-        ]
-      }
-    }
+      options: () => [
+        { value: 'default', label: 'apps.fields.display.default' },
+        { value: 'code', label: 'apps.fields.display.code' },
+      ],
+    },
   },
   'fields.$.form': {
     type: String,
@@ -140,9 +138,9 @@ Apps.schema = {
     optional: true,
     autoform: {
       firstOption,
-      options: getFormTypeOptions
-    }
-  }
+      options: getFormTypeOptions,
+    },
+  },
 }
 
 Apps.getSchemaForContext = (context) => {
@@ -152,8 +150,8 @@ Apps.getSchemaForContext = (context) => {
   Object.assign(schema['fields.$.name'], {
     autoform: {
       firstOption,
-      options: fields
-    }
+      options: fields,
+    },
   })
   return schema
 }
@@ -165,13 +163,13 @@ Apps.methods.getServiceCredentials = {
   schema: {},
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(function () {
-    const user = Meteor.users.findOne(this.userId)
-    return user.services.lea
+  run: onServer(async function () {
+    const user = await Meteor.users.findOneAsync(this.userId)
+    return user?.services?.lea
   }),
-  call: function (cb) {
+  call: (cb) => {
     Meteor.call(Apps.methods.getServiceCredentials.name, cb)
-  }
+  },
 }
 
 Apps.methods.updateSettings = {
@@ -179,14 +177,38 @@ Apps.methods.updateSettings = {
   schema: Apps.schema,
   numRequests: 1,
   timeInterval: 1000,
-  run: onServer(function (settingsDoc) {
-    const existingDocId = Apps.collection().findOne({ name: settingsDoc.name, context: settingsDoc.context })
+  run: onServer(async (settingsDoc) => {
+    const existingDocId = await Apps.collection().findOneAsync({
+      name: settingsDoc.name,
+      context: settingsDoc.context,
+    })
     if (existingDocId) {
-      return Apps.collection().update(existingDocId, { $set: settingsDoc })
-    } else {
-      return Apps.collection().insert(settingsDoc)
+      return await Apps.collection().updateAsync(existingDocId, {
+        $set: settingsDoc,
+      })
     }
-  })
+    return await Apps.collection().insertAsync(settingsDoc)
+  }),
+}
+
+Apps.methods.getHealth = {
+  name: 'apps.methods.getHealth',
+  schema: { name: String },
+  numRequests: 5,
+  timeInterval: 500,
+  run: onServerExec(() => {
+    return async ({ name }) => {
+      return {
+        name,
+        os: {
+          platform: process.platform,
+          release: process.release,
+          arch: process.arch,
+        },
+        node: process.version,
+      }
+    }
+  }),
 }
 
 Apps.publications = {}
@@ -195,24 +217,22 @@ Apps.publications.getByNames = {
   name: 'apps.publications.getByNames',
   schema: {
     appName: String,
-    contextName: String
+    contextName: String,
   },
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(function ({ appName, contextName }) {
-    return Apps.collection().find({ name: appName, context: contextName })
-  })
+  run: onServer(async ({ appName, contextName }) =>
+    Apps.collection().find({ name: appName, context: contextName }),
+  ),
 }
 
 Apps.publications.all = {
   name: 'apps.publications.all',
   schema: {},
-  log: function (...args) {
+  log: (...args) => {
     console.log(...args)
   },
   numRequests: 5,
   timeInterval: 500,
-  run: onServer(function () {
-    return Apps.collection().find()
-  })
+  run: onServer(async () => Apps.collection().find()),
 }

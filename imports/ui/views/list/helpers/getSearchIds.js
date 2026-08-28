@@ -1,7 +1,7 @@
 import { check, Match } from 'meteor/check'
 import { Mongo } from 'meteor/mongo'
 
-const exists = x => typeof x !== 'undefined' && x !== null
+const exists = (x) => typeof x !== 'undefined' && x !== null
 
 /**
  * Iterates all documents and their dependencies for a search term.
@@ -13,13 +13,16 @@ const exists = x => typeof x !== 'undefined' && x !== null
  * @param options.fieldConfig {Object} config for fields
  * @return {[String]} array of ids of documents that matches the search criteria
  */
-export const getSearchIds = options => {
-  check(options, Match.ObjectIncluding({
-    value: String,
-    collection: Mongo.Collection,
-    fieldLabels: [Object],
-    fieldConfig: Object
-  }))
+export const getSearchIds = (options) => {
+  check(
+    options,
+    Match.ObjectIncluding({
+      value: String,
+      collection: Mongo.Collection,
+      fieldLabels: [Object],
+      fieldConfig: Object,
+    }),
+  )
 
   const { value = '', collection, fieldLabels, fieldConfig } = options
   const originalValue = value.trim()
@@ -27,8 +30,8 @@ export const getSearchIds = options => {
 
   return collection
     .find()
-    .map(doc => {
-      const resolveFieldVales = key => {
+    .map((doc) => {
+      const resolveFieldVales = (key) => {
         const config = fieldConfig[key]
 
         // if we can't find a config for the the given key we can skip early
@@ -65,7 +68,7 @@ export const getSearchIds = options => {
 
           // if we search for an _id and the dependency may have this _id
           // we want to add the parent doc to the list as well
-          const dependencyIdFound = docList.some(depDoc => {
+          const dependencyIdFound = docList.some((depDoc) => {
             return (depDoc._id || depDoc.value) === originalValue
           })
 
@@ -82,7 +85,7 @@ export const getSearchIds = options => {
 
         // some simple fields are split into { type, value }
         // so we need to extract their value
-        const resolvedValue = Object.hasOwnProperty.call(fieldValue, 'value')
+        const resolvedValue = Object.hasOwn(fieldValue, 'value')
           ? fieldValue.value
           : fieldValue
 
@@ -100,11 +103,13 @@ export const getSearchIds = options => {
         if (type === Number) {
           if (resolvedType === 'number') {
             return Number(resolvedValue).toString(10).includes(lowerCaseValue)
-          } else if (resolvedType === 'string') {
-            return resolvedValue.includes(lowerCaseValue)
-          } else {
-            console.warn(`Mismatch: expected ${resolvedType} to be Number or String`)
           }
+          if (resolvedType === 'string') {
+            return resolvedValue.includes(lowerCaseValue)
+          }
+          console.warn(
+            `Mismatch: expected ${resolvedType} to be Number or String`,
+          )
         }
 
         // nothing found at all :(
@@ -121,5 +126,5 @@ export const getSearchIds = options => {
       })
       return found && doc._id
     })
-    .filter(entry => !!entry)
+    .filter((entry) => !!entry)
 }

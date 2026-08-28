@@ -6,6 +6,6 @@ export const gotoRoute = ({ path, appName, contextName }) => {
     return Router.go(path())
   }
   const { children } = RoutesTree.get(appName)
-  const route = children.find(el => el.key === contextName)
+  const route = children.find((el) => el.key === contextName)
   Router.go(route.path())
 }

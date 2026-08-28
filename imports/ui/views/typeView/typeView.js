@@ -3,29 +3,28 @@ import '../../components/stringified/stringified'
 import './typeView.html'
 
 Template.typeView.onCreated(function () {
-  const instance = this
-  instance.autorun(() => {
-    instance.state.set({ loadComplete: false })
+  this.autorun(() => {
+    this.state.set({ loadComplete: false })
     const data = Template.currentData()
-    instance.config = data.config()
-    setTimeout(() => instance.state.set({ loadComplete: true }), 300)
+    this.config = data.config()
+    setTimeout(() => this.state.set({ loadComplete: true }), 300)
   })
 })
 
 Template.typeView.helpers({
-  loadComplete () {
+  loadComplete() {
     return Template.instance().state.get('loadComplete')
   },
-  config () {
+  config() {
     return Template.instance().config
   },
-  types () {
+  types() {
     const config = Template.instance().config
     return config && Object.values(config.types)
   },
-  label (name) {
+  label(name) {
     const config = Template.instance().config
-    const type = config && config.types[name]
-    return type && type.label()
-  }
+    const type = config?.types?.[name]
+    return type?.label()
+  },
 })

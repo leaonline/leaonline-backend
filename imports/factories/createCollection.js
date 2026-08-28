@@ -3,7 +3,7 @@ import { Schema } from '../api/schema/Schema'
 import { addCollection } from '../utils/collection'
 
 const factory = createCollectionFactory({
-  schemaFactory: Schema.create
+  schemaFactory: Schema.create,
 })
 
 export const createCollection = (def, collectionName) => {

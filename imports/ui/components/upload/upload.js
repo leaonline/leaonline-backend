@@ -7,45 +7,45 @@ const defaultInsertOpts = {
   isBase64: false,
   transport: 'ddp',
   chunkSize: 'dynamic',
-  allowWebWorkers: false
+  allowWebWorkers: false,
 }
 
 Template.upload.onCreated(function () {
-  const instance = this
-
-  if (!instance.data.filesCollection) {
+  if (!this.data.filesCollection) {
     throw new Error('Upload impossible without FilesCollection')
   }
 
-  instance.currentUpload = new ReactiveVar()
+  this.currentUpload = new ReactiveVar()
 })
 
 Template.upload.helpers({
-  currentUpload () {
+  currentUpload() {
     return Template.instance().currentUpload.get()
   },
-  uploadError () {
+  uploadError() {
     return Template.instance().state.get('uploadError')
   },
-  uploadedFile () {
+  uploadedFile() {
     return Template.instance().state.get('uploadedFile')
   },
-  uploadForm () {
+  uploadForm() {
     const instance = Template.instance()
-    return !instance.state.get('uploadError') &&
+    return (
+      !instance.state.get('uploadError') &&
       !instance.state.get('uploadedFile') &&
       !instance.currentUpload.get()
+    )
   },
-  selectedFile () {
+  selectedFile() {
     return Template.instance().state.get('selectedFile')
   },
-  progress () {
+  progress() {
     return Template.instance().state.get('progress')
-  }
+  },
 })
 
 Template.upload.events({
-  'input .custom-file-input' (event, templateInstance) {
+  'input .custom-file-input'(event, templateInstance) {
     event.preventDefault()
     const files = event.target.files
     if (!files?.length) return
@@ -54,11 +54,11 @@ Template.upload.events({
     const selectedFile = {
       name: file.name,
       type: file.type,
-      size: file.size
+      size: file.size,
     }
     templateInstance.state.set({ selectedFile })
   },
-  'click .upload-button' (event, templateInstance) {
+  'click .upload-button': async (event, templateInstance) => {
     event.preventDefault()
 
     const insertConfig = templateInstance.state.get('insertConfig')
@@ -70,37 +70,40 @@ Template.upload.events({
     }
 
     const opts = Object.assign({}, defaultInsertOpts, insertConfig, {
-      file: files[0]
+      file: files[0],
     })
 
-    const upload = templateInstance.data.filesCollection.insert(opts, false)
+    const upload = await templateInstance.data.filesCollection.insertAsync(
+      opts,
+      false,
+    )
     templateInstance.currentUpload.set(true)
     templateInstance.state.set({ progress: 0 })
 
-    // upload.on('start', function () {})
+    upload.on('start', () => {})
 
-    upload.on('error', function (error) {
-      console.log(error)
+    upload.on('error', (error) => {
+      console.error(error)
       templateInstance.state.set('uploadError', error)
     })
 
-    upload.on('progress', function (progress) {
+    upload.on('progress', (progress) => {
       templateInstance.state.set({ progress })
     })
 
-    upload.on('end', function (error, fileObj) {
+    upload.on('end', (error, fileObj) => {
       setTimeout(() => {
         if (!error) {
           templateInstance.state.set({
             selectedFile: null,
             uploadedFile: fileObj,
-            uploadErr: null
+            uploadErr: null,
           })
         } else {
           templateInstance.state.set({
             selectedFile: null,
             uploadedFile: null,
-            uploadErr: error
+            uploadErr: error,
           })
         }
         templateInstance.currentUpload.set(false)
@@ -113,10 +116,10 @@ Template.upload.events({
 
     upload.start()
   },
-  'click .reset-button' (event, templateInstance) {
+  'click .reset-button'(event, templateInstance) {
     event.preventDefault()
     templateInstance.state.set('uploadError', null)
     templateInstance.state.set('uploadedFile', null)
     templateInstance.currentUpload.set(false)
-  }
+  },
 })

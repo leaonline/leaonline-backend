@@ -2,7 +2,7 @@ const defaultOptions = {
   value: null,
   configurable: true,
   enumerable: true,
-  writable: true
+  writable: true,
 }
 
 /**
@@ -15,13 +15,17 @@ const defaultOptions = {
  * @param writable
  */
 
-export const defineUndefinedFields = (destination, source, { value, configurable, enumerable, writable } = {}) => {
+export const defineUndefinedFields = (
+  destination,
+  source,
+  { value, configurable, enumerable, writable } = {},
+) => {
   const currentOptions = { value, configurable, enumerable, writable }
   const options = Object.assign({}, currentOptions, defaultOptions)
 
   let propertiesDefined = false
-  Object.entries(source).forEach(([key, value]) => {
-    if (!Object.hasOwnProperty.call(destination, key)) {
+  Object.entries(source).forEach(([key]) => {
+    if (!Object.hasOwn(destination, key)) {
       Object.defineProperty(destination, key, options)
       propertiesDefined = true
     }
@@ -32,10 +36,14 @@ export const defineUndefinedFields = (destination, source, { value, configurable
     //
     const destinationKeys = Object.keys(destination).sort()
     const sourceKeys = Object.keys(source).sort()
-    const allSourceKeysConvered = sourceKeys.every(key => destinationKeys.includes(key))
+    const allSourceKeysConvered = sourceKeys.every((key) =>
+      destinationKeys.includes(key),
+    )
 
     if (!allSourceKeysConvered) {
-      throw new TypeError(`Property mismatch detected destination: ${destinationKeys}, source: ${sourceKeys}`)
+      throw new TypeError(
+        `Property mismatch detected destination: ${destinationKeys}, source: ${sourceKeys}`,
+      )
     }
   }
 }

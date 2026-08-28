@@ -1,1 +1,1 @@
-export const subscribeSettings = (name) => {}
+export const subscribeSettings = () => {}

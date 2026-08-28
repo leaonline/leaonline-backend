@@ -4,9 +4,9 @@ import { rateLimitAccounts } from '../../factories/rateLimit'
 
 rateLimitAccounts()
 
-Meteor.startup(() => {
+Meteor.startup(async () => {
   const { oauth } = Meteor.settings
-  ServiceConfiguration.configurations.upsert(
+  await ServiceConfiguration.configurations.upsertAsync(
     { service: 'lea' },
     {
       $set: {
@@ -16,8 +16,9 @@ Meteor.startup(() => {
         dialogUrl: oauth.dialogUrl,
         accessTokenUrl: oauth.accessTokenUrl,
         identityUrl: oauth.identityUrl,
-        redirectUrl: oauth.redirectUrl
-      }
-    }
+        redirectUrl: oauth.redirectUrl,
+        debug: true,
+      },
+    },
   )
 })

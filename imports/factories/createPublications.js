@@ -4,7 +4,8 @@ import { Schema } from '../api/schema/Schema'
 
 export const createPublication = createPublicationFactory({
   schemaFactory: Schema.create,
-  mixins: [checkPermissions]
+  mixins: [checkPermissions],
 })
 
-export const createPublications = publications => publications.forEach(createPublication)
+export const createPublications = (publications) =>
+  publications.forEach(createPublication)

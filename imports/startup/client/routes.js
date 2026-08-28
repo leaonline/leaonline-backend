@@ -10,35 +10,34 @@ const defaultTarget = 'main-render-target'
 Router.titlePrefix('lea.backend - ')
 Router.loadingTemplate(loadingTemplate)
 Router.defaultTarget(defaultTarget)
-/**
- * Load all routes definitions into the router
- */
 
-Object
-  .values(Routes)
-  .map(route => {
-    route.target = (route.target || defaultTarget)
-    return route
-  })
-  .forEach(route => Router.register(route))
+const allRoutes = Object.values(Routes)
+for (const route of allRoutes) {
+  route.target = route.target || defaultTarget
+  Router.register(route)
+}
 
-/**
- * Build to RoutesTree to represent a structured sidebar nav data model
- */
-;[
-  Routes.statusOverview
+const topLevel = [
+  Routes.statusOverview,
+  Routes.queryBuilder,
   // Routes.settings
-].forEach(route => RoutesTree.topLevel(route.path(), route))
+]
 
-Template.registerHelper('next', function (...args) {
+// this creates the top-level routes for the Backend-App
+// - not the routes for the registered apps
+for (const route of topLevel) {
+  RoutesTree.topLevel(route.path(), route)
+}
+
+Template.registerHelper('next', (...args) => {
   args.pop()
   const instance = Template.instance()
-  const route = instance && instance.data.next()
-  const path = route && route.path(...args)
+  const route = instance?.data.next()
+  const path = route?.path(...args)
   return Meteor.absoluteUrl(path)
 })
 
-Template.registerHelper('route', function (name, ...args) {
+Template.registerHelper('route', (name, ...args) => {
   console.debug('args', args)
   args.pop()
   const route = Routes[name]
@@ -47,6 +46,7 @@ Template.registerHelper('route', function (name, ...args) {
   return Meteor.absoluteUrl(path)
 })
 
-Template.registerHelper('activeRoute', function (path) {
-  return window.location.pathname === path
-})
+Template.registerHelper(
+  'activeRoute',
+  (path) => window.location.pathname === path,
+)

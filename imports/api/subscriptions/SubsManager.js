@@ -15,19 +15,19 @@ let _subsCacheTimeout = -1 // never timeout
 let _subsCacheMaxPubs = -1 // no limit
 const _debug = false
 
-function getCache () {
+function getCache() {
   if (!_subsCache) {
     _subsCache = new SubsCache(_subsCacheTimeout, _subsCacheMaxPubs, false)
   }
   return _subsCache
 }
 
-function createHandle (publicationName, opts, callbacks) {
+function createHandle(publicationName, opts, callbacks) {
   const options = opts || {}
   const _callbacks = callbacks || {
-    onStop (e) {
+    onStop(e) {
       if (_debug && e) console.error(e)
-    }
+    },
   }
 
   const handle = getCache().subscribe(publicationName, options, _callbacks)
@@ -42,7 +42,6 @@ function createHandle (publicationName, opts, callbacks) {
 // ////////////////////////////////////////////////////////////////////////////
 
 export const SubsManager = {
-
   connection: {
     /**
      * Sets the current connection. Default is Meteor.connection.
@@ -50,8 +49,11 @@ export const SubsManager = {
      * You may use this method before subscribing to remote publications.
      * @param connection A DDP remote connection or Meteor.Connection
      */
-    set (connection) {
-      check(connection, Match.Where(c => !!c && !!c.subscribe))
+    set(connection) {
+      check(
+        connection,
+        Match.Where((c) => !!c && !!c.subscribe),
+      )
       SubsManager.each((name) => SubsManager.unsubscribe(name))
       _connection = connection
     },
@@ -59,28 +61,28 @@ export const SubsManager = {
      * Returns the current internally used connection.
      * Returns either a Meter.Connection or DDP connection.
      */
-    get () {
+    get() {
       return _connection
-    }
+    },
   },
 
   /**
    * Return the current snapshot of all subscriptions
    */
-  all () {
+  all() {
     return Object.assign({}, _subs)
   },
 
   cache: {
-    setTimeout (value) {
+    setTimeout(value) {
       check(value, Number)
       _subsCacheTimeout = value
     },
-    setLimit (value) {
+    setLimit(value) {
       check(value, Number)
       _subsCacheMaxPubs = value
     },
-    get: getCache
+    get: getCache,
   },
 
   // ////////////////////////////////////////////////////////////////
@@ -89,9 +91,15 @@ export const SubsManager = {
   //
   // ////////////////////////////////////////////////////////////////
 
-  subscribe (publicationName, options = {}) {
-    if (!Meteor.isClient) throw new Meteor.Error(this.errors.EXECUTION_CLIENT_ONLY)
-    if (!Meteor.userId()) return { ready () { return false } }
+  subscribe(publicationName, options = {}) {
+    if (!Meteor.isClient)
+      throw new Meteor.Error(this.errors.EXECUTION_CLIENT_ONLY)
+    if (!Meteor.userId())
+      return {
+        ready() {
+          return false
+        },
+      }
 
     if (this.has(publicationName)) {
       const existingSub = this.handle(publicationName)
@@ -103,7 +111,7 @@ export const SubsManager = {
     return createHandle(publicationName, options)
   },
 
-  unsubscribe (publicationName) {
+  unsubscribe(publicationName) {
     if (!this.has(publicationName)) {
       return false
     }
@@ -114,15 +122,15 @@ export const SubsManager = {
     return !this.has(publicationName)
   },
 
-  each (fct) {
-    Object.keys(_subs).forEach(publicationName => {
+  each(fct) {
+    Object.keys(_subs).forEach((publicationName) => {
       const handle = this.handle(publicationName)
       fct.call(this, publicationName, handle)
     })
   },
 
-  dispose () {
-    Object.keys(_subs).forEach(key => {
+  dispose() {
+    Object.keys(_subs).forEach((key) => {
       const handle = _subs[key].handle
       handle.stopNow()
       delete _subs[key]
@@ -131,11 +139,11 @@ export const SubsManager = {
     _subsCache = null
   },
 
-  has (publicationName) {
-    return !!(_subs[publicationName])
+  has(publicationName) {
+    return !!_subs[publicationName]
   },
 
-  handle (publicationName) {
+  handle(publicationName) {
     return _subs[publicationName]
-  }
+  },
 }

@@ -1,4 +1,4 @@
-export const isPrimitiveConstructor = (key, value) => {
+export const isPrimitiveConstructor = (_key, value) => {
   if (typeof value !== 'string') return undefined
 
   switch (value) {

@@ -5,5 +5,4 @@ const i18nFactory = i18n.get
 
 export const createFilesCollection = createGridFilesFactory({
   i18nFactory,
-  debug: true
 })

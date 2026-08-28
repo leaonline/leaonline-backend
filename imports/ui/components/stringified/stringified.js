@@ -8,12 +8,13 @@ import './stringified.html'
 highlight.registerLanguage('json', jsonLang)
 
 Template.stringified.helpers({
-  stringify (target) {
+  stringify(target) {
+    console.debug(EJSON.stringify(target, { indent: 2 }))
     return target && EJSON.stringify(target, { indent: 2 })
-  }
+  },
 })
 
-Template.stringified.onRendered(function () {
+Template.stringified.onRendered(() => {
   document.querySelectorAll('pre code').forEach((block) => {
     highlight.highlightBlock(block)
   })

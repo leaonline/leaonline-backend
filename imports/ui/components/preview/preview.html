@@ -21,8 +21,8 @@
 							<i class="fa fas fa-fw fa-mobile-alt"></i>
 						</button>
 					</span>
-					<button type="button" class="close" data-dismiss="modal" aria-label="{{i18n 'actions.close'}}">
-						<span aria-hidden="true">&times;</span>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{i18n 'actions.close'}}">
+						{{> icon name="times"}}
 					</button>
 				</div>
 				<div class="modal-body">
@@ -47,7 +47,7 @@
                             {{i18n 'actions.save'}}
                         </button>
                     {{/if --}}
-					<button type="button" class="btn btn-secondary ml-auto" data-dismiss="modal">
+					<button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal">
                         {{i18n 'actions.close'}}
                     </button>
 				</div>

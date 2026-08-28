@@ -11,14 +11,14 @@ const _connections = {}
 
 Apps.debug = true
 
-function connect (name, url) {
+function connect(name, url) {
   if (!_connections[name]) {
     _connections[name] = DDP.connect(url)
   }
   return _connections[name]
 }
 
-function updateStatus (name, status) {
+function updateStatus(name, status) {
   const app = _apps.get(name)
   if (!app) {
     throw new Error(`[Apps] expected app by name ${name}`)
@@ -27,30 +27,45 @@ function updateStatus (name, status) {
   _apps.set(name, app)
 }
 
-function updateLogin (name, userId) {
+function updateLogin(name, userId) {
   const app = _apps.get(name)
   app.login = { successful: !!userId }
   _apps.set(name, app)
 }
 
-function updateConfig (name, config) {
+function updateConfig(name, config) {
   const app = _apps.get(name)
   app.config = config
   _apps.set(name, app)
 }
 
-function log (...args) {
+function log(...args) {
   if (Apps.debug && Meteor.isDevelopment) {
     console.info('[Apps]', ...args)
   }
 }
 
-function track (name, connection, ddpLogin) {
+function track(name, connection, ddpLogin) {
   const url = connection._stream.rawUrl
-  Tracker.autorun(computation => {
-    // skip this computation if there is
+  Tracker.autorun((computation) => {
+    // always update status to
+    // trigger reactive Template updates
+    const status = connection.status()
+    updateStatus(name, status)
+
+    // first of all, skip if we are not yet connected
+    if (!status.connected) {
+      log(name, 'not yet connected -> skip', status.retryCount)
+      if (status.retryCount >= 3) {
+        log(name, 'cancel connection')
+        computation.stop()
+      }
+      return
+    }
+
+    // otherwise, skip this computation if there is
     // currently no logged in backend user
-    if (Meteor.status().connected && !Meteor.user() && !Meteor.userId()) {
+    if (!Meteor.user() || !Meteor.userId()) {
       // clear localStorage entries from previous
       // login results to avoid follow-up 403 errors
       localStorage.removeItem(`${url}/lea/userId`)
@@ -63,22 +78,7 @@ function track (name, connection, ddpLogin) {
       return
     }
 
-    // always update status to
-    // trigger reactive Template updates
-    const status = connection.status()
-    updateStatus(name, status)
-
-    // also skip if we are not yet connected
-    if (!status.connected) {
-      log(name, 'not yet connected -> skip', status.retryCount)
-      if (status.retryCount >= 3) {
-        log(name, 'cancel connection')
-        computation.stop()
-      }
-      return
-    }
-
-    // skip if we have not explcitly enabled the DDP login
+    // skip if we have not explicitly enabled the DDP login
     if (!ddpLogin) {
       computation.stop()
       return
@@ -101,7 +101,10 @@ function track (name, connection, ddpLogin) {
         return
       }
       log(name, 'init login')
-      const options = { accessToken: credentials.accessToken, debug: Apps.debug }
+      const options = {
+        accessToken: credentials.accessToken,
+        debug: Apps.debug,
+      }
       DDP.loginWithLea(connection, options, (err, res) => {
         connection._loggingIn = false
         if (err) {
@@ -110,12 +113,11 @@ function track (name, connection, ddpLogin) {
           //   add error to app, so we can display this issue
           //   in the overview template
           return console.error(err)
-        } else {
-          log(name, 'logged in with token', !!res)
-          updateLogin(name, connection.userId())
-          computation.stop()
-          configure(name)
         }
+        log(name, 'logged in with token', !!res)
+        updateLogin(name, connection.userId())
+        computation.stop()
+        configure(name)
       })
     })
   })
@@ -125,7 +127,7 @@ function track (name, connection, ddpLogin) {
  *
  * @param callback {function(name:string, done:function):void} callback to call after parsing is done
  */
-Apps.loadConfig = function (callback) {
+Apps.loadConfig = (callback) => {
   _loadConfigHandler = callback
 }
 
@@ -133,8 +135,8 @@ let _loadConfigHandler = () => {
   throw new Error('No config loader registered! Register via Apps.loadConfig.')
 }
 
-function configure (name) {
-  _loadConfigHandler(name, function (err, config) {
+function configure(name) {
+  _loadConfigHandler(name, (err, config) => {
     if (err) {
       log(name, 'config error')
       log(err)
@@ -142,32 +144,32 @@ function configure (name) {
     }
     log(name, 'config received successful')
     updateConfig(name, config)
-    hostLoaded(name, null, true)
+    Apps.getHealth(name, config).finally(() => hostLoaded(name, null, true))
   })
 }
 
 const callbacks = new Map()
 
-Apps.onHostLoaded = function (name, cb) {
+Apps.onHostLoaded = (name, cb) => {
   const hostCbs = callbacks.get(name) || []
   hostCbs.push(cb)
   callbacks.set(name, hostCbs)
 }
 
-function hostLoaded (name, err, res) {
+function hostLoaded(name, err, res) {
   const loadedCbs = callbacks.get(name)
   if (!loadedCbs || loadedCbs.length === 0) {
     return
   }
 
-  loadedCbs.forEach(cb => {
+  loadedCbs.forEach((cb) => {
     setTimeout(() => cb(err, res), 0)
   })
 
   loadedCbs.length = 0
 }
 
-Apps.register = function ({ name, label, url, icon, ddpConnect, ddpLogin }) {
+Apps.register = ({ name, label, url, icon, ddpConnect, ddpLogin }) => {
   const app = _apps.set(name, { name, label, url, icon, ddpConnect, ddpLogin })
   if (ddpConnect) {
     const connection = connect(name, url)
@@ -176,31 +178,56 @@ Apps.register = function ({ name, label, url, icon, ddpConnect, ddpLogin }) {
   return app
 }
 
-Apps.get = function (name) {
+Apps.get = (name) => {
   const app = _apps.get(name)
   const connection = _connections[name]
   return Object.assign({}, app, { connection })
 }
 
-Apps.connection = function (name) {
-  return _connections[name]
-}
+Apps.connection = (name) => _connections[name]
 
-Apps.all = function () {
+Apps.all = () => {
   const all = _apps.all()
   return all && Object.values(all)
 }
 
-Apps.subscribe = (appName, contextName) => Meteor.subscribe(Apps.publications.getByNames.name, { appName, contextName })
+Apps.subscribe = (appName, contextName) =>
+  Meteor.subscribe(Apps.publications.getByNames.name, { appName, contextName })
 
 const templates = new Map()
 Apps.registerTemplate = (name, options) => templates.set(name, options)
 Apps.getRegisteredTemplates = () => Array.from(templates)
-Apps.getUriBase = function (name) {
+Apps.getUriBase = (name) => {
   check(name, String)
   const connection = _connections[name]
-  check(connection, Match.Where(x => typeof x === 'object'))
+  check(
+    connection,
+    Match.Where((x) => typeof x === 'object'),
+  )
   return connection._stream.rawUrl
+}
+
+Apps.getHealth = async (name) => {
+  const app = _apps.get(name)
+  const connection = _connections[name]
+  if (!app || !connection) {
+    app.health = { status: 'failed', reason: 'not connected' }
+    _apps.set(name, app)
+    return app.health
+  }
+  try {
+    const health = await Meteor.callAsync(Apps.methods.getHealth.name, { name })
+    if (!health) {
+      throw new Error('no health received')
+    }
+    app.health = { status: { ok: true }, ...health }
+  } catch (e) {
+    console.error('[Apps] health check failed for', name, e)
+    app.health = { status: 'failed', reason: e.message }
+  }
+
+  _apps.set(name, app)
+  return app.health
 }
 
 export { Apps }

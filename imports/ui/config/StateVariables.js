@@ -6,6 +6,7 @@ export const StateVariables = {
   actionInsert: 'actionInsert',
   actionUpdate: 'actionUpdate',
   actionUpload: 'actionUpload',
+  actionExport: 'actionExport',
   actionPreview: 'actionPreview',
   customActions: 'customActions',
   updateDoc: 'updateDoc',
@@ -22,5 +23,5 @@ export const StateVariables = {
    */
   pageCount: 'pageCount',
   docsPerPage: 'docsPerPage',
-  currentPage: 'currentPage'
+  currentPage: 'currentPage',
 }

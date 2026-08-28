@@ -13,25 +13,25 @@ export const FormTypes = {
       imagesCollection: String,
       save: {
         type: String,
-        allowedValues: ['id', 'url']
-      }
+        allowedValues: ['id', 'url'],
+      },
     },
-    load: async function () {
+    load: async () => {
       const mod = await import('./imageSelect/imageSelect')
       FormTypes.imageSelect.loaded = true
       return mod
-    }
+    },
   },
   sortable: {
     name: 'sortable',
     template: 'leaSortable',
     loaded: false,
     schema: {},
-    load: async function () {
+    load: async () => {
       const mod = await import('./sortable/sortable')
       FormTypes.sortable.loaded = true
       return mod
-    }
+    },
   },
   taskContent: {
     name: 'taskContent',
@@ -39,30 +39,30 @@ export const FormTypes = {
     loaded: false,
     schema: {
       filesCollection: {
-        type: String
+        type: String,
       },
       version: {
         type: String,
-        allowedValues: ['original', 'thumbnail']
+        allowedValues: ['original', 'thumbnail'],
       },
       uriBase: {
-        type: String
-      }
+        type: String,
+      },
     },
-    load: async function () {
+    load: async () => {
       const mod = await import('./taskContent/taskContent')
       FormTypes.taskContent.loaded = true
       return mod
-    }
+    },
   },
   regExp: {
     name: 'regExp',
     template: 'regexp',
     loaded: false,
-    load: async function () {
+    load: async () => {
       const mod = await import('meteor/leaonline:autoform-regexp')
       FormTypes.regExp.loaded = true
       return mod
-    }
-  }
+    },
+  },
 }

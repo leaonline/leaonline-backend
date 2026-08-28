@@ -3,14 +3,16 @@ import { Apps } from '../../../api/apps/Apps'
 import './overview.html'
 
 Template.statusOverview.helpers({
-  apps () {
-    return Apps.all()
+  apps() {
+    return Apps.all().sort((a, b) => a.name.localeCompare(b.name))
   },
-  isConnected (app) {
+  isConnected(app) {
     return app?.status?.connected
   },
-  isLoggedIn (app) {
-    console.debug(app)
+  isLoggedIn(app) {
     return app?.login?.successful
-  }
+  },
+  health(app) {
+    return app.health
+  },
 })
