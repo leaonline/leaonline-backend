@@ -29,7 +29,7 @@ if (isOfHosts) {
   Router.addLoadDependency(
     new Promise((resolve) => {
       Apps.onHostLoaded(hostName, (err, res) => {
-        if (!err && !!res) {
+        if (!err && res) {
           setTimeout(() => Router.go(fullPath), 300)
         }
         resolve()

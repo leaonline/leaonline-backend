@@ -30,7 +30,6 @@
     "lozad": "^1.16.0",
     "marked": "^17.0.1",
     "meteor-node-stubs": "^1.2.25",
-    "select2": "^3.5.1",
     "sortablejs": "^1.15.6",
     "select2": "^4.0.6",
     "simpl-schema": "^1.12.0"

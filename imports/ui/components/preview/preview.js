@@ -20,7 +20,7 @@ Template.preview.helpers({
   titleField() {
     const { data } = Template.instance()
     const { titleField, doc } = data
-    return titleField && doc && doc[titleField]
+    return titleField && doc?.[titleField]
   },
   unsaved() {
     const { data } = Template.instance()
