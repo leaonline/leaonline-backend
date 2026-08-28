@@ -91,9 +91,10 @@ export const parseActions = function parseActions({
 function getUploadAction(context) {
   let accept
   if (Array.isArray(context.extensions)) {
-    accept = context.extensions.map(e => e.startsWith('.') ? e : `.${e}`).join(',')
-  }
-  else if (typeof context.accept === 'string') {
+    accept = context.extensions
+      .map((e) => (e.startsWith('.') ? e : `.${e}`))
+      .join(',')
+  } else if (typeof context.accept === 'string') {
     accept = context.accept
   }
   return {
